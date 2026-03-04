@@ -1,0 +1,1405 @@
+- id: '1752541263640'
+  alias: 'Lighting: Sleep Mode'
+  description: Activates sleep lighting when iPhone sleep focus turns on
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_sleep_focus_mode
+    to: 'on'
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 208694a8d5e7948b810321bfff0d2235
+    entity_id: 99c5de87c3c1866fd98a968688443c06
+    domain: remote
+  - action: switch.turn_off
+    data: {}
+    target:
+      entity_id:
+      - switch.tapo_power_strip_49c7_smart_plug_1
+      - switch.tapo_power_strip_49c7_smart_plug_4
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id:
+        - matthews_bedroom
+        - kitchen
+        - living_room
+        device_id:
+        - e9afd45f3065823eabf2ebdab37800e9
+        - 1bb1b0cdbaa14208e037a5638b9d3210
+      override_mode: bedtime
+      transition: 10
+  - action: script.nintendo_toy_off
+    data: {}
+  mode: single
+- id: '1752541408687'
+  alias: 'Lighting: Wake Up Mode'
+  description: Activates adaptive lighting when iPhone sleep focus turns off
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_button.all_lights_white
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_sleep_focus_mode
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: device_tracker.matthews_iphone_17_pro
+    state:
+    - home
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id:
+        - matthews_bedroom
+        - kitchen
+        - living_room
+      transition: 60
+  - action: script.nintendo_toy_alternating
+    data: {}
+  mode: single
+- id: '1758584148000'
+  alias: 'Lighting: Bathroom Presence'
+  description: Presence-based bathroom lighting with sleep mode awareness
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.bathroom_presence_presence
+    from:
+    to:
+  - trigger: time_pattern
+    seconds: /1
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.bathroom_presence_presence
+      state: 'on'
+    then:
+    - condition: state
+      entity_id: light.bathroom_light_strip
+      state: 'off'
+    - if:
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'on'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            entity_id: light.bathroom_light_strip
+          override_mode: bedtime
+          transition: 0
+      else:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            entity_id: light.bathroom_light_strip
+          transition: 0
+    else:
+    - action: light.turn_off
+      data: {}
+      target:
+        entity_id: light.bathroom_light_strip
+  mode: single
+- id: '1762485541183'
+  alias: 'Lighting: Bedroom Presence'
+  description: Presence-based lighting using adaptive lighting - requires both presence
+    off AND moving distance > 100 to turn off
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.esphome_web_cb9878_presence
+    to: 'off'
+    for:
+      seconds: 5
+    id: presence_off
+  - trigger: time_pattern
+    seconds: /1
+    id: time_check
+  - trigger: device
+    type: occupied
+    device_id: ddcfc3b69328d9678089d111a1ace821
+    entity_id: 7d42b49068568a0220f2652076c1cb45
+    domain: binary_sensor
+    id: motion_detected
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: presence_off
+      - condition: numeric_state
+        entity_id: sensor.esphome_web_cb9878_moving_distance
+        above: 100
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 0
+        target:
+          area_id: matthews_bedroom
+    - conditions:
+      - condition: trigger
+        id: motion_detected
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'off'
+      - condition: state
+        entity_id: light.bedroom_nightstand_light_strip
+        state: 'off'
+      sequence:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id: matthews_bedroom
+          transition: 0
+    - conditions:
+      - condition: trigger
+        id: time_check
+      - condition: state
+        entity_id: binary_sensor.esphome_web_cb9878_presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.esphome_web_cb9878_moving_distance
+        below: 100
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'off'
+      - condition: state
+        entity_id: light.bedroom_nightstand_light_strip
+        state: 'off'
+      sequence:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id: matthews_bedroom
+          transition: 0
+  mode: single
+- id: '1763575398211'
+  alias: 'Lighting: Entrance Presence'
+  description: Turns on lights when someone enters the apartment
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.motion_sensor_occupancy_2
+    to:
+    - 'on'
+  conditions:
+  - condition: state
+    entity_id: light.shoerack_light
+    state:
+    - 'off'
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state:
+    - 'off'
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        entity_id: light.lights
+      transition: 3
+  mode: single
+- id: '1753768667859'
+  alias: 'Lighting: Kitchen Sink Night'
+  description: Brightens kitchen sink light temporarily during sleep mode when motion
+    detected
+  triggers:
+  - type: occupied
+    device_id: 7a77497327e77c4f57494e46af1adda4
+    entity_id: 45f4a4582c135ccff23030dc5d0394e3
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'on'
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 100
+      rgb_color:
+      - 255
+      - 0
+      - 0
+    target:
+      device_id: e9afd45f3065823eabf2ebdab37800e9
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      brightness_pct: 1
+      rgb_color:
+      - 255
+      - 0
+      - 0
+    target:
+      device_id: e9afd45f3065823eabf2ebdab37800e9
+  mode: single
+- id: '1768528427688'
+  alias: 'Lighting: Bathroom Night Path'
+  description: Illuminates path to bathroom during sleep mode
+  triggers:
+  - type: occupied
+    device_id: ddcfc3b69328d9678089d111a1ace821
+    entity_id: 7d42b49068568a0220f2652076c1cb45
+    domain: binary_sensor
+    trigger: device
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state:
+    - 'on'
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      effect: Candle Multi
+      transition: 2
+      brightness_pct: 100
+    target:
+      entity_id: light.bed_frame_light_strips
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 5
+      milliseconds: 0
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      brightness_pct: 1
+    target:
+      entity_id: light.bed_frame_light_strips
+  mode: single
+- id: '1758772924016'
+  alias: 'Lighting: Bedtime Transition'
+  description: Dims all lights when phone starts charging during sleep mode
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_charging
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'on'
+  actions:
+  - action: light.turn_on
+    metadata: {}
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      transition: 5
+      brightness_pct: 1
+      effect: Solid
+    target:
+      area_id:
+      - matthews_bedroom
+      - living_room
+      - bathroom
+      - kitchen
+  - action: script.nintendo_toy_off
+    metadata: {}
+    data: {}
+  mode: single
+- id: '1768974170420'
+  alias: 'Lighting: Party Mode'
+  description: Sets random RGB colors on all lights
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_button.random_scene
+    to:
+  conditions: []
+  actions:
+  - repeat:
+      for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | list
+        }}'
+      sequence:
+      - target:
+          entity_id: '{{ repeat.item }}'
+        data:
+          rgb_color: '{{ [[255,0,0], [0,255,0], [0,0,255]] | random }}'
+        action: light.turn_on
+  mode: single
+- id: '1756866282389'
+  alias: 'Media: Theater Mode On'
+  description: Dims living room lights when video starts playing on Apple TV. Respects
+    eating mode for back lights.
+  triggers:
+  - device_id: 208694a8d5e7948b810321bfff0d2235
+    domain: media_player
+    entity_id: b451ca0d99fa64340608813604902977
+    type: playing
+    trigger: device
+  conditions:
+  - condition: device
+    type: is_on
+    device_id: e5221f5ed730d77d25162de28c0382cc
+    entity_id: b3e4d785b798fde8ef39f4b7a591c0ed
+    domain: light
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+      != ''music'' }}'
+  actions:
+  - if:
+    - condition: or
+      conditions:
+      - condition: sun
+        before: sunrise
+      - condition: sun
+        after: sunset
+        after_offset: 00:30:00
+    then:
+    - action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          area_id: living_room
+        override_mode: theater
+        transition: 5
+  - if:
+    - condition: state
+      entity_id: input_boolean.eating_mode
+      state: 'on'
+    then:
+    - action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          entity_id:
+          - light.living_room_vertical_light_strip
+          - light.living_room_pegboard_light_strip
+          - light.desk_light_strips
+          - light.desk_lamp
+        transition: 5
+    else:
+    - action: light.turn_off
+      data: {}
+      target:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_pegboard_light_strip
+  mode: single
+- id: '1732932623429'
+  alias: 'Media: Jumbotron On'
+  description: Turns on Jumbotron at sunset
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: 00:30:00
+  conditions: []
+  actions:
+  - type: turn_on
+    device_id: 53082fca53a2374821d4d89b24379beb
+    entity_id: 0e987938a9671f0aa60dbf9371895671
+    domain: switch
+  mode: single
+- id: '1732932581372'
+  alias: 'Media: Jumbotron Off'
+  description: Turns off Jumbotron at midnight
+  triggers:
+  - trigger: time
+    at: 00:00:00
+  conditions: []
+  actions:
+  - type: turn_off
+    device_id: 53082fca53a2374821d4d89b24379beb
+    entity_id: 0e987938a9671f0aa60dbf9371895671
+    domain: switch
+  mode: single
+- id: '1763168904540'
+  alias: 'Media: Fix Google TV Apple TV'
+  description: Launches Apple TV HDMI input when Google TV gets stuck
+  triggers:
+  - trigger: state
+    entity_id:
+    - media_player.matthews_bedroom_2
+    to:
+    - idle
+  conditions: []
+  actions:
+  - repeat:
+      count: 60
+      sequence:
+      - if:
+        - condition: or
+          conditions:
+          - condition: state
+            entity_id: media_player.android_tv_10_0_1_195
+            state:
+            - Settings
+            attribute: app_name
+          - condition: state
+            entity_id: media_player.android_tv_10_0_1_195
+            state:
+            - Google TV Launcher
+            attribute: app_name
+        then:
+        - action: script.google_tv_apple_tv_input_select
+          metadata: {}
+          data: {}
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+  mode: single
+- id: '1759889851814'
+  alias: 'Media: Apple TV Auto Reload'
+  description: Reloads Apple TV integration when it becomes unavailable
+  triggers:
+  - trigger: time_pattern
+    minutes: /1
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - unavailable
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - unknown
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - 'off'
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - paused
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - standby
+  actions:
+  - action: homeassistant.reload_config_entry
+    data:
+      entry_id: 01K6795C0QFJXVTKS517FHT203
+  mode: single
+- id: '1753323920085'
+  alias: 'Climate: Pre-arrival Conditioning'
+  description: Sets thermostat when arriving home
+  triggers:
+  - device_id: 349de079bd26e1ce976b6691078eda72
+    domain: device_tracker
+    entity_id: 59fed915c3e6d516333d765196ebf4ba
+    type: enters
+    trigger: device
+    zone: zone.apartment
+  conditions: []
+  actions:
+  - action: climate.set_temperature
+    data:
+      temperature: '{{ states(''input_number.keep_apartment_climate_temperature'')
+        | int }}'
+      hvac_mode: cool
+    target:
+      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      message: Setting apartment thermostat to {{ states('input_number.keep_apartment_climate_temperature')
+        }}º. It's currently {{ state_attr('climate.living_room', 'current_temperature')
+        }}º.
+      title: Heading Back to Your Apartment
+  mode: single
+- id: '1753504171791'
+  alias: 'Climate: Maintain Temperature'
+  description: Maintains apartment temperature at set point
+  triggers:
+  - trigger: time_pattern
+    minutes: /5
+  conditions:
+  - condition: device
+    device_id: 38fc2e8be61a27e5fe435de15f1d1aab
+    domain: climate
+    entity_id: 8711459caa17b34fa2d469ba3063ca5a
+    type: is_hvac_mode
+    hvac_mode: cool
+  actions:
+  - action: climate.set_temperature
+    data:
+      hvac_mode: cool
+      target_temp_high: '{{ states(''input_number.keep_apartment_climate_temperature'')
+        | int }}'
+      target_temp_low: '{{ states(''input_number.keep_apartment_climate_temperature'')
+        | int }}'
+      temperature: '{{ states(''input_number.keep_apartment_climate_temperature'')
+        | int }}'
+    target:
+      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
+  - action: climate.set_hvac_mode
+    data:
+      hvac_mode: cool
+    target:
+      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
+  mode: single
+- id: '1766321188342'
+  alias: 'Presence: Away Mode'
+  description: Disables automations when away mode is enabled
+  triggers:
+  - trigger: state
+    entity_id:
+    - device_tracker.matthews_iphone_17_pro
+    attribute: latitude
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: device_tracker.matthews_iphone_17_pro
+      state:
+      - home
+    then:
+    - action: automation.turn_on
+      target:
+        label_id: away_mode_disables
+      data: {}
+    else:
+    - action: automation.turn_off
+      target:
+        label_id: away_mode_disables
+      data:
+        stop_actions: true
+  mode: single
+- id: '1763097958611'
+  alias: 'Presence: Guest Mode'
+  description: Disables automations when guest mode is enabled
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.guest_mode
+    to:
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state:
+        - 'on'
+      sequence:
+      - action: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          label_id: guest_mode_disabled
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state:
+        - 'off'
+      sequence:
+      - action: automation.turn_on
+        data: {}
+        target:
+          label_id: guest_mode_disabled
+  mode: single
+- id: '1762549425282'
+  alias: 'Presence: Kitchen Motion Tracker'
+  description: Records last kitchen motion sensor trigger time
+  triggers:
+  - trigger: state
+    entity_id:
+    - binary_sensor.motion_sensor_trigger_count_last_15m
+    to:
+    - 'on'
+  - type: motion
+    device_id: 3198b11294e5ad0eb908ecfe9c6d1094
+    entity_id: 66a31ceefc9efa422acf86a29339c5b2
+    domain: binary_sensor
+    trigger: device
+  conditions: []
+  actions:
+  - action: input_datetime.set_datetime
+    data:
+      timestamp: '{{ now().timestamp() }}'
+    target:
+      entity_id: input_datetime.last_kitchen_motion_sensor_trigger
+  mode: single
+- id: '1758168644378'
+  alias: 'Presence: Sunset Triggers'
+  description: Turns on power strip switches at sunset when home
+  triggers:
+  - trigger: sun
+    event: sunset
+    offset: 00:15:00
+  conditions:
+  - condition: state
+    entity_id: device_tracker.matthews_iphone
+    state: Apartment
+  actions:
+  - action: switch.turn_on
+    data: {}
+    target:
+      entity_id:
+      - switch.tapo_power_strip_49c7_smart_plug_1
+      - switch.tapo_power_strip_49c7_smart_plug_4
+  mode: single
+- id: '1764891750525'
+  alias: 'Safety: Soldering Iron Alert'
+  description: Sends critical notification when soldering iron is left on, auto-turns
+    off after 60s if no response
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.tapo_smart_plug_2
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - if:
+    - condition: state
+      entity_id: switch.tapo_smart_plug_2
+      state:
+      - 'on'
+    then:
+    - action: notify.mobile_app_matthews_iphone_17_pro
+      data:
+        title: Soldering Iron Left On
+        message: Respond OK to this notification to keep it on; otherwise, it will
+          be shut off in 60 seconds.
+        data:
+          push:
+            interruption-level: critical
+          actions:
+          - action: KEEP_IRON_ON
+            title: Keep On
+          - action: TURN_OFF_NOW
+            title: Turn Off Now
+    - delay:
+        seconds: 60
+    - if:
+      - condition: state
+        entity_id: switch.tapo_smart_plug_2
+        state:
+        - 'on'
+      then:
+      - action: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.tapo_smart_plug_2
+      - action: notify.mobile_app_matthews_iphone_17_pro
+        data:
+          title: Soldering Iron Auto-Off
+          message: Soldering iron has been automatically turned off for safety.
+  mode: single
+- id: '1764892218525'
+  alias: 'Safety: Soldering Iron Keep On'
+  description: Handles Keep On notification action for soldering iron
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: KEEP_IRON_ON
+  conditions: []
+  actions:
+  - action: automation.trigger
+    target:
+      entity_id: automation.safety_soldering_iron_alert
+    data:
+      skip_condition: true
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Soldering Iron Timer Reset
+      message: Timer reset. You have another 5 minutes.
+  mode: single
+- id: '1764892233300'
+  alias: 'Safety: Soldering Iron Turn Off'
+  description: Handles Turn Off Now notification action for soldering iron
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: TURN_OFF_NOW
+  conditions: []
+  actions:
+  - action: switch.turn_off
+    data: {}
+    target:
+      entity_id: switch.tapo_smart_plug_2
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Soldering Iron Off
+      message: Soldering iron turned off
+  mode: single
+- id: '1765080604283'
+  alias: 'Safety: Soldering Pegboard Light'
+  description: Shows red plasma effect on pegboard when soldering iron is on
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.tapo_smart_plug_2
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: switch.tapo_smart_plug_2
+      state:
+      - 'on'
+    then:
+    - action: light.turn_on
+      data:
+        rgb_color:
+        - 255
+        - 0
+        - 0
+        effect: Plasma
+        brightness_pct: 100
+      target:
+        entity_id: light.living_room_pegboard_light_strip
+    else:
+    - if:
+      - condition: state
+        entity_id: light.shoerack_light
+        state:
+        - 'on'
+      then:
+      - action: light.turn_on
+        data:
+          brightness_pct: 100
+          effect: Breathe
+        target:
+          entity_id: light.living_room_pegboard_light_strip
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 5
+          milliseconds: 0
+      - data:
+          rgb_color: '{{ state_attr(''light.desk_light_strips'', ''rgb_color'') }}'
+          brightness: '{{ state_attr(''light.desk_light_strips'', ''brightness'')
+            }}'
+          effect: Solid
+        action: light.turn_on
+        target:
+          entity_id: light.living_room_pegboard_light_strip
+      else:
+      - action: light.turn_off
+        data: {}
+        target:
+          entity_id: light.living_room_pegboard_light_strip
+  mode: single
+- id: '1672003294436'
+  alias: 'System: Home Assistant Update'
+  description: Auto-updates Home Assistant and reboots at 3 AM
+  triggers:
+  - platform: time
+    at: 03:00:00
+  conditions: []
+  actions:
+  - action: update.install
+    data:
+      backup: true
+    target:
+      entity_id: update.home_assistant_core_update
+  - action: update.install
+    data:
+      backup: true
+    target:
+      entity_id: update.home_assistant_operating_system_update
+  - action: update.install
+    data:
+      backup: true
+    target:
+      entity_id: update.home_assistant_supervisor_update
+  - action: update.install
+    data:
+      backup: true
+    target:
+      entity_id: update.cloudflared_update
+  - action: hassio.host_reboot
+    data: {}
+  mode: single
+- id: '1676690404416'
+  alias: 'System: Server Fan Toggle'
+  description: Toggles server fan when input boolean changes
+  triggers:
+  - platform: state
+    entity_id:
+    - input_boolean.fan_on_or_off
+  conditions: []
+  actions:
+  - action: script.honeywell_fan_power_on_off
+    data: {}
+  mode: single
+- id: '1769569726896'
+  alias: 'System: Git Config Auto Push'
+  description: Pushes Home Assistant config to git every minute
+  triggers:
+  - minutes: '*'
+    trigger: time_pattern
+  conditions: []
+  actions:
+  - action: shell_command.git_push_config
+    data: {}
+  mode: single
+- id: '1763239865946'
+  alias: 'System: Sleep Mode Automations'
+  description: Disables automations when sleep focus mode is on
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_sleep_focus_mode
+  - trigger: state
+    entity_id:
+    - input_boolean.iphone_charging
+  conditions: []
+  actions:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state:
+        - 'on'
+      - condition: state
+        entity_id: input_boolean.iphone_charging
+        state:
+        - 'on'
+    then:
+    - action: automation.turn_off
+      data:
+        stop_actions: true
+      target:
+        label_id: sleeping_disabled
+    else:
+    - action: automation.turn_on
+      data: {}
+      target:
+        label_id: sleeping_disabled
+  mode: single
+- id: '1764825433805'
+  alias: 'System: Nintendo Toy Shutdown'
+  description: Turns off Nintendo toy when Home Assistant shuts down
+  triggers:
+  - trigger: homeassistant
+    event: shutdown
+  conditions: []
+  actions:
+  - action: script.nintendo_toy_off
+    data: {}
+  mode: single
+- id: '1764825627873'
+  alias: 'System: Nintendo Toy Button'
+  description: Turns off Nintendo toy when button helper is pressed
+  triggers:
+  - trigger: state
+    entity_id:
+    - input_button.turn_off_nintendo_toy_helper
+    to:
+  conditions: []
+  actions:
+  - action: script.nintendo_toy_off
+    data: {}
+  mode: single
+- id: '1742846170666'
+  alias: 'Notification: Jellyseerr'
+  description: Comprehensive Jellyseerr notifications for requests, approvals, availability,
+    and issues
+  triggers:
+  - webhook_id: -AdVpVNVr-35VVtidXy5vH-up
+    allowed_methods:
+    - POST
+    - PUT
+    local_only: false
+    trigger: webhook
+  conditions: []
+  actions:
+  - variables:
+      event_type: '{{ trigger.json.event | default("Unknown Event") }}'
+      media_title: '{{ trigger.json.subject | default("Unknown Title") }}'
+      username: '{{ trigger.json.request.requestedBy_username | default("Unknown User")
+        }}'
+      media_type: '{{ trigger.json.media.media_type | default("Unknown Type") }}'
+      media_status: '{{ trigger.json.media.status | default("Unknown Status") }}'
+      media_image: '{{ trigger.json.image | default("") }}'
+  - data:
+      title: '{% if event_type == "MEDIA_REQUESTED" %}New Request: {{ media_title
+        }} {% elif event_type == "MEDIA_APPROVED" %}Approved: {{ media_title }} {%
+        elif event_type == "MEDIA_AVAILABLE" %}Now Available: {{ media_title }} {%
+        elif event_type == "ISSUE_CREATED" %}New Issue: {{ media_title }} {% elif
+        event_type == "ISSUE_COMMENT" %}New Comment: {{ media_title }} {% elif event_type
+        == "ISSUE_RESOLVED" %}Issue Resolved: {{ media_title }} {% else %}{{ event_type
+        }}: {{ media_title }} {% endif %}'
+      message: "{% if event_type.startswith(\"MEDIA_\") %}\n  {{ username }} {{ event_type
+        | replace(\"MEDIA_\", \"\") | lower }} {{ media_type | lower }} \"{{ media_title
+        }}\"\n  Status: {{ media_status | title }}\n{% elif event_type.startswith(\"ISSUE_\")
+        %}\n  {{ trigger.json.issue.reportedBy_username | default(username) }} {{
+        event_type | replace(\"ISSUE_\", \"\") | lower }} an issue for \"{{ media_title
+        }}\"\n  {% if trigger.json.comment.comment_message %}\n  Comment: {{ trigger.json.comment.comment_message
+        }}\n  {% endif %}\n{% else %}\n  {{ trigger.json.message }}\n{% endif %}"
+      data:
+        image: '{{ media_image }}'
+        actions:
+        - action: URI
+          title: View in Jellyseerr
+          uri: "{% if media_type == \"movie\" %}\n  https://your-jellyseerr-url/movie/{{
+            trigger.json.media.tmdbId }}\n{% elif media_type == \"tv\" %}\n  https://your-jellyseerr-url/tv/{{
+            trigger.json.media.tmdbId }}\n{% else %}\n  https://your-jellyseerr-url\n{%
+            endif %}"
+    action: notify.mobile_app_matthews_iphone_17_pro
+  mode: single
+- id: '1763173437229'
+  alias: 'Notification: Minecraft Server'
+  description: Notifies when players join the Minecraft server
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.minecraft_server_player_count
+    above: 0
+  conditions: []
+  actions: []
+  mode: single
+- id: '1758577368189'
+  alias: 'Notification: Kitchen Cleanup Cancel'
+  description: Handles cancel action for kitchen vacuum cleanup notification
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: CANCEL_VACUUM
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Auto Kitchen Vacuum Cleanup Cancelled
+      message: The vacuum won't clean up the kitchen this time around, as per your
+        request.
+  mode: single
+- id: '1762487108563'
+  alias: 'Lighting: Effect Handler'
+  description: Changes light effects based on Apple TV media type (music vs video).
+    Uses input_select helpers for per-light effect selection. Only sends commands
+    if effect needs to change.
+  triggers:
+  - platform: state
+    entity_id:
+    - media_player.matthews_bedroom_2
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 5
+  - platform: time_pattern
+    seconds: /30
+  conditions:
+  - condition: not
+    conditions:
+    - condition: or
+      conditions:
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state:
+        - unknown
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state:
+        - unavailable
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state:
+    - 'off'
+  actions:
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state:
+        - Music
+        attribute: app_name
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state:
+        - playing
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''light.living_room_vertical_light_strip'',
+          ''effect'') != states(''input_select.music_effect_vertical_strip'') }}'
+      then:
+      - action: light.turn_on
+        data:
+          effect: '{{ states(''input_select.music_effect_vertical_strip'') }}'
+        target:
+          entity_id: light.living_room_vertical_light_strip
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''light.living_room_tv_stand_light_strip'',
+          ''effect'') != states(''input_select.music_effect_tv_stand_strip'') }}'
+      then:
+      - action: light.turn_on
+        data:
+          effect: '{{ states(''input_select.music_effect_tv_stand_strip'') }}'
+        target:
+          entity_id: light.living_room_tv_stand_light_strip
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''light.living_room_bookshelf_light_strips'',
+          ''effect'') != states(''input_select.music_effect_bookshelf_strips'') }}'
+      then:
+      - action: light.turn_on
+        data:
+          effect: '{{ states(''input_select.music_effect_bookshelf_strips'') }}'
+        target:
+          entity_id: light.living_room_bookshelf_light_strips
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''light.desk_light_strips'', ''effect'') !=
+          states(''input_select.music_effect_desk_strips'') }}'
+      then:
+      - action: light.turn_on
+        data:
+          effect: '{{ states(''input_select.music_effect_desk_strips'') }}'
+        target:
+          entity_id: light.desk_light_strips
+    - if:
+      - condition: template
+        value_template: '{{ state_attr(''light.living_room_pegboard_light_strip'',
+          ''effect'') != states(''input_select.music_effect_pegboard_strip'') }}'
+      then:
+      - action: light.turn_on
+        data:
+          effect: '{{ states(''input_select.music_effect_pegboard_strip'') }}'
+        target:
+          entity_id: light.living_room_pegboard_light_strip
+    else:
+    - if:
+      - condition: and
+        conditions:
+        - condition: template
+          value_template: '{{ state_attr(''light.living_room_vertical_light_strip'',
+            ''effect'') != ''Solid'' }}'
+        - condition: state
+          entity_id: light.living_room_vertical_light_strip
+          state:
+          - 'on'
+      then:
+      - action: light.turn_on
+        data:
+          effect: Solid
+          rgb_color: '{{ state_attr(''light.kitchen_sink_light_strip'', ''rgb_color'')
+            }}'
+          brightness: '{{ state_attr(''light.kitchen_sink_light_strip'', ''brightness'')
+            }}'
+        target:
+          entity_id:
+          - light.living_room_vertical_light_strip
+          - light.living_room_tv_stand_light_strip
+          - light.living_room_bookshelf_light_strips
+          - light.desk_light_strips
+          - light.living_room_pegboard_light_strip
+  mode: single
+- id: theater_mode_off
+  alias: 'Media: Theater Mode Off'
+  description: Restores living room lights to adaptive lighting when video pauses
+    on Apple TV
+  triggers:
+  - device_id: 208694a8d5e7948b810321bfff0d2235
+    domain: media_player
+    entity_id: b451ca0d99fa64340608813604902977
+    type: paused
+    trigger: device
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id: living_room
+      transition: 10
+  mode: single
+- id: adaptive_lighting_schedule
+  alias: 'Lighting: Adaptive Sun Schedule'
+  description: Updates light color temperature every 30 minutes based on sun elevation.
+    Skips during sleep mode and when watching video.
+  triggers:
+  - minutes: /30
+    trigger: time_pattern
+  conditions:
+  - condition: state
+    entity_id: light.lights
+    state: 'on'
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  - condition: not
+    conditions:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state: playing
+      - condition: template
+        value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+          != ''Music'' }}'
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        entity_id: '{{ expand(''light.lights'') | selectattr(''state'', ''eq'', ''on'')
+          | map(attribute=''entity_id'') | list }}'
+      transition: 10
+  mode: single
+- id: vacuum_after_cooking
+  alias: 'Cleaning: Vacuum After Cooking'
+  description: Schedules vacuum to clean kitchen after extended cooking activity.
+    Mops if 3+ days since last mop.
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.kitchen_motion_sensor_trigger_last_15m
+    above: 24
+  conditions: []
+  actions:
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      data:
+        actions:
+        - action: CANCEL_VACUUM
+          title: Cancel
+        channel: Vacuum Notifications
+        importance: high
+        sticky: true
+      title: Automatic Kitchen Cleanup Scheduled
+      message: '{% set last_mop = states(''input_datetime.last_mop_use'') %}{% set
+        days_since_mop = ((now().timestamp() - as_timestamp(last_mop, 0)) / 86400)
+        | round(1) %}{% if days_since_mop >= 3 %}Vacuum + mop in 20 min ({{ days_since_mop
+        }} days since last mop){% else %}Vacuum only in 20 min (mopped {{ days_since_mop
+        }} days ago){% endif %}'
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - wait_for_trigger:
+    - type: not_occupied
+      device_id: 7a77497327e77c4f57494e46af1adda4
+      entity_id: 45f4a4582c135ccff23030dc5d0394e3
+      domain: binary_sensor
+      trigger: device
+      for:
+        hours: 0
+        minutes: 20
+        seconds: 0
+    timeout:
+      hours: 2
+      minutes: 0
+      seconds: 0
+    continue_on_timeout: true
+  - if:
+    - condition: state
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+      state: 'on'
+    then:
+    - if:
+      - condition: template
+        value_template: '{{ ((now().timestamp() - as_timestamp(states(''input_datetime.last_mop_use''),
+          0)) / 86400) >= 3 }}'
+      then:
+      - action: vacuum.send_command
+        target:
+          entity_id: vacuum.vaccum
+        data:
+          command: set_properties
+          params:
+          - siid: 4
+            piid: 4
+            value: 2
+      - delay:
+          seconds: 2
+      - action: dreame_vacuum.vacuum_clean_segment
+        data:
+          suction_level: 3
+          segments:
+          - 6
+        target:
+          entity_id: vacuum.vaccum
+      - action: input_datetime.set_datetime
+        data:
+          timestamp: '{{ now().timestamp() }}'
+        target:
+          entity_id: input_datetime.last_mop_use
+      else:
+      - action: vacuum.send_command
+        target:
+          entity_id: vacuum.vaccum
+        data:
+          command: set_properties
+          params:
+          - siid: 4
+            piid: 4
+            value: 0
+      - delay:
+          seconds: 2
+      - action: dreame_vacuum.vacuum_clean_segment
+        data:
+          suction_level: 3
+          segments:
+          - 6
+        target:
+          entity_id: vacuum.vaccum
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+    - delay:
+        minutes: 15
+  mode: single
+- id: weekly_full_clean
+  alias: 'Cleaning: Weekly Full Clean'
+  description: Full apartment vacuum and mop every Tuesday at noon
+  triggers:
+  - trigger: time
+    at: '12:00:00'
+  conditions:
+  - condition: time
+    weekday:
+    - tue
+  actions:
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Weekly Full Clean Starting
+      message: Vacuum + mop for all rooms
+  - action: vacuum.send_command
+    target:
+      entity_id: vacuum.vaccum
+    data:
+      command: set_properties
+      params:
+      - siid: 4
+        piid: 4
+        value: 2
+  - delay:
+      seconds: 2
+  - action: dreame_vacuum.vacuum_clean_segment
+    data:
+      suction_level: 3
+      segments:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+    target:
+      entity_id: vacuum.vaccum
+  - action: input_datetime.set_datetime
+    data:
+      timestamp: '{{ now().timestamp() }}'
+    target:
+      entity_id: input_datetime.last_mop_use
+  mode: single
+- id: media_theater_mode_off
+  alias: 'Media: Theater Mode Off'
+  description: Restores living room lights to adaptive lighting when video stops/pauses
+    on Apple TV
+  triggers:
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    from: playing
+    to: paused
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    from: playing
+    to: idle
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    from: playing
+    to: standby
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id: living_room
+      transition: 10
+  mode: single
+- id: eating_mode_on
+  alias: 'Eating: Restore Back Lights'
+  description: When eating mode is turned on during theater mode, restore back lights
+    to adaptive lighting
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.eating_mode
+    from: 'off'
+    to: 'on'
+  conditions:
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state: playing
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+      != ''Music'' }}'
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_pegboard_light_strip
+        - light.desk_light_strips
+        - light.desk_lamp
+      transition: 5
+  mode: single
+- id: eating_mode_off
+  alias: 'Eating: Dim Back Lights'
+  description: When eating mode is turned off during theater mode, turn off back lights
+    again
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.eating_mode
+    from: 'on'
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state: playing
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+      != ''Music'' }}'
+  actions:
+  - action: light.turn_off
+    data:
+      transition: 5
+    target:
+      entity_id:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
+      - light.desk_light_strips
+      - light.desk_lamp
+  mode: single

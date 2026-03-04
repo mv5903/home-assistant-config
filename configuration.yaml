@@ -1,0 +1,173 @@
+# Loads default set of integrations. Do not remove.
+default_config:
+
+frontend:
+  themes: !include_dir_merge_named themes
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+homeassistant:
+  external_url: "https://ha.mattvandenberg.com"
+  packages: !include_dir_named packages
+  name: Home
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  time_zone: America/Los_Angeles
+
+light:
+  - platform: unifiled
+    host: 10.0.0.1
+    username: !secret unifiled_username
+    password: !secret unifiled_password 
+
+calendar:
+  - platform: caldav
+    username: !secret caldav_username
+    password: !secret caldav_password
+    url: "https://caldav.icloud.com"
+
+switch:
+  - platform: wake_on_lan
+    mac: D8-BB-C1-8B-8B-6F
+    host: 10.0.1.1
+    name: "MATT PC WOL"
+
+template:
+  - trigger:
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: sensor.strava_matthew_vandenberg_run_date
+        for:
+          seconds: 2
+    sensor:
+      - name: "Running Distance All Time"
+        unique_id: running_distance_all_time
+        unit_of_measurement: "mi"
+        state_class: total_increasing
+        device_class: distance
+        state: >
+          {% if trigger.platform == 'homeassistant' %}
+            {{ this.state | float(0) }}
+          {% else %}
+            {{ this.state | float(0) + states('sensor.strava_matthew_vandenberg_run_distance') | float(0) }}
+          {% endif %}
+          
+command_line:
+  - sensor: 
+        command: "curl -s https://api.mcsrvstat.us/3/play.mattvandenberg.com | grep -o '\"online\":[0-9]*' | head -1 | cut -d':' -f2"
+        command_timeout: 7
+        name: Minecraft Server Player Count
+        unique_id: sensor.minecraft_server_player_count
+
+template:
+  - sensor:
+      - name: "Jellyfin Playing Count"
+        state: >
+          {% set jellyfin_players = integration_entities('jellyfin') | list %}
+          {{ jellyfin_players | select('is_state', 'playing') | list | count }}
+        unit_of_measurement: "users"
+        icon: mdi:play-circle
+
+sensor:
+  - platform: command_line
+    name: "Running Docker Containers"
+    command: "ssh matt@docker.home 'docker ps --format \"{{.ID}}\" | wc -l'"
+    unit_of_measurement: "containers"
+    scan_interval: 60  # Update every minute
+
+  - platform: rest
+    name: jellyfin_api_sessions
+    resource: !secret jellyfin_url
+    method: GET
+    headers:
+      Content-Type: "application/json"
+    value_template: >-
+      {% set sessions = namespace(x=[]) %}
+      {% for session in value_json %}
+        {% if session.NowPlayingItem is defined %}
+          {% set sessions.x = sessions.x + [{ "user": session.UserName, "media_id": session.NowPlayingItem.Id }] %}
+        {% endif %}
+      {% endfor %}
+      {{ sessions.x | to_json }}
+    scan_interval: 5  
+    json_attributes:
+      - user
+      - media_id
+
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: disk_use
+      - type: disk_free
+      - type: memory_use_percent
+      - type: memory_use
+      - type: memory_free
+      - type: swap_use_percent
+      - type: swap_use
+      - type: swap_free
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+      - type: network_in
+        arg: eth0
+      - type: network_out
+        arg: eth0
+      - type: throughput_network_in
+        arg: eth0
+      - type: throughput_network_out
+        arg: eth0
+      - type: packets_in
+        arg: eth0
+      - type: packets_out
+        arg: eth0
+      - type: ipv4_address
+        arg: eth0
+      - type: ipv6_address
+        arg: eth0
+      - type: processor_use
+      - type: processor_temperature
+      - type: last_boot
+
+google_assistant:
+  project_id: homeassistant-74687
+  service_account: !include SERVICE_ACCOUNT.JSON
+  report_state: true
+  exposed_domains:
+    - switch
+    - light
+
+shell_command:
+  git_push_config: 'cd /config/ha_vibecode_git && git push'
+
+input_number: !include input_number.yaml
+
+# Lovelace Dashboards
+lovelace:
+  dashboards:
+    running-dashboard:
+      mode: yaml
+      title: Running
+      icon: mdi:creation
+      filename: running-dashboard.yaml
+      show_in_sidebar: true
+
+group: !include groups.yaml
+
+input_select: !include input_select.yaml
+
+input_datetime: !include input_datetime.yaml
+
+input_boolean: !include input_boolean.yaml
