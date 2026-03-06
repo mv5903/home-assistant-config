@@ -497,7 +497,8 @@
   mode: single
 - id: '1753323920085'
   alias: 'Climate: Pre-arrival Conditioning'
-  description: Sets thermostat when arriving home
+  description: Restores thermostat to saved state when arriving home, or uses default
+    if AC wasn't on when leaving
   triggers:
   - device_id: 349de079bd26e1ce976b6691078eda72
     domain: device_tracker
@@ -507,19 +508,29 @@
     zone: zone.apartment
   conditions: []
   actions:
-  - action: climate.set_temperature
-    data:
-      temperature: '{{ states(''input_number.keep_apartment_climate_temperature'')
-        | int }}'
-      hvac_mode: cool
-    target:
-      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
-  - action: notify.mobile_app_matthews_iphone
-    data:
-      message: Setting apartment thermostat to {{ states('input_number.keep_apartment_climate_temperature')
-        }}º. It's currently {{ state_attr('climate.living_room', 'current_temperature')
-        }}º.
-      title: Heading Back to Your Apartment
+  - if:
+    - condition: state
+      entity_id: input_boolean.ac_was_on_when_left
+      state: 'on'
+    then:
+    - action: climate.set_temperature
+      data:
+        temperature: '{{ states(''input_number.ac_previous_temperature'') | int }}'
+        hvac_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+      target:
+        entity_id: climate.living_room
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        title: Welcome Home
+        message: Restoring AC to {{ states('input_select.ac_previous_mode') }} at
+          {{ states('input_number.ac_previous_temperature') | int }}°. Currently {{
+          state_attr('climate.living_room', 'current_temperature') }}° inside.
+    else:
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        title: Welcome Home
+        message: AC was off when you left. Currently {{ state_attr('climate.living_room',
+          'current_temperature') }}° inside.
   mode: single
 - id: '1753504171791'
   alias: 'Climate: Maintain Temperature'
@@ -1402,4 +1413,50 @@
       - light.living_room_pegboard_light_strip
       - light.desk_light_strips
       - light.desk_lamp
+  mode: single
+- id: climate_save_and_off_when_leaving
+  alias: 'Climate: Save and Turn Off When Leaving'
+  description: Immediately saves current AC state when leaving home, then turns off
+    after 5 min delay
+  triggers:
+  - trigger: state
+    entity_id: person.matt
+    from: home
+    to: not_home
+  conditions: []
+  actions:
+  - if:
+    - condition: template
+      value_template: '{{ states(''climate.living_room'') != ''off'' }}'
+    then:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.ac_was_on_when_left
+    - action: input_select.select_option
+      target:
+        entity_id: input_select.ac_previous_mode
+      data:
+        option: '{{ states(''climate.living_room'') }}'
+    - action: input_number.set_value
+      target:
+        entity_id: input_number.ac_previous_temperature
+      data:
+        value: '{{ state_attr(''climate.living_room'', ''temperature'') | float(72)
+          }}'
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        title: Left Home
+        message: AC was {{ states('climate.living_room') }} at {{ state_attr('climate.living_room',
+          'temperature') | int }}°. Saved — will turn off in 5 min.
+    - delay:
+        minutes: 5
+    - condition: template
+      value_template: '{{ states(''climate.living_room'') != ''off'' }}'
+    - action: climate.turn_off
+      target:
+        entity_id: climate.living_room
+    else:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.ac_was_on_when_left
   mode: single
