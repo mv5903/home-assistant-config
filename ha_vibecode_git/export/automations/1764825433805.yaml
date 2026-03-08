@@ -1,0 +1,12 @@
+id: '1764825433805'
+alias: 'System: Nintendo Toy Shutdown'
+description: Turns off Nintendo toy when Home Assistant shuts down
+triggers:
+- trigger: homeassistant
+  event: shutdown
+conditions: []
+actions:
+- action: script.nintendo_toy_off
+  data: {}
+mode: single
+enabled: true

@@ -1,0 +1,14 @@
+id: '1732932581372'
+alias: 'Media: Jumbotron Off'
+description: Turns off Jumbotron at midnight
+triggers:
+- trigger: time
+  at: 00:00:00
+conditions: []
+actions:
+- type: turn_off
+  device_id: 53082fca53a2374821d4d89b24379beb
+  entity_id: 0e987938a9671f0aa60dbf9371895671
+  domain: switch
+mode: single
+enabled: true

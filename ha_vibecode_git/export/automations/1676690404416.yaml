@@ -1,0 +1,13 @@
+id: '1676690404416'
+alias: 'System: Server Fan Toggle'
+description: Toggles server fan when input boolean changes
+triggers:
+- platform: state
+  entity_id:
+  - input_boolean.fan_on_or_off
+conditions: []
+actions:
+- action: script.honeywell_fan_power_on_off
+  data: {}
+mode: single
+enabled: true

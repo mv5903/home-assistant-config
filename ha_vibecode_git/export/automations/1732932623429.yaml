@@ -1,0 +1,15 @@
+id: '1732932623429'
+alias: 'Media: Jumbotron On'
+description: Turns on Jumbotron at sunset
+triggers:
+- trigger: sun
+  event: sunset
+  offset: 00:30:00
+conditions: []
+actions:
+- type: turn_on
+  device_id: 53082fca53a2374821d4d89b24379beb
+  entity_id: 0e987938a9671f0aa60dbf9371895671
+  domain: switch
+mode: single
+enabled: true

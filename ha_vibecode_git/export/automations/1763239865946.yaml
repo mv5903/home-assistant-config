@@ -1,0 +1,36 @@
+id: '1763239865946'
+alias: 'System: Sleep Mode Automations'
+description: Disables automations when sleep focus mode is on
+triggers:
+- trigger: state
+  entity_id:
+  - input_boolean.iphone_sleep_focus_mode
+- trigger: state
+  entity_id:
+  - input_boolean.iphone_charging
+conditions: []
+actions:
+- if:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state:
+      - 'on'
+    - condition: state
+      entity_id: input_boolean.iphone_charging
+      state:
+      - 'on'
+  then:
+  - action: automation.turn_off
+    data:
+      stop_actions: true
+    target:
+      label_id: sleeping_disabled
+  else:
+  - action: automation.turn_on
+    data: {}
+    target:
+      label_id: sleeping_disabled
+mode: single
+enabled: true

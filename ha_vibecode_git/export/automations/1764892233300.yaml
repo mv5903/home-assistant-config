@@ -1,0 +1,20 @@
+id: '1764892233300'
+alias: 'Safety: Soldering Iron Turn Off'
+description: Handles Turn Off Now notification action for soldering iron
+triggers:
+- trigger: event
+  event_type: mobile_app_notification_action
+  event_data:
+    action: TURN_OFF_NOW
+conditions: []
+actions:
+- action: switch.turn_off
+  data: {}
+  target:
+    entity_id: switch.tapo_smart_plug_2
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    title: Soldering Iron Off
+    message: Soldering iron turned off
+mode: single
+enabled: true

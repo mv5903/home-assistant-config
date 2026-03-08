@@ -1,0 +1,57 @@
+id: '1765080604283'
+alias: 'Safety: Soldering Pegboard Light'
+description: Shows red plasma effect on pegboard when soldering iron is on
+triggers:
+- trigger: state
+  entity_id:
+  - switch.tapo_smart_plug_2
+conditions: []
+actions:
+- if:
+  - condition: state
+    entity_id: switch.tapo_smart_plug_2
+    state:
+    - 'on'
+  then:
+  - action: light.turn_on
+    data:
+      rgb_color:
+      - 255
+      - 0
+      - 0
+      effect: Plasma
+      brightness_pct: 100
+    target:
+      entity_id: light.living_room_pegboard_light_strip
+  else:
+  - if:
+    - condition: state
+      entity_id: light.shoerack_light
+      state:
+      - 'on'
+    then:
+    - action: light.turn_on
+      data:
+        brightness_pct: 100
+        effect: Breathe
+      target:
+        entity_id: light.living_room_pegboard_light_strip
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 5
+        milliseconds: 0
+    - data:
+        rgb_color: '{{ state_attr(''light.desk_light_strips'', ''rgb_color'') }}'
+        brightness: '{{ state_attr(''light.desk_light_strips'', ''brightness'') }}'
+        effect: Solid
+      action: light.turn_on
+      target:
+        entity_id: light.living_room_pegboard_light_strip
+    else:
+    - action: light.turn_off
+      data: {}
+      target:
+        entity_id: light.living_room_pegboard_light_strip
+mode: single
+enabled: true

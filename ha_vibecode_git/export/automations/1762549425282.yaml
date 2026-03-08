@@ -1,0 +1,23 @@
+id: '1762549425282'
+alias: 'Presence: Kitchen Motion Tracker'
+description: Records last kitchen motion sensor trigger time
+triggers:
+- trigger: state
+  entity_id:
+  - binary_sensor.motion_sensor_trigger_count_last_15m
+  to:
+  - 'on'
+- type: motion
+  device_id: 3198b11294e5ad0eb908ecfe9c6d1094
+  entity_id: 66a31ceefc9efa422acf86a29339c5b2
+  domain: binary_sensor
+  trigger: device
+conditions: []
+actions:
+- action: input_datetime.set_datetime
+  data:
+    timestamp: '{{ now().timestamp() }}'
+  target:
+    entity_id: input_datetime.last_kitchen_motion_sensor_trigger
+mode: single
+enabled: true

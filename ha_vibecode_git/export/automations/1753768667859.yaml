@@ -1,0 +1,42 @@
+id: '1753768667859'
+alias: 'Lighting: Kitchen Sink Night'
+description: Brightens kitchen sink light temporarily during sleep mode when motion
+  detected
+triggers:
+- type: occupied
+  device_id: 7a77497327e77c4f57494e46af1adda4
+  entity_id: 45f4a4582c135ccff23030dc5d0394e3
+  domain: binary_sensor
+  trigger: device
+conditions:
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state: 'on'
+actions:
+- action: light.turn_on
+  metadata: {}
+  data:
+    brightness_pct: 100
+    rgb_color:
+    - 255
+    - 0
+    - 0
+  target:
+    device_id: e9afd45f3065823eabf2ebdab37800e9
+- delay:
+    hours: 0
+    minutes: 0
+    seconds: 30
+    milliseconds: 0
+- action: light.turn_on
+  metadata: {}
+  data:
+    brightness_pct: 1
+    rgb_color:
+    - 255
+    - 0
+    - 0
+  target:
+    device_id: e9afd45f3065823eabf2ebdab37800e9
+mode: single
+enabled: true

@@ -1,0 +1,74 @@
+id: '1762485541183'
+alias: 'Lighting: Bedroom Presence'
+description: Presence-based lighting using adaptive lighting - requires both presence
+  off AND moving distance > 100 to turn off
+triggers:
+- trigger: state
+  entity_id:
+  - binary_sensor.esphome_web_cb9878_presence
+  to: 'off'
+  for:
+    seconds: 5
+  id: presence_off
+- trigger: time_pattern
+  seconds: /1
+  id: time_check
+- trigger: device
+  type: occupied
+  device_id: ddcfc3b69328d9678089d111a1ace821
+  entity_id: 7d42b49068568a0220f2652076c1cb45
+  domain: binary_sensor
+  id: motion_detected
+conditions: []
+actions:
+- choose:
+  - conditions:
+    - condition: trigger
+      id: presence_off
+    - condition: numeric_state
+      entity_id: sensor.esphome_web_cb9878_moving_distance
+      above: 100
+    sequence:
+    - action: light.turn_off
+      data:
+        transition: 0
+      target:
+        area_id: matthews_bedroom
+  - conditions:
+    - condition: trigger
+      id: motion_detected
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state: 'off'
+    - condition: state
+      entity_id: light.bedroom_nightstand_light_strip
+      state: 'off'
+    sequence:
+    - action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          area_id: matthews_bedroom
+        transition: 0
+  - conditions:
+    - condition: trigger
+      id: time_check
+    - condition: state
+      entity_id: binary_sensor.esphome_web_cb9878_presence
+      state: 'on'
+    - condition: numeric_state
+      entity_id: sensor.esphome_web_cb9878_moving_distance
+      below: 100
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state: 'off'
+    - condition: state
+      entity_id: light.bedroom_nightstand_light_strip
+      state: 'off'
+    sequence:
+    - action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          area_id: matthews_bedroom
+        transition: 0
+mode: single
+enabled: true

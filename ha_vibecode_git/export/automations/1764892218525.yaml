@@ -1,0 +1,21 @@
+id: '1764892218525'
+alias: 'Safety: Soldering Iron Keep On'
+description: Handles Keep On notification action for soldering iron
+triggers:
+- trigger: event
+  event_type: mobile_app_notification_action
+  event_data:
+    action: KEEP_IRON_ON
+conditions: []
+actions:
+- action: automation.trigger
+  target:
+    entity_id: automation.safety_soldering_iron_alert
+  data:
+    skip_condition: true
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    title: Soldering Iron Timer Reset
+    message: Timer reset. You have another 5 minutes.
+mode: single
+enabled: true

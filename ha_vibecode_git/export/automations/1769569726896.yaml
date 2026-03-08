@@ -1,0 +1,12 @@
+id: '1769569726896'
+alias: 'System: Git Config Auto Push'
+description: Pushes Home Assistant config to git every minute
+triggers:
+- minutes: '*'
+  trigger: time_pattern
+conditions: []
+actions:
+- action: shell_command.git_push_config
+  data: {}
+mode: single
+enabled: true

@@ -1,0 +1,124 @@
+id: '1762487108563'
+alias: 'Lighting: Effect Handler'
+description: Changes light effects based on Apple TV media type (music vs video).
+  Uses input_select helpers for per-light effect selection. Only sends commands if
+  effect needs to change.
+triggers:
+- platform: state
+  entity_id:
+  - media_player.matthews_bedroom_2
+  for:
+    hours: 0
+    minutes: 0
+    seconds: 5
+- platform: time_pattern
+  seconds: /30
+conditions:
+- condition: not
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - unknown
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - unavailable
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state:
+  - 'off'
+actions:
+- if:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - Music
+      attribute: app_name
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state:
+      - playing
+  then:
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(''light.living_room_vertical_light_strip'', ''effect'')
+        != states(''input_select.music_effect_vertical_strip'') }}'
+    then:
+    - action: light.turn_on
+      data:
+        effect: '{{ states(''input_select.music_effect_vertical_strip'') }}'
+      target:
+        entity_id: light.living_room_vertical_light_strip
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(''light.living_room_tv_stand_light_strip'', ''effect'')
+        != states(''input_select.music_effect_tv_stand_strip'') }}'
+    then:
+    - action: light.turn_on
+      data:
+        effect: '{{ states(''input_select.music_effect_tv_stand_strip'') }}'
+      target:
+        entity_id: light.living_room_tv_stand_light_strip
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(''light.living_room_bookshelf_light_strips'',
+        ''effect'') != states(''input_select.music_effect_bookshelf_strips'') }}'
+    then:
+    - action: light.turn_on
+      data:
+        effect: '{{ states(''input_select.music_effect_bookshelf_strips'') }}'
+      target:
+        entity_id: light.living_room_bookshelf_light_strips
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(''light.desk_light_strips'', ''effect'') != states(''input_select.music_effect_desk_strips'')
+        }}'
+    then:
+    - action: light.turn_on
+      data:
+        effect: '{{ states(''input_select.music_effect_desk_strips'') }}'
+      target:
+        entity_id: light.desk_light_strips
+  - if:
+    - condition: template
+      value_template: '{{ state_attr(''light.living_room_pegboard_light_strip'', ''effect'')
+        != states(''input_select.music_effect_pegboard_strip'') }}'
+    then:
+    - action: light.turn_on
+      data:
+        effect: '{{ states(''input_select.music_effect_pegboard_strip'') }}'
+      target:
+        entity_id: light.living_room_pegboard_light_strip
+  else:
+  - if:
+    - condition: and
+      conditions:
+      - condition: template
+        value_template: '{{ state_attr(''light.living_room_vertical_light_strip'',
+          ''effect'') != ''Solid'' }}'
+      - condition: state
+        entity_id: light.living_room_vertical_light_strip
+        state:
+        - 'on'
+    then:
+    - action: light.turn_on
+      data:
+        effect: Solid
+        rgb_color: '{{ state_attr(''light.kitchen_sink_light_strip'', ''rgb_color'')
+          }}'
+        brightness: '{{ state_attr(''light.kitchen_sink_light_strip'', ''brightness'')
+          }}'
+      target:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_tv_stand_light_strip
+        - light.living_room_bookshelf_light_strips
+        - light.desk_light_strips
+        - light.living_room_pegboard_light_strip
+mode: single
+enabled: true

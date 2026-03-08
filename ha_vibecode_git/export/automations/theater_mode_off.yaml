@@ -1,0 +1,23 @@
+id: theater_mode_off
+alias: 'Media: Theater Mode Off'
+description: Restores living room lights to adaptive lighting when video pauses on
+  Apple TV
+triggers:
+- device_id: 208694a8d5e7948b810321bfff0d2235
+  domain: media_player
+  entity_id: b451ca0d99fa64340608813604902977
+  type: paused
+  trigger: device
+  for:
+    hours: 0
+    minutes: 0
+    seconds: 0
+conditions: []
+actions:
+- action: script.apply_adaptive_lighting
+  data:
+    target_lights:
+      area_id: living_room
+    transition: 10
+mode: single
+enabled: true

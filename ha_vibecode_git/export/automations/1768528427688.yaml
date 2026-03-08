@@ -1,0 +1,44 @@
+id: '1768528427688'
+alias: 'Lighting: Bathroom Night Path'
+description: Illuminates path to bathroom during sleep mode
+triggers:
+- type: occupied
+  device_id: ddcfc3b69328d9678089d111a1ace821
+  entity_id: 7d42b49068568a0220f2652076c1cb45
+  domain: binary_sensor
+  trigger: device
+conditions:
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state:
+  - 'on'
+actions:
+- action: light.turn_on
+  metadata: {}
+  data:
+    rgb_color:
+    - 255
+    - 0
+    - 0
+    effect: Candle Multi
+    transition: 2
+    brightness_pct: 100
+  target:
+    entity_id: light.bed_frame_light_strips
+- delay:
+    hours: 0
+    minutes: 0
+    seconds: 5
+    milliseconds: 0
+- action: light.turn_on
+  metadata: {}
+  data:
+    rgb_color:
+    - 255
+    - 0
+    - 0
+    brightness_pct: 1
+  target:
+    entity_id: light.bed_frame_light_strips
+mode: single
+enabled: true

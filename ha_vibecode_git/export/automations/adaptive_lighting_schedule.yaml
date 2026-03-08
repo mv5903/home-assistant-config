@@ -1,0 +1,33 @@
+id: adaptive_lighting_schedule
+alias: 'Lighting: Adaptive Sun Schedule'
+description: Updates light color temperature every 30 minutes based on sun elevation.
+  Skips during sleep mode and when watching video.
+triggers:
+- minutes: /30
+  trigger: time_pattern
+conditions:
+- condition: state
+  entity_id: light.lights
+  state: 'on'
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state: 'off'
+- condition: not
+  conditions:
+  - condition: and
+    conditions:
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state: playing
+    - condition: template
+      value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+        != ''Music'' }}'
+actions:
+- action: script.apply_adaptive_lighting
+  data:
+    target_lights:
+      entity_id: '{{ expand(''light.lights'') | selectattr(''state'', ''eq'', ''on'')
+        | map(attribute=''entity_id'') | list }}'
+    transition: 10
+mode: single
+enabled: true

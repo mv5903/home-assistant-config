@@ -1,0 +1,32 @@
+id: '1672003294436'
+alias: 'System: Home Assistant Update'
+description: Auto-updates Home Assistant and reboots at 3 AM
+triggers:
+- platform: time
+  at: 03:00:00
+conditions: []
+actions:
+- action: update.install
+  data:
+    backup: true
+  target:
+    entity_id: update.home_assistant_core_update
+- action: update.install
+  data:
+    backup: true
+  target:
+    entity_id: update.home_assistant_operating_system_update
+- action: update.install
+  data:
+    backup: true
+  target:
+    entity_id: update.home_assistant_supervisor_update
+- action: update.install
+  data:
+    backup: true
+  target:
+    entity_id: update.cloudflared_update
+- action: hassio.host_reboot
+  data: {}
+mode: single
+enabled: true

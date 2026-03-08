@@ -1,0 +1,28 @@
+id: eating_mode_off
+alias: 'Eating: Dim Back Lights'
+description: When eating mode is turned off during theater mode, turn off back lights
+  again
+triggers:
+- trigger: state
+  entity_id: input_boolean.eating_mode
+  from: 'on'
+  to: 'off'
+conditions:
+- condition: state
+  entity_id: media_player.matthews_bedroom_2
+  state: playing
+- condition: template
+  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+    != ''Music'' }}'
+actions:
+- action: light.turn_off
+  data:
+    transition: 5
+  target:
+    entity_id:
+    - light.living_room_vertical_light_strip
+    - light.living_room_pegboard_light_strip
+    - light.desk_light_strips
+    - light.desk_lamp
+mode: single
+enabled: true

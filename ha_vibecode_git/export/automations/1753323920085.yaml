@@ -1,0 +1,38 @@
+id: '1753323920085'
+alias: 'Climate: Pre-arrival Conditioning'
+description: Restores thermostat to saved state when arriving home, or uses default
+  if AC wasn't on when leaving
+triggers:
+- device_id: 349de079bd26e1ce976b6691078eda72
+  domain: device_tracker
+  entity_id: 59fed915c3e6d516333d765196ebf4ba
+  type: enters
+  trigger: device
+  zone: zone.apartment
+conditions: []
+actions:
+- if:
+  - condition: state
+    entity_id: input_boolean.ac_was_on_when_left
+    state: 'on'
+  then:
+  - action: climate.set_temperature
+    data:
+      temperature: '{{ states(''input_number.ac_previous_temperature'') | int }}'
+      hvac_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+    target:
+      entity_id: climate.living_room
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Welcome Home
+      message: Restoring AC to {{ states('input_select.ac_previous_mode') }} at {{
+        states('input_number.ac_previous_temperature') | int }}°. Currently {{ state_attr('climate.living_room',
+        'current_temperature') }}° inside.
+  else:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Welcome Home
+      message: AC was off when you left. Currently {{ state_attr('climate.living_room',
+        'current_temperature') }}° inside.
+mode: single
+enabled: true

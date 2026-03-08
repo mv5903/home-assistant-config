@@ -1,0 +1,28 @@
+id: '1766321188342'
+alias: 'Presence: Away Mode'
+description: Disables automations when away mode is enabled
+triggers:
+- trigger: state
+  entity_id:
+  - device_tracker.matthews_iphone_17_pro
+  attribute: latitude
+conditions: []
+actions:
+- if:
+  - condition: state
+    entity_id: device_tracker.matthews_iphone_17_pro
+    state:
+    - home
+  then:
+  - action: automation.turn_on
+    target:
+      label_id: away_mode_disables
+    data: {}
+  else:
+  - action: automation.turn_off
+    target:
+      label_id: away_mode_disables
+    data:
+      stop_actions: true
+mode: single
+enabled: true

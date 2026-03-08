@@ -1,0 +1,58 @@
+id: '1756866282389'
+alias: 'Media: Theater Mode On'
+description: Dims living room lights when video starts playing on Apple TV. Respects
+  eating mode for back lights.
+triggers:
+- device_id: 208694a8d5e7948b810321bfff0d2235
+  domain: media_player
+  entity_id: b451ca0d99fa64340608813604902977
+  type: playing
+  trigger: device
+conditions:
+- condition: device
+  type: is_on
+  device_id: e5221f5ed730d77d25162de28c0382cc
+  entity_id: b3e4d785b798fde8ef39f4b7a591c0ed
+  domain: light
+- condition: template
+  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+    != ''music'' }}'
+actions:
+- if:
+  - condition: or
+    conditions:
+    - condition: sun
+      before: sunrise
+    - condition: sun
+      after: sunset
+      after_offset: 00:30:00
+  then:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id: living_room
+      override_mode: theater
+      transition: 5
+- if:
+  - condition: state
+    entity_id: input_boolean.eating_mode
+    state: 'on'
+  then:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_pegboard_light_strip
+        - light.desk_light_strips
+        - light.desk_lamp
+      transition: 5
+  else:
+  - action: light.turn_off
+    data: {}
+    target:
+      entity_id:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
+mode: single
+enabled: true

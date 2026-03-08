@@ -1,0 +1,29 @@
+id: '1752541408687'
+alias: 'Lighting: Wake Up Mode'
+description: Activates adaptive lighting when iPhone sleep focus turns off
+triggers:
+- trigger: state
+  entity_id:
+  - input_button.all_lights_white
+- trigger: state
+  entity_id:
+  - input_boolean.iphone_sleep_focus_mode
+  to: 'off'
+conditions:
+- condition: state
+  entity_id: device_tracker.matthews_iphone_17_pro
+  state:
+  - home
+actions:
+- action: script.apply_adaptive_lighting
+  data:
+    target_lights:
+      area_id:
+      - matthews_bedroom
+      - kitchen
+      - living_room
+    transition: 60
+- action: script.nintendo_toy_alternating
+  data: {}
+mode: single
+enabled: true

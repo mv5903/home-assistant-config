@@ -1,0 +1,34 @@
+id: '1758772924016'
+alias: 'Lighting: Bedtime Transition'
+description: Dims all lights when phone starts charging during sleep mode
+triggers:
+- trigger: state
+  entity_id:
+  - input_boolean.iphone_charging
+  to: 'on'
+conditions:
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state: 'on'
+actions:
+- action: light.turn_on
+  metadata: {}
+  data:
+    rgb_color:
+    - 255
+    - 0
+    - 0
+    transition: 5
+    brightness_pct: 1
+    effect: Solid
+  target:
+    area_id:
+    - matthews_bedroom
+    - living_room
+    - bathroom
+    - kitchen
+- action: script.nintendo_toy_off
+  metadata: {}
+  data: {}
+mode: single
+enabled: true

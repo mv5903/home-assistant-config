@@ -1,0 +1,14 @@
+id: '1764825627873'
+alias: 'System: Nintendo Toy Button'
+description: Turns off Nintendo toy when button helper is pressed
+triggers:
+- trigger: state
+  entity_id:
+  - input_button.turn_off_nintendo_toy_helper
+  to: null
+conditions: []
+actions:
+- action: script.nintendo_toy_off
+  data: {}
+mode: single
+enabled: true

@@ -1,0 +1,103 @@
+id: vacuum_after_cooking
+alias: 'Cleaning: Vacuum After Cooking'
+description: Schedules vacuum to clean kitchen after extended cooking activity. Mops
+  if 3+ days since last mop.
+triggers:
+- trigger: numeric_state
+  entity_id:
+  - sensor.kitchen_motion_sensor_trigger_last_15m
+  above: 24
+conditions: []
+actions:
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    data:
+      actions:
+      - action: CANCEL_VACUUM
+        title: Cancel
+      channel: Vacuum Notifications
+      importance: high
+      sticky: true
+    title: Automatic Kitchen Cleanup Scheduled
+    message: '{% set last_mop = states(''input_datetime.last_mop_use'') %}{% set days_since_mop
+      = ((now().timestamp() - as_timestamp(last_mop, 0)) / 86400) | round(1) %}{%
+      if days_since_mop >= 3 %}Vacuum + mop in 20 min ({{ days_since_mop }} days since
+      last mop){% else %}Vacuum only in 20 min (mopped {{ days_since_mop }} days ago){%
+      endif %}'
+- action: input_boolean.turn_on
+  target:
+    entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+- wait_for_trigger:
+  - type: not_occupied
+    device_id: 7a77497327e77c4f57494e46af1adda4
+    entity_id: 45f4a4582c135ccff23030dc5d0394e3
+    domain: binary_sensor
+    trigger: device
+    for:
+      hours: 0
+      minutes: 20
+      seconds: 0
+  timeout:
+    hours: 2
+    minutes: 0
+    seconds: 0
+  continue_on_timeout: true
+- if:
+  - condition: state
+    entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+    state: 'on'
+  then:
+  - if:
+    - condition: template
+      value_template: '{{ ((now().timestamp() - as_timestamp(states(''input_datetime.last_mop_use''),
+        0)) / 86400) >= 3 }}'
+    then:
+    - action: vacuum.send_command
+      target:
+        entity_id: vacuum.vaccum
+      data:
+        command: set_properties
+        params:
+        - siid: 4
+          piid: 4
+          value: 2
+    - delay:
+        seconds: 2
+    - action: dreame_vacuum.vacuum_clean_segment
+      data:
+        suction_level: 3
+        segments:
+        - 6
+      target:
+        entity_id: vacuum.vaccum
+    - action: input_datetime.set_datetime
+      data:
+        timestamp: '{{ now().timestamp() }}'
+      target:
+        entity_id: input_datetime.last_mop_use
+    else:
+    - action: vacuum.send_command
+      target:
+        entity_id: vacuum.vaccum
+      data:
+        command: set_properties
+        params:
+        - siid: 4
+          piid: 4
+          value: 0
+    - delay:
+        seconds: 2
+    - action: dreame_vacuum.vacuum_clean_segment
+      data:
+        suction_level: 3
+        segments:
+        - 6
+      target:
+        entity_id: vacuum.vaccum
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - delay:
+      minutes: 15
+mode: single
+enabled: true

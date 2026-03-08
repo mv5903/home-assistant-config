@@ -1,0 +1,20 @@
+id: '1768974170420'
+alias: 'Lighting: Party Mode'
+description: Sets random RGB colors on all lights
+triggers:
+- trigger: state
+  entity_id:
+  - input_button.random_scene
+  to: null
+conditions: []
+actions:
+- repeat:
+    for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | list }}'
+    sequence:
+    - target:
+        entity_id: '{{ repeat.item }}'
+      data:
+        rgb_color: '{{ [[255,0,0], [0,255,0], [0,0,255]] | random }}'
+      action: light.turn_on
+mode: single
+enabled: true

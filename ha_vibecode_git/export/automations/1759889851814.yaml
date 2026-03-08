@@ -1,0 +1,35 @@
+id: '1759889851814'
+alias: 'Media: Apple TV Auto Reload'
+description: Reloads Apple TV integration when it becomes unavailable
+triggers:
+- trigger: time_pattern
+  minutes: /1
+conditions:
+- condition: or
+  conditions:
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - unavailable
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - unknown
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - 'off'
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - paused
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - standby
+actions:
+- action: homeassistant.reload_config_entry
+  data:
+    entry_id: 01K6795C0QFJXVTKS517FHT203
+mode: single
+enabled: true

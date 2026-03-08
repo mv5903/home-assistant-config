@@ -1,0 +1,38 @@
+id: '1763168904540'
+alias: 'Media: Fix Google TV Apple TV'
+description: Launches Apple TV HDMI input when Google TV gets stuck
+triggers:
+- trigger: state
+  entity_id:
+  - media_player.matthews_bedroom_2
+  to:
+  - idle
+conditions: []
+actions:
+- repeat:
+    count: 60
+    sequence:
+    - if:
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: media_player.android_tv_10_0_1_195
+          state:
+          - Settings
+          attribute: app_name
+        - condition: state
+          entity_id: media_player.android_tv_10_0_1_195
+          state:
+          - Google TV Launcher
+          attribute: app_name
+      then:
+      - action: script.google_tv_apple_tv_input_select
+        metadata: {}
+        data: {}
+    - delay:
+        hours: 0
+        minutes: 0
+        seconds: 1
+        milliseconds: 0
+mode: single
+enabled: true

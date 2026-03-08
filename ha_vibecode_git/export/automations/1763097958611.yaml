@@ -1,0 +1,34 @@
+id: '1763097958611'
+alias: 'Presence: Guest Mode'
+description: Disables automations when guest mode is enabled
+triggers:
+- trigger: state
+  entity_id:
+  - input_boolean.guest_mode
+  to: null
+conditions: []
+actions:
+- choose:
+  - conditions:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state:
+      - 'on'
+    sequence:
+    - action: automation.turn_off
+      data:
+        stop_actions: true
+      target:
+        label_id: guest_mode_disabled
+  - conditions:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state:
+      - 'off'
+    sequence:
+    - action: automation.turn_on
+      data: {}
+      target:
+        label_id: guest_mode_disabled
+mode: single
+enabled: true

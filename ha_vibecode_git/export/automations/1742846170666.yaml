@@ -1,0 +1,49 @@
+id: '1742846170666'
+alias: 'Notification: Jellyseerr'
+description: Comprehensive Jellyseerr notifications for requests, approvals, availability,
+  and issues
+triggers:
+- webhook_id: -AdVpVNVr-35VVtidXy5vH-up
+  allowed_methods:
+  - POST
+  - PUT
+  local_only: false
+  trigger: webhook
+conditions: []
+actions:
+- variables:
+    event_type: '{{ trigger.json.event | default("Unknown Event") }}'
+    media_title: '{{ trigger.json.subject | default("Unknown Title") }}'
+    username: '{{ trigger.json.request.requestedBy_username | default("Unknown User")
+      }}'
+    media_type: '{{ trigger.json.media.media_type | default("Unknown Type") }}'
+    media_status: '{{ trigger.json.media.status | default("Unknown Status") }}'
+    media_image: '{{ trigger.json.image | default("") }}'
+- data:
+    title: '{% if event_type == "MEDIA_REQUESTED" %}New Request: {{ media_title }}
+      {% elif event_type == "MEDIA_APPROVED" %}Approved: {{ media_title }} {% elif
+      event_type == "MEDIA_AVAILABLE" %}Now Available: {{ media_title }} {% elif event_type
+      == "ISSUE_CREATED" %}New Issue: {{ media_title }} {% elif event_type == "ISSUE_COMMENT"
+      %}New Comment: {{ media_title }} {% elif event_type == "ISSUE_RESOLVED" %}Issue
+      Resolved: {{ media_title }} {% else %}{{ event_type }}: {{ media_title }} {%
+      endif %}'
+    message: "{% if event_type.startswith(\"MEDIA_\") %}\n  {{ username }} {{ event_type\
+      \ | replace(\"MEDIA_\", \"\") | lower }} {{ media_type | lower }} \"{{ media_title\
+      \ }}\"\n  Status: {{ media_status | title }}\n{% elif event_type.startswith(\"\
+      ISSUE_\") %}\n  {{ trigger.json.issue.reportedBy_username | default(username)\
+      \ }} {{ event_type | replace(\"ISSUE_\", \"\") | lower }} an issue for \"{{\
+      \ media_title }}\"\n  {% if trigger.json.comment.comment_message %}\n  Comment:\
+      \ {{ trigger.json.comment.comment_message }}\n  {% endif %}\n{% else %}\n  {{\
+      \ trigger.json.message }}\n{% endif %}"
+    data:
+      image: '{{ media_image }}'
+      actions:
+      - action: URI
+        title: View in Jellyseerr
+        uri: "{% if media_type == \"movie\" %}\n  https://your-jellyseerr-url/movie/{{\
+          \ trigger.json.media.tmdbId }}\n{% elif media_type == \"tv\" %}\n  https://your-jellyseerr-url/tv/{{\
+          \ trigger.json.media.tmdbId }}\n{% else %}\n  https://your-jellyseerr-url\n\
+          {% endif %}"
+  action: notify.mobile_app_matthews_iphone_17_pro
+mode: single
+enabled: true

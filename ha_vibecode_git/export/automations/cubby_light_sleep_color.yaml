@@ -1,0 +1,45 @@
+id: cubby_light_sleep_color
+alias: 'Lighting: Cubby Sleep Color'
+description: Sets cubby light green when awake, red during sleep mode
+triggers:
+- trigger: state
+  entity_id:
+  - input_boolean.iphone_sleep_focus_mode
+- trigger: state
+  entity_id:
+  - light.cubby
+  to: 'on'
+- trigger: homeassistant
+  event: start
+conditions:
+- condition: state
+  entity_id: light.cubby
+  state: 'on'
+actions:
+- choose:
+  - conditions:
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state: 'on'
+    sequence:
+    - action: light.turn_on
+      target:
+        entity_id: light.cubby
+      data:
+        rgb_color:
+        - 255
+        - 0
+        - 0
+        brightness: 128
+  default:
+  - action: light.turn_on
+    target:
+      entity_id: light.cubby
+    data:
+      rgb_color:
+      - 0
+      - 255
+      - 0
+      brightness: 200
+mode: single
+enabled: true

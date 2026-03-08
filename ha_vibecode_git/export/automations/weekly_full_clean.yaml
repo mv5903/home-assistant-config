@@ -1,0 +1,46 @@
+id: weekly_full_clean
+alias: 'Cleaning: Weekly Full Clean'
+description: Full apartment vacuum and mop every Tuesday at noon
+triggers:
+- trigger: time
+  at: '12:00:00'
+conditions:
+- condition: time
+  weekday:
+  - tue
+actions:
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    title: Weekly Full Clean Starting
+    message: Vacuum + mop for all rooms
+- action: vacuum.send_command
+  target:
+    entity_id: vacuum.vaccum
+  data:
+    command: set_properties
+    params:
+    - siid: 4
+      piid: 4
+      value: 2
+- delay:
+    seconds: 2
+- action: dreame_vacuum.vacuum_clean_segment
+  data:
+    suction_level: 3
+    segments:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+  target:
+    entity_id: vacuum.vaccum
+- action: input_datetime.set_datetime
+  data:
+    timestamp: '{{ now().timestamp() }}'
+  target:
+    entity_id: input_datetime.last_mop_use
+mode: single
+enabled: true

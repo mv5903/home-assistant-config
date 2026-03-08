@@ -1,0 +1,20 @@
+id: '1758168644378'
+alias: 'Presence: Sunset Triggers'
+description: Turns on power strip switches at sunset when home
+triggers:
+- trigger: sun
+  event: sunset
+  offset: 00:15:00
+conditions:
+- condition: state
+  entity_id: device_tracker.matthews_iphone
+  state: Apartment
+actions:
+- action: switch.turn_on
+  data: {}
+  target:
+    entity_id:
+    - switch.tapo_power_strip_49c7_smart_plug_1
+    - switch.tapo_power_strip_49c7_smart_plug_4
+mode: single
+enabled: true

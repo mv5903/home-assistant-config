@@ -1,0 +1,12 @@
+id: '1763173437229'
+alias: 'Notification: Minecraft Server'
+description: Notifies when players join the Minecraft server
+triggers:
+- trigger: numeric_state
+  entity_id:
+  - sensor.minecraft_server_player_count
+  above: 0
+conditions: []
+actions: []
+mode: single
+enabled: true

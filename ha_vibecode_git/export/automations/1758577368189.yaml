@@ -1,0 +1,20 @@
+id: '1758577368189'
+alias: 'Notification: Kitchen Cleanup Cancel'
+description: Handles cancel action for kitchen vacuum cleanup notification
+triggers:
+- trigger: event
+  event_type: mobile_app_notification_action
+  event_data:
+    action: CANCEL_VACUUM
+conditions: []
+actions:
+- action: input_boolean.turn_off
+  data: {}
+  target:
+    entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    title: Auto Kitchen Vacuum Cleanup Cancelled
+    message: The vacuum won't clean up the kitchen this time around, as per your request.
+mode: single
+enabled: true
