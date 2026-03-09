@@ -1458,8 +1458,8 @@
         - 0
         - 255
         - 0
-        brightness: 200
-        effect: Two Dots
+        effect: Solid
+        brightness_pct: 34
   mode: single
 - id: '1773036151964'
   alias: 'Climate: Save and Turn Off When Leaving'
