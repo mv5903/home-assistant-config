@@ -1461,3 +1461,43 @@
         brightness: 200
         effect: Two Dots
   mode: single
+- id: '1773036151964'
+  alias: 'Climate: Save and Turn Off When Leaving'
+  description: Saves thermostat state and turns off AC when leaving home
+  triggers:
+  - platform: zone
+    entity_id: device_tracker.matthews_iphone_17_pro
+    zone: zone.home
+    event: leave
+  conditions: []
+  actions:
+  - if:
+    - condition: not
+      conditions:
+      - condition: state
+        entity_id: climate.living_room
+        state: 'off'
+    then:
+    - action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.ac_was_on_when_left
+    - action: input_number.set_value
+      data:
+        value: '{{ state_attr(''climate.living_room'', ''temperature'') | int }}'
+      target:
+        entity_id: input_number.ac_previous_temperature
+    - action: input_select.select_option
+      data:
+        option: '{{ states(''climate.living_room'') }}'
+      target:
+        entity_id: input_select.ac_previous_mode
+    - action: climate.set_hvac_mode
+      data:
+        hvac_mode: 'off'
+      target:
+        entity_id: climate.living_room
+    else:
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.ac_was_on_when_left
+  mode: single
