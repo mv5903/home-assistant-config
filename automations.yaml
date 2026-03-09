@@ -1447,8 +1447,8 @@
           - 255
           - 0
           - 0
-          brightness: 128
           effect: Candle Multi
+          brightness_pct: 1
     default:
     - action: light.turn_on
       target:
