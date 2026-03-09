@@ -1459,7 +1459,7 @@
         - 255
         - 0
         effect: Solid
-        brightness_pct: 34
+        brightness_pct: 10
   mode: single
 - id: '1773036151964'
   alias: 'Climate: Save and Turn Off When Leaving'
