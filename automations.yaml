@@ -667,8 +667,9 @@
     offset: 00:15:00
   conditions:
   - condition: state
-    entity_id: device_tracker.matthews_iphone
-    state: Apartment
+    entity_id: device_tracker.matthews_iphone_17_pro
+    state:
+    - home
   actions:
   - action: switch.turn_on
     data: {}
@@ -746,7 +747,7 @@
   actions:
   - action: automation.trigger
     target:
-      entity_id: automation.safety_soldering_iron_alert
+      entity_id: automation.soldering_iron_safety_notification
     data:
       skip_condition: true
   - action: notify.mobile_app_matthews_iphone_17_pro
@@ -999,7 +1000,12 @@
     - sensor.minecraft_server_player_count
     above: 0
   conditions: []
-  actions: []
+  actions:
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Minecraft Server
+      message: A player joined! {{ states('sensor.minecraft_server_player_count')
+        }} player(s) online.
   mode: single
 - id: '1758577368189'
   alias: 'Notification: Kitchen Cleanup Cancel'
@@ -1454,35 +1460,4 @@
         - 0
         brightness: 200
         effect: Two Dots
-  mode: single
-- id: '1773035520697'
-  alias: 'Lighting: Periodic Adaptive Update'
-  description: Periodically re-applies adaptive lighting to all on lights so color
-    temperature stays in sync with the sun throughout the day
-  triggers:
-  - platform: time_pattern
-    minutes: /10
-  conditions:
-  - condition: state
-    entity_id: input_boolean.iphone_sleep_focus_mode
-    state: 'off'
-  actions:
-  - action: script.apply_adaptive_lighting
-    data:
-      target_lights:
-        entity_id:
-        - light.living_room_vertical_light_strip
-        - light.living_room_tv_stand_light_strip
-        - light.living_room_pegboard_light_strip
-        - light.living_room_bookshelf_light_strips
-        - light.desk_light_strips
-        - light.kitchen_sink_light_strip
-        - light.shoerack_light
-        - light.living_room_lamp
-        - light.desk_lamp
-        - light.bedroom_nightstand_light_strip
-        - light.bed_frame_light_strips
-        - light.bed_lamp
-        - light.bathroom_light_strip
-      transition: 30
   mode: single
