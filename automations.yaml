@@ -545,37 +545,6 @@
         message: AC was off when you left. Currently {{ state_attr('climate.living_room',
           'current_temperature') }}° inside.
   mode: single
-- id: '1753504171791'
-  alias: 'Climate: Maintain Temperature'
-  description: Maintains apartment temperature at set point
-  triggers:
-  - trigger: time_pattern
-    minutes: /5
-  conditions:
-  - condition: device
-    device_id: 38fc2e8be61a27e5fe435de15f1d1aab
-    domain: climate
-    entity_id: 8711459caa17b34fa2d469ba3063ca5a
-    type: is_hvac_mode
-    hvac_mode: cool
-  actions:
-  - action: climate.set_temperature
-    data:
-      hvac_mode: cool
-      target_temp_high: '{{ states(''input_number.keep_apartment_climate_temperature'')
-        | int }}'
-      target_temp_low: '{{ states(''input_number.keep_apartment_climate_temperature'')
-        | int }}'
-      temperature: '{{ states(''input_number.keep_apartment_climate_temperature'')
-        | int }}'
-    target:
-      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
-  - action: climate.set_hvac_mode
-    data:
-      hvac_mode: cool
-    target:
-      device_id: 38fc2e8be61a27e5fe435de15f1d1aab
-  mode: single
 - id: '1766321188342'
   alias: 'Presence: Away Mode'
   description: Disables automations when away mode is enabled
