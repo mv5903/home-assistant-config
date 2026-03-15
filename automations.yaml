@@ -35,7 +35,8 @@
   mode: single
 - id: '1752541408687'
   alias: 'Lighting: Wake Up Mode'
-  description: Activates adaptive lighting when iPhone sleep focus turns off
+  description: Activates adaptive lighting when iPhone sleep focus turns off or All
+    Lights White is pressed. Also clears the adaptive lighting pause flag.
   triggers:
   - trigger: state
     entity_id:
@@ -50,6 +51,9 @@
     state:
     - home
   actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.adaptive_lighting_paused
   - action: script.apply_adaptive_lighting
     data:
       target_lights:
@@ -333,7 +337,8 @@
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
-  description: Sets random RGB colors on all lights
+  description: Sets random RGB colors on all lights and pauses adaptive lighting for
+    the rest of the day
   triggers:
   - trigger: state
     entity_id:
@@ -341,6 +346,9 @@
     to:
   conditions: []
   actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.adaptive_lighting_paused
   - repeat:
       for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | list
         }}'
@@ -348,7 +356,8 @@
       - target:
           entity_id: '{{ repeat.item }}'
         data:
-          rgb_color: '{{ [[255,0,0], [0,255,0], [0,0,255]] | random }}'
+          rgb_color: '{{ [[255,0,0],[0,255,0],[0,0,255],[255,165,0],[255,0,255],[0,255,255],[255,255,0]]
+            | random }}'
         action: light.turn_on
   mode: single
 - id: '1756866282389'
@@ -1497,4 +1506,94 @@
     - action: input_boolean.turn_off
       target:
         entity_id: input_boolean.ac_was_on_when_left
+  mode: single
+- id: '1773594447534'
+  alias: 'Lighting: Reset Adaptive Lighting Pause at Midnight'
+  description: Resets the adaptive lighting pause flag at midnight so it's fresh each
+    new day
+  triggers:
+  - trigger: time
+    at: 00:00:00
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.adaptive_lighting_paused
+  mode: single
+- id: '1773594551937'
+  alias: 'Climate: Auto Eating Mode On'
+  description: 'Automatically activates eating mode when: Apple TV starts playing
+    AND kitchen motion sensor shows recent activity (cooking likely happened) AND
+    eating mode is not already on'
+  triggers:
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    to: playing
+  conditions:
+  - condition: state
+    entity_id: input_boolean.eating_mode
+    state: 'off'
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+      != ''music'' }}'
+  - condition: numeric_state
+    entity_id: sensor.kitchen_motion_sensor_trigger_last_15m
+    above: 3
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.eating_mode
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: "\U0001F37D️ Eating Mode On"
+      message: Detected kitchen activity + Apple TV playing. Eating mode activated.
+        Tap to cancel.
+      data:
+        actions:
+        - action: CANCEL_EATING_MODE
+          title: Turn Off
+        channel: Home Notifications
+  mode: single
+- id: '1773594557138'
+  alias: 'Climate: Auto Eating Mode Off'
+  description: Turns off eating mode when Apple TV stops playing, and clears it at
+    midnight as a failsafe
+  triggers:
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    from: playing
+    to:
+    - paused
+    - idle
+    - standby
+    for:
+      minutes: 5
+  - trigger: time
+    at: 00:00:00
+  conditions:
+  - condition: state
+    entity_id: input_boolean.eating_mode
+    state: 'on'
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.eating_mode
+  mode: single
+- id: '1773594562680'
+  alias: 'Notification: Cancel Eating Mode'
+  description: Handles the cancel notification action for eating mode
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: CANCEL_EATING_MODE
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.eating_mode
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: Eating Mode Off
+      message: Got it, eating mode cancelled.
   mode: single
