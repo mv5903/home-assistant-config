@@ -45,11 +45,7 @@
     entity_id:
     - input_boolean.iphone_sleep_focus_mode
     to: 'off'
-  conditions:
-  - condition: state
-    entity_id: device_tracker.matthews_iphone_17_pro
-    state:
-    - home
+  conditions: []
   actions:
   - action: input_boolean.turn_off
     target:
