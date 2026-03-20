@@ -1517,7 +1517,7 @@
       entity_id: input_boolean.adaptive_lighting_paused
   mode: single
 - id: '1773594551937'
-  alias: 'Climate: Auto Eating Mode On'
+  alias: 'Lighting: Auto Eating Mode On'
   description: 'Automatically activates eating mode when: Apple TV starts playing
     AND kitchen motion sensor shows recent activity (cooking likely happened) AND
     eating mode is not already on AND user hasn''t manually cancelled this session.'
@@ -1554,7 +1554,7 @@
         channel: Home Notifications
   mode: single
 - id: '1773594557138'
-  alias: 'Climate: Auto Eating Mode Off'
+  alias: 'Lighting: Auto Eating Mode Off'
   description: Turns off eating mode and clears the user-cancelled flag when Apple
     TV stops playing, and at midnight as a failsafe
   triggers:
