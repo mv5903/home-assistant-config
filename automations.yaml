@@ -1520,7 +1520,7 @@
   alias: 'Climate: Auto Eating Mode On'
   description: 'Automatically activates eating mode when: Apple TV starts playing
     AND kitchen motion sensor shows recent activity (cooking likely happened) AND
-    eating mode is not already on'
+    eating mode is not already on AND user hasn''t manually cancelled this session.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -1528,6 +1528,9 @@
   conditions:
   - condition: state
     entity_id: input_boolean.eating_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.eating_mode_user_cancelled
     state: 'off'
   - condition: template
     value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
@@ -1552,8 +1555,8 @@
   mode: single
 - id: '1773594557138'
   alias: 'Climate: Auto Eating Mode Off'
-  description: Turns off eating mode when Apple TV stops playing, and clears it at
-    midnight as a failsafe
+  description: Turns off eating mode and clears the user-cancelled flag when Apple
+    TV stops playing, and at midnight as a failsafe
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -1566,18 +1569,19 @@
       minutes: 5
   - trigger: time
     at: 00:00:00
-  conditions:
-  - condition: state
-    entity_id: input_boolean.eating_mode
-    state: 'on'
+  conditions: []
   actions:
   - action: input_boolean.turn_off
     target:
       entity_id: input_boolean.eating_mode
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.eating_mode_user_cancelled
   mode: single
 - id: '1773594562680'
   alias: 'Notification: Cancel Eating Mode'
-  description: Handles the cancel notification action for eating mode
+  description: Handles the cancel notification action for eating mode. Sets a user-cancelled
+    flag so auto-detect won't re-trigger for this session.
   triggers:
   - trigger: event
     event_type: mobile_app_notification_action
@@ -1588,6 +1592,9 @@
   - action: input_boolean.turn_off
     target:
       entity_id: input_boolean.eating_mode
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.eating_mode_user_cancelled
   - action: notify.mobile_app_matthews_iphone_17_pro
     data:
       title: Eating Mode Off
