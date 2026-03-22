@@ -108,7 +108,8 @@
 - id: '1762485541183'
   alias: 'Lighting: Bedroom Presence'
   description: Presence-based lighting using adaptive lighting - requires both presence
-    off AND moving distance > 100 to turn off
+    off AND moving distance > 100 to turn off. Time check recovers from brief sensor
+    drops but only if lights just turned off (within 10s).
   triggers:
   - entity_id:
     - binary_sensor.esphome_web_cb9878_presence
@@ -117,11 +118,9 @@
       seconds: 5
     id: presence_off
     platform: state
-  - entity_id:
-    - binary_sensor.esphome_web_cb9878_presence
-    to: 'on'
-    id: presence_on
-    platform: state
+  - seconds: /1
+    id: time_check
+    platform: time_pattern
   - type: occupied
     device_id: ddcfc3b69328d9678089d111a1ace821
     entity_id: 7d42b49068568a0220f2652076c1cb45
@@ -160,13 +159,22 @@
           transition: 0
     - conditions:
       - condition: trigger
-        id: presence_on
+        id: time_check
+      - condition: state
+        entity_id: binary_sensor.esphome_web_cb9878_presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.esphome_web_cb9878_moving_distance
+        below: 100
       - condition: state
         entity_id: input_boolean.iphone_sleep_focus_mode
         state: 'off'
       - condition: state
         entity_id: light.bedroom_nightstand_light_strip
         state: 'off'
+      - condition: template
+        value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
+          < 10 }}'
       sequence:
       - action: script.apply_adaptive_lighting
         data:
