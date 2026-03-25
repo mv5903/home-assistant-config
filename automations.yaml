@@ -1566,8 +1566,9 @@
   mode: single
 - id: '1773594557138'
   alias: 'Lighting: Auto Eating Mode Off'
-  description: Turns off eating mode and clears the user-cancelled flag when Apple
-    TV stops playing, and at midnight as a failsafe
+  description: 'Turns off eating mode and clears the user-cancelled flag when: Apple
+    TV stops playing for 5 mins, eating mode has been on for 30 minutes, or at midnight
+    as a failsafe.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -1578,6 +1579,11 @@
     - standby
     for:
       minutes: 5
+  - trigger: state
+    entity_id: input_boolean.eating_mode
+    to: 'on'
+    for:
+      minutes: 30
   - trigger: time
     at: 00:00:00
   conditions: []
