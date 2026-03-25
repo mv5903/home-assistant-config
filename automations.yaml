@@ -1524,7 +1524,8 @@
   alias: 'Lighting: Auto Eating Mode On'
   description: 'Automatically activates eating mode when: Apple TV starts playing
     AND kitchen motion sensor shows recent activity (cooking likely happened) AND
-    eating mode is not already on AND user hasn''t manually cancelled this session.'
+    eating mode is not already on AND user hasn''t manually cancelled this session.
+    Only runs after sunset (when adaptive lighting has shifted warm).'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -1542,6 +1543,12 @@
   - condition: numeric_state
     entity_id: sensor.kitchen_motion_sensor_trigger_last_15m
     above: 3
+  - condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
   actions:
   - action: input_boolean.turn_on
     target:
