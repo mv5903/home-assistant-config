@@ -184,19 +184,16 @@
   mode: single
 - id: '1763575398211'
   alias: 'Lighting: Entrance Presence'
-  description: Turns on common area lights when someone enters the apartment. Excludes
-    bedroom and bathroom lights.
+  description: Turns on/updates common area lights when someone enters the apartment,
+    based on front door motion sensor. Always applies adaptive lighting so color temp
+    is correct for time of day. Excludes bedroom and bathroom.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - binary_sensor.motion_sensor_occupancy_2
     to:
     - 'on'
+    platform: state
   conditions:
-  - condition: state
-    entity_id: light.shoerack_light
-    state:
-    - 'off'
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
     state:
