@@ -1614,3 +1614,28 @@
       title: Eating Mode Off
       message: Got it, eating mode cancelled.
   mode: single
+- id: '1774978513749'
+  alias: 'Climate: Apartment Fan On with Cooling'
+  description: Turns on the Apartment Fan helper when the thermostat enters cool mode.
+  triggers:
+  - platform: state
+    entity_id: climate.living_room
+    to: cool
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.apartment_fan
+  mode: single
+- id: '1774978519324'
+  alias: 'Climate: Apartment Fan Off When Not Cooling'
+  description: Turns off the Apartment Fan helper when the thermostat turns off (e.g.
+    when leaving home).
+  triggers:
+  - platform: state
+    entity_id: climate.living_room
+    to: 'off'
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.apartment_fan
+  mode: single
