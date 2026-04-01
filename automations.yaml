@@ -518,14 +518,14 @@
   mode: single
 - id: '1753323920085'
   alias: 'Climate: Pre-arrival Conditioning'
-  description: Restores thermostat when arriving home. Forces cool mode if today's
-    forecast high is >= 65°F, regardless of prior AC state. Otherwise restores previous
-    state.
+  description: Restores thermostat mode, temperature, and fan_mode when arriving home.
+    Forces cool if forecast high >= 65F.
   triggers:
   - platform: zone
     entity_id: device_tracker.matthews_iphone_17_pro
     zone: zone.home
     event: enter
+  conditions: []
   actions:
   - action: weather.get_forecasts
     data:
@@ -537,6 +537,8 @@
       forecast_high: '{{ forecast_data[''weather.37_41101472054772_121_8889136975829''][''forecast''][0][''temperature'']
         | float(0) }}'
       saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
+      saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+      saved_fan: '{{ states(''input_select.ac_previous_fan_mode'') }}'
   - choose:
     - conditions:
       - condition: template
@@ -548,12 +550,17 @@
           hvac_mode: cool
         target:
           entity_id: climate.living_room
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: '{{ saved_fan }}'
+        target:
+          entity_id: climate.living_room
       - action: notify.mobile_app_matthews_iphone_17_pro
         data:
-          title: "Welcome Home \U0001F321️"
-          message: Forecast high is {{ forecast_high | round(0) }}°F — AC forced to
-            cool at {{ saved_temp }}°. Currently {{ state_attr('climate.living_room',
-            'current_temperature') }}° inside.
+          title: Welcome Home
+          message: 'Forecast high {{ forecast_high | round(0) }}F - cool at {{ saved_temp
+            }}, fan: {{ saved_fan }}. Currently {{ state_attr(''climate.living_room'',
+            ''current_temperature'') }} inside.'
     - conditions:
       - condition: state
         entity_id: input_boolean.ac_was_on_when_left
@@ -561,24 +568,28 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: '{{ states(''input_number.ac_previous_temperature'') | int
-            }}'
-          hvac_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+          temperature: '{{ saved_temp }}'
+          hvac_mode: '{{ saved_mode }}'
+        target:
+          entity_id: climate.living_room
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: '{{ saved_fan }}'
         target:
           entity_id: climate.living_room
       - action: notify.mobile_app_matthews_iphone_17_pro
         data:
           title: Welcome Home
-          message: Restoring AC to {{ states('input_select.ac_previous_mode') }} at
-            {{ states('input_number.ac_previous_temperature') | int }}°. Currently
-            {{ state_attr('climate.living_room', 'current_temperature') }}° inside.
+          message: 'Restored {{ saved_mode }} at {{ saved_temp }}, fan: {{ saved_fan
+            }}. Currently {{ state_attr(''climate.living_room'', ''current_temperature'')
+            }} inside.'
     default:
     - action: notify.mobile_app_matthews_iphone_17_pro
       data:
         title: Welcome Home
         message: 'AC was off when you left. Currently {{ state_attr(''climate.living_room'',
-          ''current_temperature'') }}° inside. (Forecast high: {{ forecast_high |
-          round(0) }}°F)'
+          ''current_temperature'') }} inside. (Forecast high: {{ forecast_high | round(0)
+          }}F)'
   mode: single
 - id: '1766321188342'
   alias: 'Presence: Away Mode'
@@ -1466,7 +1477,8 @@
   mode: single
 - id: '1773036151964'
   alias: 'Climate: Save and Turn Off When Leaving'
-  description: Saves thermostat state and turns off AC when leaving home
+  description: Saves thermostat state (mode, temperature, fan_mode) and turns off
+    AC when leaving home
   triggers:
   - platform: zone
     entity_id: device_tracker.matthews_iphone_17_pro
@@ -1494,6 +1506,11 @@
         option: '{{ states(''climate.living_room'') }}'
       target:
         entity_id: input_select.ac_previous_mode
+    - action: input_select.select_option
+      data:
+        option: '{{ state_attr(''climate.living_room'', ''fan_mode'') }}'
+      target:
+        entity_id: input_select.ac_previous_fan_mode
     - action: climate.set_hvac_mode
       data:
         hvac_mode: 'off'
