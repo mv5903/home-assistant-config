@@ -447,40 +447,25 @@
   mode: single
 - id: '1763168904540'
   alias: 'Media: Fix Google TV Apple TV'
-  description: Launches Apple TV HDMI input when Google TV gets stuck
+  description: Switches Android TV to Apple TV HDMI input every 5 seconds when Google
+    TV is stuck on Settings or Google TV Launcher
   triggers:
-  - trigger: state
-    entity_id:
-    - media_player.matthews_bedroom_2
-    to:
-    - idle
-  conditions: []
+  - trigger: time_pattern
+    seconds: /5
+  conditions:
+  - condition: or
+    conditions:
+    - condition: state
+      entity_id: media_player.android_tv_10_0_1_195
+      state: Settings
+      attribute: app_name
+    - condition: state
+      entity_id: media_player.android_tv_10_0_1_195
+      state: Google TV Launcher
+      attribute: app_name
   actions:
-  - repeat:
-      count: 60
-      sequence:
-      - if:
-        - condition: or
-          conditions:
-          - condition: state
-            entity_id: media_player.android_tv_10_0_1_195
-            state:
-            - Settings
-            attribute: app_name
-          - condition: state
-            entity_id: media_player.android_tv_10_0_1_195
-            state:
-            - Google TV Launcher
-            attribute: app_name
-        then:
-        - action: script.google_tv_apple_tv_input_select
-          metadata: {}
-          data: {}
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
+  - action: script.google_tv_apple_tv_input_select
+    data: {}
   mode: single
 - id: '1759889851814'
   alias: 'Media: Apple TV Auto Reload'
