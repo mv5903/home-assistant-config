@@ -65,19 +65,26 @@
   alias: 'Lighting: Bathroom Presence'
   description: Presence-based bathroom lighting with sleep mode awareness
   triggers:
-  - platform: state
-    entity_id:
+  - entity_id:
     - binary_sensor.bathroom_presence_presence
+    for:
+      seconds: 2
+    platform: state
     to: 'on'
-  - platform: state
-    entity_id:
+  - entity_id:
     - binary_sensor.bathroom_presence_presence
-    to: 'off'
     for:
       seconds: 30
+    platform: state
+    to: 'off'
   conditions: []
   actions:
-  - if:
+  - else:
+    - action: light.turn_off
+      data: {}
+      target:
+        entity_id: light.bathroom_light_strip
+    if:
     - condition: state
       entity_id: binary_sensor.bathroom_presence_presence
       state: 'on'
@@ -85,28 +92,23 @@
     - condition: state
       entity_id: light.bathroom_light_strip
       state: 'off'
-    - if:
+    - else:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            entity_id: light.bathroom_light_strip
+          transition: 0
+      if:
       - condition: state
         entity_id: input_boolean.iphone_sleep_focus_mode
         state: 'on'
       then:
       - action: script.apply_adaptive_lighting
         data:
-          target_lights:
-            entity_id: light.bathroom_light_strip
           override_mode: bedtime
-          transition: 0
-      else:
-      - action: script.apply_adaptive_lighting
-        data:
           target_lights:
             entity_id: light.bathroom_light_strip
           transition: 0
-    else:
-    - action: light.turn_off
-      data: {}
-      target:
-        entity_id: light.bathroom_light_strip
   mode: single
 - id: '1762485541183'
   alias: 'Lighting: Bedroom Presence'
