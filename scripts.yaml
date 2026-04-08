@@ -478,8 +478,9 @@ lights_bedtime:
   description: ''
 apply_adaptive_lighting:
   alias: Apply Adaptive Lighting
-  description: Continuous adaptive lighting based on sun elevation. Only updates lights
-    that need changes. Skips lights that don't support color_temp (e.g. WLED/RGB-only).
+  description: Continuous adaptive lighting based on sun elevation. Only updates color_temp
+    lights that need changes (avoids flickering). Turns on RGBW-only lights if they
+    are off, but does not update them if already on.
   fields:
     target_lights:
       description: Light entities, areas, or groups to control
@@ -490,6 +491,7 @@ apply_adaptive_lighting:
     transition:
       description: 'Transition time in seconds (default: 2)'
       example: 5
+  mode: parallel
   sequence:
   - variables:
       is_sleep_mode: '{{ states(''input_boolean.iphone_sleep_focus_mode'') == ''on''
@@ -574,6 +576,12 @@ apply_adaptive_lighting:
           | abs %}{% if current_effect != ''Solid'' or kelvin_diff > 200 or current_brightness
           < 250 %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endif %}{%
           endfor %}{{ ns.lights }}'
+        rgbw_lights_off: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
+          %}{% set supported_modes = state_attr(light, ''supported_color_modes'')
+          | default([]) %}{% if ''color_temp'' not in supported_modes and (''rgbw''
+          in supported_modes or ''rgb'' in supported_modes) and states(light) == ''off''
+          %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endfor %}{{ ns.lights
+          }}'
     - if:
       - condition: template
         value_template: '{{ lights_needing_update | length > 0 }}'
@@ -586,4 +594,18 @@ apply_adaptive_lighting:
           brightness_pct: 100
           effect: Solid
           transition: '{{ trans }}'
-  mode: parallel
+    - if:
+      - condition: template
+        value_template: '{{ rgbw_lights_off | length > 0 }}'
+      then:
+      - action: light.turn_on
+        target:
+          entity_id: '{{ rgbw_lights_off }}'
+        data:
+          rgb_color:
+          - 255
+          - 255
+          - 255
+          brightness_pct: 100
+          effect: Solid
+          transition: '{{ trans }}'
