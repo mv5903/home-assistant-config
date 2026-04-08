@@ -67,8 +67,6 @@
   triggers:
   - entity_id:
     - binary_sensor.bathroom_presence_presence
-    for:
-      seconds: 2
     platform: state
     to: 'on'
   - entity_id:
