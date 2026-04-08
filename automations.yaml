@@ -65,13 +65,16 @@
   alias: 'Lighting: Bathroom Presence'
   description: Presence-based bathroom lighting with sleep mode awareness
   triggers:
-  - trigger: state
+  - platform: state
     entity_id:
     - binary_sensor.bathroom_presence_presence
-    from:
-    to:
-  - trigger: time_pattern
-    seconds: /1
+    to: 'on'
+  - platform: state
+    entity_id:
+    - binary_sensor.bathroom_presence_presence
+    to: 'off'
+    for:
+      seconds: 30
   conditions: []
   actions:
   - if:
