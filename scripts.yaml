@@ -478,16 +478,15 @@ lights_bedtime:
   description: ''
 apply_adaptive_lighting:
   alias: Apply Adaptive Lighting
-  description: Continuous adaptive lighting based on sun elevation. Only updates color_temp
-    lights that need changes (avoids flickering). Converts kelvin to RGBW for strip
-    lights.
+  description: Continuous adaptive lighting based on sun elevation. Converts kelvin
+    to RGBW for strip lights.
   fields:
-    target_lights:
-      description: Light entities, areas, or groups to control
-      example: light.living_room_lamp
     override_mode:
       description: 'Optional: Force a specific mode (sleep, bedtime, theater)'
       example: theater
+    target_lights:
+      description: Light entities, areas, or groups to control
+      example: light.living_room_lamp
     transition:
       description: 'Transition time in seconds (default: 2)'
       example: 5
@@ -504,7 +503,7 @@ apply_adaptive_lighting:
       clamped_elevation: '{{ [min_elevation, [max_elevation, sun_elevation] | min]
         | max }}'
       adaptive_kelvin: '{{ (min_kelvin + (max_kelvin - min_kelvin) * (clamped_elevation
-        - min_elevation) / (max_elevation - min_elevation)) | round(0) }}'
+        - min_elevation) / (max_elevation - min_elevation)) | round(0) | int }}'
       trans: '{{ transition | default(2) }}'
       all_target_lights: '{% set ns = namespace(lights=[]) %}{% if target_lights.entity_id
         is defined %}{% set entities = target_lights.entity_id if target_lights.entity_id
@@ -523,7 +522,6 @@ apply_adaptive_lighting:
     - conditions: '{{ override_mode is defined and override_mode == ''sleep'' }}'
       sequence:
       - action: light.turn_on
-        target: '{{ target_lights }}'
         data:
           rgb_color:
           - 255
@@ -532,10 +530,10 @@ apply_adaptive_lighting:
           brightness_pct: 1
           effect: Candle Multi
           transition: '{{ trans }}'
+        target: '{{ target_lights }}'
     - conditions: '{{ override_mode is defined and override_mode == ''bedtime'' }}'
       sequence:
       - action: light.turn_on
-        target: '{{ target_lights }}'
         data:
           rgb_color:
           - 255
@@ -544,19 +542,19 @@ apply_adaptive_lighting:
           brightness_pct: 100
           effect: Candle Multi
           transition: '{{ trans }}'
+        target: '{{ target_lights }}'
     - conditions: '{{ override_mode is defined and override_mode == ''theater'' }}'
       sequence:
       - action: light.turn_on
-        target: '{{ target_lights }}'
         data:
           color_temp_kelvin: 2000
           brightness_pct: 6
           effect: Solid
           transition: '{{ trans }}'
+        target: '{{ target_lights }}'
     - conditions: '{{ is_sleep_mode }}'
       sequence:
       - action: light.turn_on
-        target: '{{ target_lights }}'
         data:
           rgb_color:
           - 255
@@ -565,65 +563,55 @@ apply_adaptive_lighting:
           brightness_pct: 1
           effect: Candle Multi
           transition: '{{ trans }}'
+        target: '{{ target_lights }}'
     default:
     - variables:
-        lights_needing_update: '{% set ns = namespace(lights=[]) %}{% for light in
-          all_target_lights %}{% set supported_modes = state_attr(light, ''supported_color_modes'')
-          | default([]) %}{% if ''color_temp'' in supported_modes %}{% set current_kelvin
-          = state_attr(light, ''color_temp_kelvin'') | int(0) %}{% set current_effect
-          = state_attr(light, ''effect'') %}{% set current_brightness = state_attr(light,
-          ''brightness'') | int(0) %}{% set kelvin_diff = (current_kelvin - adaptive_kelvin)
-          | abs %}{% if current_effect != ''Solid'' or kelvin_diff > 200 or current_brightness
-          < 250 %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endif %}{%
-          endfor %}{{ ns.lights }}'
-        rgbw_lights_needing_update: '{% set t = adaptive_kelvin / 100 %}{% set r =
-          255 if t <= 66 else [[329.698727446 * ((t - 60) ** -0.1332047592), 255]
-          | min, 0] | max | int %}{% set g = ([[99.4708025861 * (t | log) - 161.1195681661,
-          255] | min, 0] | max | int) if t <= 66 else ([[288.1221695283 * ((t - 60)
-          ** -0.0755148492), 255] | min, 0] | max | int) %}{% set b = 255 if t >=
-          66 else (0 if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307,
-          255] | min, 0] | max | int) %}{% set w = [r, g, b] | min %}{% set tr = r
-          - w %}{% set tg = g - w %}{% set tb = b - w %}{% set ns = namespace(lights=[])
-          %}{% for light in all_target_lights %}{% set supported_modes = state_attr(light,
-          ''supported_color_modes'') | default([]) %}{% if ''color_temp'' not in supported_modes
-          and (''rgbw'' in supported_modes or ''rgb'' in supported_modes) %}{% set
-          cur_rgb = state_attr(light, ''rgb_color'') | default([0,0,0]) %}{% set cur_r
-          = cur_rgb[0] | int %}{% set cur_g = cur_rgb[1] | int %}{% set cur_b = cur_rgb[2]
-          | int %}{% set cur_effect = state_attr(light, ''effect'') %}{% set cur_brightness
-          = state_attr(light, ''brightness'') | int(0) %}{% set color_diff = ([cur_r
-          - tr, tr - cur_r] | max) + ([cur_g - tg, tg - cur_g] | max) + ([cur_b -
-          tb, tb - cur_b] | max) %}{% if cur_effect != ''Solid'' or color_diff > 30
-          or cur_brightness < 250 %}{% set ns.lights = ns.lights + [light] %}{% endif
-          %}{% endif %}{% endfor %}{{ ns.lights }}'
-        adaptive_rgbw: '{% set t = adaptive_kelvin / 100 %}{% set r = 255 if t <=
-          66 else [[329.698727446 * ((t - 60) ** -0.1332047592), 255] | min, 0] |
-          max | int %}{% set g = ([[99.4708025861 * (t | log) - 161.1195681661, 255]
-          | min, 0] | max | int) if t <= 66 else ([[288.1221695283 * ((t - 60) **
-          -0.0755148492), 255] | min, 0] | max | int) %}{% set b = 255 if t >= 66
-          else (0 if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307,
-          255] | min, 0] | max | int) %}{% set w = [r, g, b] | min %}{{ [r - w, g
-          - w, b - w, w] }}'
+        color_temp_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
+          %}{% set modes = state_attr(light, ''supported_color_modes'') | default([])
+          %}{% if ''color_temp'' in modes %}{% set cur_k = state_attr(light, ''color_temp_kelvin'')
+          | int(0) %}{% set cur_fx = state_attr(light, ''effect'') %}{% set cur_bri
+          = state_attr(light, ''brightness'') | int(0) %}{% if cur_fx != ''Solid''
+          or ((cur_k - adaptive_kelvin) | abs) > 200 or cur_bri < 250 %}{% set ns.lights
+          = ns.lights + [light] %}{% endif %}{% endif %}{% endfor %}{{ ns.lights }}'
+        rgbw_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
+          %}{% set modes = state_attr(light, ''supported_color_modes'') | default([])
+          %}{% if ''color_temp'' not in modes and (''rgbw'' in modes or ''rgb'' in
+          modes) %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endfor %}{{
+          ns.lights }}'
+        adaptive_r: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t <= 66 else [[329.698727446
+          * ((t - 60) ** -0.1332047592), 255] | min, 0] | max | int }}'
+        adaptive_g: '{% set t = adaptive_kelvin / 100 %}{{ ([[99.4708025861 * (t |
+          log) - 161.1195681661, 255] | min, 0] | max | int) if t <= 66 else ([[288.1221695283
+          * ((t - 60) ** -0.0755148492), 255] | min, 0] | max | int) }}'
+        adaptive_b: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t >= 66 else (0
+          if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307, 255]
+          | min, 0] | max | int) }}'
+        adaptive_w: '{{ [adaptive_r, adaptive_g, adaptive_b] | min }}'
     - if:
       - condition: template
-        value_template: '{{ lights_needing_update | length > 0 }}'
+        value_template: '{{ color_temp_lights | length > 0 }}'
       then:
       - action: light.turn_on
-        target:
-          entity_id: '{{ lights_needing_update }}'
         data:
           color_temp_kelvin: '{{ adaptive_kelvin }}'
           brightness_pct: 100
           effect: Solid
           transition: '{{ trans }}'
+        target:
+          entity_id: '{{ color_temp_lights }}'
     - if:
       - condition: template
-        value_template: '{{ rgbw_lights_needing_update | length > 0 }}'
+        value_template: '{{ rgbw_lights | length > 0 }}'
       then:
       - action: light.turn_on
-        target:
-          entity_id: '{{ rgbw_lights_needing_update }}'
         data:
-          rgbw_color: '{{ adaptive_rgbw }}'
+          rgbw_color:
+          - '{{ adaptive_r - adaptive_w }}'
+          - '{{ adaptive_g - adaptive_w }}'
+          - '{{ adaptive_b - adaptive_w }}'
+          - '{{ adaptive_w }}'
           brightness_pct: 100
           effect: Solid
           transition: '{{ trans }}'
+        target:
+          entity_id: '{{ rgbw_lights }}'
