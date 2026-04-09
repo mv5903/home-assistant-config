@@ -479,8 +479,8 @@ lights_bedtime:
 apply_adaptive_lighting:
   alias: Apply Adaptive Lighting
   description: Continuous adaptive lighting based on sun elevation. Only updates color_temp
-    lights that need changes (avoids flickering). Turns on RGBW-only lights if they
-    are off, but does not update them if already on.
+    lights that need changes (avoids flickering). Converts kelvin to RGBW for strip
+    lights.
   fields:
     target_lights:
       description: Light entities, areas, or groups to control
@@ -576,12 +576,33 @@ apply_adaptive_lighting:
           | abs %}{% if current_effect != ''Solid'' or kelvin_diff > 200 or current_brightness
           < 250 %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endif %}{%
           endfor %}{{ ns.lights }}'
-        rgbw_lights_off: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
-          %}{% set supported_modes = state_attr(light, ''supported_color_modes'')
-          | default([]) %}{% if ''color_temp'' not in supported_modes and (''rgbw''
-          in supported_modes or ''rgb'' in supported_modes) and states(light) == ''off''
-          %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endfor %}{{ ns.lights
-          }}'
+        rgbw_lights_needing_update: '{% set t = adaptive_kelvin / 100 %}{% set r =
+          255 if t <= 66 else [[329.698727446 * ((t - 60) ** -0.1332047592), 255]
+          | min, 0] | max | int %}{% set g = ([[99.4708025861 * (t | log) - 161.1195681661,
+          255] | min, 0] | max | int) if t <= 66 else ([[288.1221695283 * ((t - 60)
+          ** -0.0755148492), 255] | min, 0] | max | int) %}{% set b = 255 if t >=
+          66 else (0 if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307,
+          255] | min, 0] | max | int) %}{% set w = [r, g, b] | min %}{% set tr = r
+          - w %}{% set tg = g - w %}{% set tb = b - w %}{% set ns = namespace(lights=[])
+          %}{% for light in all_target_lights %}{% set supported_modes = state_attr(light,
+          ''supported_color_modes'') | default([]) %}{% if ''color_temp'' not in supported_modes
+          and (''rgbw'' in supported_modes or ''rgb'' in supported_modes) %}{% set
+          cur_rgb = state_attr(light, ''rgb_color'') | default([0,0,0]) %}{% set cur_r
+          = cur_rgb[0] | int %}{% set cur_g = cur_rgb[1] | int %}{% set cur_b = cur_rgb[2]
+          | int %}{% set cur_effect = state_attr(light, ''effect'') %}{% set cur_brightness
+          = state_attr(light, ''brightness'') | int(0) %}{% set color_diff = ([cur_r
+          - tr, tr - cur_r] | max) + ([cur_g - tg, tg - cur_g] | max) + ([cur_b -
+          tb, tb - cur_b] | max) %}{% if cur_effect != ''Solid'' or color_diff > 30
+          or cur_brightness < 250 %}{% set ns.lights = ns.lights + [light] %}{% endif
+          %}{% endif %}{% endfor %}{{ ns.lights }}'
+        adaptive_rgbw: '{% set t = adaptive_kelvin / 100 %}{% set r = 255 if t <=
+          66 else [[329.698727446 * ((t - 60) ** -0.1332047592), 255] | min, 0] |
+          max | int %}{% set g = ([[99.4708025861 * (t | log) - 161.1195681661, 255]
+          | min, 0] | max | int) if t <= 66 else ([[288.1221695283 * ((t - 60) **
+          -0.0755148492), 255] | min, 0] | max | int) %}{% set b = 255 if t >= 66
+          else (0 if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307,
+          255] | min, 0] | max | int) %}{% set w = [r, g, b] | min %}{{ [r - w, g
+          - w, b - w, w] }}'
     - if:
       - condition: template
         value_template: '{{ lights_needing_update | length > 0 }}'
@@ -596,16 +617,13 @@ apply_adaptive_lighting:
           transition: '{{ trans }}'
     - if:
       - condition: template
-        value_template: '{{ rgbw_lights_off | length > 0 }}'
+        value_template: '{{ rgbw_lights_needing_update | length > 0 }}'
       then:
       - action: light.turn_on
         target:
-          entity_id: '{{ rgbw_lights_off }}'
+          entity_id: '{{ rgbw_lights_needing_update }}'
         data:
-          rgb_color:
-          - 255
-          - 255
-          - 255
+          rgbw_color: '{{ adaptive_rgbw }}'
           brightness_pct: 100
           effect: Solid
           transition: '{{ trans }}'
