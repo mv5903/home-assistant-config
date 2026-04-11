@@ -581,12 +581,14 @@
   mode: single
 - id: '1766321188342'
   alias: 'Presence: Away Mode'
-  description: Disables automations when away mode is enabled
+  description: Disables automations when away mode is enabled. When re-enabling, re-applies
+    any still-active modes (guest, sleep) so multi-labeled automations aren't incorrectly
+    turned on.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - device_tracker.matthews_iphone_17_pro
     attribute: latitude
+    platform: state
   conditions: []
   actions:
   - if:
@@ -599,6 +601,31 @@
       target:
         label_id: away_mode_disables
       data: {}
+    - if:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'on'
+      then:
+      - action: automation.turn_off
+        target:
+          label_id: guest_mode_disabled
+        data:
+          stop_actions: true
+    - if:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_boolean.iphone_sleep_focus_mode
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.iphone_charging
+          state: 'on'
+      then:
+      - action: automation.turn_off
+        target:
+          label_id: sleeping_disabled
+        data:
+          stop_actions: true
     else:
     - action: automation.turn_off
       target:
@@ -608,12 +635,14 @@
   mode: single
 - id: '1763097958611'
   alias: 'Presence: Guest Mode'
-  description: Disables automations when guest mode is enabled
+  description: Disables automations when guest mode is enabled. When re-enabling,
+    re-applies any still-active modes (away, sleep) so multi-labeled automations aren't
+    incorrectly turned on.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - input_boolean.guest_mode
     to:
+    platform: state
   conditions: []
   actions:
   - choose:
@@ -638,6 +667,33 @@
         data: {}
         target:
           label_id: guest_mode_disabled
+      - if:
+        - condition: not
+          conditions:
+          - condition: state
+            entity_id: device_tracker.matthews_iphone_17_pro
+            state: home
+        then:
+        - action: automation.turn_off
+          data:
+            stop_actions: true
+          target:
+            label_id: away_mode_disables
+      - if:
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: input_boolean.iphone_sleep_focus_mode
+            state: 'on'
+          - condition: state
+            entity_id: input_boolean.iphone_charging
+            state: 'on'
+        then:
+        - action: automation.turn_off
+          data:
+            stop_actions: true
+          target:
+            label_id: sleeping_disabled
   mode: single
 - id: '1762549425282'
   alias: 'Presence: Kitchen Motion Tracker'
@@ -890,17 +946,46 @@
   mode: single
 - id: '1763239865946'
   alias: 'System: Sleep Mode Automations'
-  description: Disables automations when sleep focus mode is on
+  description: Disables automations when sleep focus mode is on. When re-enabling,
+    re-applies any still-active modes (away, guest) so multi-labeled automations aren't
+    incorrectly turned on.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - input_boolean.iphone_sleep_focus_mode
-  - trigger: state
-    entity_id:
+    platform: state
+  - entity_id:
     - input_boolean.iphone_charging
+    platform: state
   conditions: []
   actions:
-  - if:
+  - else:
+    - action: automation.turn_on
+      data: {}
+      target:
+        label_id: sleeping_disabled
+    - if:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: device_tracker.matthews_iphone_17_pro
+          state: home
+      then:
+      - action: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          label_id: away_mode_disables
+    - if:
+      - condition: state
+        entity_id: input_boolean.guest_mode
+        state: 'on'
+      then:
+      - action: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          label_id: guest_mode_disabled
+    if:
     - condition: and
       conditions:
       - condition: state
@@ -915,11 +1000,6 @@
     - action: automation.turn_off
       data:
         stop_actions: true
-      target:
-        label_id: sleeping_disabled
-    else:
-    - action: automation.turn_on
-      data: {}
       target:
         label_id: sleeping_disabled
   mode: single
