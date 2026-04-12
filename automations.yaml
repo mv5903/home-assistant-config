@@ -57,7 +57,7 @@
         - matthews_bedroom
         - kitchen
         - living_room
-      transition: 60
+      transition: 2
   - action: script.nintendo_toy_alternating
     data: {}
   mode: single
