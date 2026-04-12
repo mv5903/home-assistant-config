@@ -1724,3 +1724,43 @@
     target:
       entity_id: input_boolean.apartment_fan
   mode: single
+- id: '1775968647956'
+  alias: Spooky Lights on Song Change
+  description: When a song changes on the Apple TV, set all non-living-room WLED strip
+    lights to random colors from a deep spooky palette (purples, crimsons, midnight
+    blues, dark teals, embers).
+  triggers:
+  - platform: state
+    entity_id: media_player.matthews_bedroom_2
+    attribute: media_title
+  conditions:
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state: playing
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_title'')
+      not in [None, '''', ''unknown'', ''unavailable''] }}'
+  actions:
+  - repeat:
+      for_each:
+      - light.bed_frame_light_strips
+      - light.bedroom_nightstand_light_strip
+      - light.bed_lamp
+      - light.desk_lamp
+      - light.living_room_lamp
+      - light.kitchen_sink_light_strip
+      - light.shoerack_light
+      - light.bathroom_light_strip
+      sequence:
+      - condition: template
+        value_template: '{{ is_state(repeat.item, ''on'') }}'
+      - target:
+          entity_id: '{{ repeat.item }}'
+        data:
+          rgb_color: '{% set colors = [[120, 0, 200], [150, 30, 120], [180, 20, 20],
+            [20, 40, 150], [0, 130, 90], [160, 0, 0], [80, 0, 160], [200, 80, 10],
+            [30, 150, 50], [100, 0, 80], [140, 10, 60], [10, 20, 100]] %}{{ colors
+            | random }}'
+          transition: 2
+        action: light.turn_on
+  mode: restart
