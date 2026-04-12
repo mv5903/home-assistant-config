@@ -36,7 +36,8 @@
 - id: '1752541408687'
   alias: 'Lighting: Wake Up Mode'
   description: Activates adaptive lighting when iPhone sleep focus turns off or All
-    Lights White is pressed. Also clears the adaptive lighting pause flag.
+    Lights White is pressed. Also clears the adaptive lighting pause flag. Respects
+    theater mode by keeping back lights off unless eating mode is on.
   triggers:
   - trigger: state
     entity_id:
@@ -50,14 +51,57 @@
   - action: input_boolean.turn_off
     target:
       entity_id: input_boolean.adaptive_lighting_paused
-  - action: script.apply_adaptive_lighting
-    data:
-      target_lights:
-        area_id:
-        - matthews_bedroom
-        - kitchen
-        - living_room
-      transition: 2
+  - choose:
+    - alias: Theater mode active - skip back lights unless eating
+      conditions:
+      - condition: state
+        entity_id: media_player.matthews_bedroom_2
+        state: playing
+      - condition: template
+        value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+          != ''music'' }}'
+      sequence:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id:
+            - matthews_bedroom
+            - kitchen
+            entity_id:
+            - light.living_room_tv_stand_light_strip
+            - light.living_room_bookshelf_light_strips
+            - light.living_room_lamp
+            - light.desk_light_strips
+            - light.desk_lamp
+          transition: 2
+      - if:
+        - condition: state
+          entity_id: input_boolean.eating_mode
+          state: 'on'
+        then:
+        - action: script.apply_adaptive_lighting
+          data:
+            target_lights:
+              entity_id:
+              - light.living_room_vertical_light_strip
+              - light.living_room_pegboard_light_strip
+            transition: 2
+        else:
+        - action: light.turn_off
+          target:
+            entity_id:
+            - light.living_room_vertical_light_strip
+            - light.living_room_pegboard_light_strip
+    default:
+    - alias: No theater mode - all lights adaptive
+      action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          area_id:
+          - matthews_bedroom
+          - kitchen
+          - living_room
+        transition: 2
   - action: script.nintendo_toy_alternating
     data: {}
   mode: single
@@ -337,21 +381,29 @@
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
-  description: Sets random RGB colors on all lights and pauses adaptive lighting for
-    the rest of the day
+  description: Sets random RGB colors on all lights and pauses adaptive lighting.
+    Respects theater mode by keeping back lights off unless eating mode is on.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - input_button.random_scene
+    trigger: state
     to:
   conditions: []
   actions:
   - action: input_boolean.turn_on
     target:
       entity_id: input_boolean.adaptive_lighting_paused
+  - variables:
+      theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
+        and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+        != ''music'' }}'
+      eating: '{{ states(''input_boolean.eating_mode'') == ''on'' }}'
+      back_lights:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
   - repeat:
-      for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | list
-        }}'
+      for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | reject(''in'',
+        back_lights if (theater_active and not eating) else []) | list }}'
       sequence:
       - target:
           entity_id: '{{ repeat.item }}'
@@ -359,6 +411,15 @@
           rgb_color: '{{ [[255,0,0],[0,255,0],[0,0,255],[255,165,0],[255,0,255],[0,255,255],[255,255,0]]
             | random }}'
         action: light.turn_on
+  - if:
+    - condition: template
+      value_template: '{{ theater_active and not eating }}'
+    then:
+    - action: light.turn_off
+      target:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_pegboard_light_strip
   mode: single
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
