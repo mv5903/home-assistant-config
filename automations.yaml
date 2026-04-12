@@ -39,13 +39,13 @@
     Lights White is pressed. Also clears the adaptive lighting pause flag. Respects
     theater mode by keeping back lights off unless eating mode is on.
   triggers:
-  - trigger: state
-    entity_id:
+  - entity_id:
     - input_button.all_lights_white
-  - trigger: state
-    entity_id:
+    trigger: state
+  - entity_id:
     - input_boolean.iphone_sleep_focus_mode
     to: 'off'
+    trigger: state
   conditions: []
   actions:
   - action: input_boolean.turn_off
@@ -74,7 +74,13 @@
             - light.desk_light_strips
             - light.desk_lamp
           transition: 2
-      - if:
+      - else:
+        - action: light.turn_off
+          target:
+            entity_id:
+            - light.living_room_vertical_light_strip
+            - light.living_room_pegboard_light_strip
+        if:
         - condition: state
           entity_id: input_boolean.eating_mode
           state: 'on'
@@ -86,15 +92,9 @@
               - light.living_room_vertical_light_strip
               - light.living_room_pegboard_light_strip
             transition: 2
-        else:
-        - action: light.turn_off
-          target:
-            entity_id:
-            - light.living_room_vertical_light_strip
-            - light.living_room_pegboard_light_strip
     default:
-    - alias: No theater mode - all lights adaptive
-      action: script.apply_adaptive_lighting
+    - action: script.apply_adaptive_lighting
+      alias: No theater mode - all lights adaptive
       data:
         target_lights:
           area_id:
@@ -102,9 +102,10 @@
           - kitchen
           - living_room
         transition: 2
-  - action: script.nintendo_toy_alternating
-    data: {}
-  mode: single
+  - action: script.turn_on
+    target:
+      entity_id: script.nintendo_toy_alternating
+  mode: restart
 - id: '1758584148000'
   alias: 'Lighting: Bathroom Presence'
   description: Presence-based bathroom lighting with sleep mode awareness
@@ -1788,9 +1789,8 @@
 - id: '1775968647956'
   alias: Spooky Lights on Song Change
   description: When a song changes on the Apple TV, set all non-living-room WLED strip
-    lights to random colors from a deep spooky palette (purples, crimsons, midnight
-    blues, dark teals, embers). Sets effect to Solid first so WLED strips accept the
-    color.
+    lights to random colors from a deep spooky palette. Only fires during music playback
+    AND when adaptive lighting is paused (party/random mode active).
   triggers:
   - attribute: media_title
     entity_id: media_player.matthews_bedroom_2
@@ -1799,6 +1799,13 @@
   - condition: state
     entity_id: media_player.matthews_bedroom_2
     state: playing
+  - attribute: app_name
+    condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state: Music
+  - condition: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    state: 'on'
   - condition: template
     value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_title'')
       not in [None, '''', ''unknown'', ''unavailable''] }}'
@@ -1816,7 +1823,8 @@
       sequence:
       - condition: template
         value_template: '{{ is_state(repeat.item, ''on'') }}'
-      - data:
+      - action: light.turn_on
+        data:
           effect: Solid
           rgb_color: '{% set colors = [[120, 0, 200], [150, 30, 120], [180, 20, 20],
             [20, 40, 150], [0, 130, 90], [160, 0, 0], [80, 0, 160], [200, 80, 10],
@@ -1825,7 +1833,6 @@
           transition: 2
         target:
           entity_id: '{{ repeat.item }}'
-        action: light.turn_on
   mode: restart
 - id: '1775970525307'
   alias: 'Music: Album Art WLED Controller'
