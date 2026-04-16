@@ -1298,8 +1298,8 @@
 - id: adaptive_lighting_schedule
   alias: 'Lighting: Adaptive Sun Schedule'
   description: Updates light color temperature every 30 minutes based on sun elevation.
-    Skips during sleep mode, when watching/listening on Apple TV, when Spotify is
-    playing, or when adaptive lighting is manually paused (e.g. after Random Scene).
+    Skips during sleep mode, when Apple TV is playing or reloading (unavailable),
+    or when adaptive lighting is manually paused (e.g. after Random Scene).
   triggers:
   - minutes: /30
     platform: time_pattern
@@ -1317,12 +1317,9 @@
     conditions:
     - condition: state
       entity_id: media_player.matthews_bedroom_2
-      state: playing
-  - condition: not
-    conditions:
-    - condition: state
-      entity_id: media_player.spotify_matthew_vandenberg
-      state: playing
+      state:
+      - playing
+      - unavailable
   actions:
   - action: script.apply_adaptive_lighting
     data:
