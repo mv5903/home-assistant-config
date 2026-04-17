@@ -52,7 +52,6 @@ automation_ids:
 - '1775968647956'
 - music_album_art_wled_controller
 - music_album_art_wled_controller_2
-- lighting_color_mode_activate
 - lighting_color_mode_deactivate
 - '1752541263640'
 - '1752541408687'
@@ -101,5 +100,6 @@ automation_ids:
 - '1775970525307'
 - '1758584148000'
 - '1762485541183'
-exported_at: '2026-04-16T21:06:56.200066'
+- lighting_color_mode_activate
+exported_at: '2026-04-16T22:38:02.694405'
 total_count: 102

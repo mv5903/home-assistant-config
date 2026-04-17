@@ -1981,23 +1981,6 @@
           brightness: 255
         action: light.turn_on
   mode: restart
-- id: lighting_color_mode_activate
-  alias: 'Lighting: Color Mode Activate'
-  description: When Color Mode is turned on via the dashboard toggle, immediately
-    fires the party lights automation to set random RGB colors apartment-wide. Music
-    sync then takes over as tracks change.
-  triggers:
-  - trigger: state
-    entity_id: input_boolean.adaptive_lighting_paused
-    to: 'on'
-  conditions: []
-  actions:
-  - action: automation.trigger
-    data:
-      skip_condition: true
-    target:
-      entity_id: automation.lighting_random_rgb_colors
-  mode: single
 - id: lighting_color_mode_deactivate
   alias: 'Lighting: Color Mode Deactivate'
   description: When Color Mode is turned off, restores all lights apartment-wide to
@@ -2176,4 +2159,26 @@
         - action: light.turn_on
           target:
             area_id: matthews_bedroom
+  mode: single
+- id: lighting_color_mode_activate
+  alias: 'Lighting: Color Mode Activate'
+  description: When Color Mode is turned on via the dashboard toggle, immediately
+    fires the party lights automation to set random RGB colors apartment-wide. Music
+    sync then takes over as tracks change.
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    to: 'on'
+  conditions: []
+  actions:
+  - action: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.lighting_random_rgb_colors
+  - action: select.select_option
+    target:
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: Alternating
   mode: single
