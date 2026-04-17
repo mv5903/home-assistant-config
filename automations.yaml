@@ -2102,3 +2102,20 @@
           brightness: 255
         action: light.turn_on
   mode: restart
+- id: lighting_color_mode_activate
+  alias: 'Lighting: Color Mode Activate'
+  description: When Color Mode is turned on via the dashboard toggle, immediately
+    fires the party lights automation to set random RGB colors apartment-wide. Music
+    sync then takes over as tracks change.
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    to: 'on'
+  conditions: []
+  actions:
+  - action: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.lighting_random_rgb_colors
+  mode: single
