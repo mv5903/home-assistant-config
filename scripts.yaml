@@ -531,6 +531,11 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
+      - action: select.select_option
+        target:
+          entity_id: select.nintendo_toy_mode_selector
+        data:
+          option: 'Off'
     - conditions: '{{ override_mode is defined and override_mode == ''bedtime'' }}'
       sequence:
       - action: light.turn_on
@@ -543,6 +548,11 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
+      - action: select.select_option
+        target:
+          entity_id: select.nintendo_toy_mode_selector
+        data:
+          option: Alternating
     - conditions: '{{ override_mode is defined and override_mode == ''theater'' }}'
       sequence:
       - action: light.turn_on
@@ -552,6 +562,11 @@ apply_adaptive_lighting:
           effect: Solid
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
+      - action: select.select_option
+        target:
+          entity_id: select.nintendo_toy_mode_selector
+        data:
+          option: All
     - conditions: '{{ is_sleep_mode }}'
       sequence:
       - action: light.turn_on
@@ -564,6 +579,11 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
+      - action: select.select_option
+        target:
+          entity_id: select.nintendo_toy_mode_selector
+        data:
+          option: 'Off'
     default:
     - variables:
         color_temp_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
@@ -615,3 +635,8 @@ apply_adaptive_lighting:
           transition: '{{ trans }}'
         target:
           entity_id: '{{ rgbw_lights }}'
+    - action: select.select_option
+      target:
+        entity_id: select.nintendo_toy_mode_selector
+      data:
+        option: All
