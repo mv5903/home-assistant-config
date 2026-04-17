@@ -140,11 +140,16 @@
       entity_id: light.bathroom_light_strip
       state: 'off'
     - else:
-      - action: script.apply_adaptive_lighting
-        data:
-          target_lights:
-            entity_id: light.bathroom_light_strip
-          transition: 0
+      - if:
+        - condition: state
+          entity_id: input_boolean.adaptive_lighting_paused
+          state: 'off'
+        then:
+        - action: script.apply_adaptive_lighting
+          data:
+            target_lights:
+              entity_id: light.bathroom_light_strip
+            transition: 0
       if:
       - condition: state
         entity_id: input_boolean.iphone_sleep_focus_mode
@@ -203,6 +208,9 @@
       - condition: state
         entity_id: light.bedroom_nightstand_light_strip
         state: 'off'
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state: 'off'
       sequence:
       - action: script.apply_adaptive_lighting
         data:
@@ -227,6 +235,9 @@
       - condition: template
         value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
           < 10 }}'
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state: 'off'
       sequence:
       - action: script.apply_adaptive_lighting
         data:
@@ -250,6 +261,9 @@
     entity_id: input_boolean.iphone_sleep_focus_mode
     state:
     - 'off'
+  - condition: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    state: 'off'
   actions:
   - action: script.apply_adaptive_lighting
     data:
