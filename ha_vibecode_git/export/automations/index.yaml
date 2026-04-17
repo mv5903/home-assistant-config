@@ -50,6 +50,7 @@ automation_ids:
 - climate_apartment_fan_on_with_cooling
 - climate_apartment_fan_off_when_not_cooling
 - '1775968647956'
+- music_album_art_wled_controller
 - '1752541263640'
 - '1752541408687'
 - '1758584148000'
@@ -97,6 +98,5 @@ automation_ids:
 - '1774978513749'
 - '1774978519324'
 - '1775970525307'
-- music_album_art_wled_controller
-exported_at: '2026-04-16T18:49:09.111141'
+exported_at: '2026-04-16T18:59:50.283154'
 total_count: 99

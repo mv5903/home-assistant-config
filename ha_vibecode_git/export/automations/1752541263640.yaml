@@ -1,6 +1,7 @@
 id: '1752541263640'
 alias: 'Lighting: Sleep Mode'
-description: Activates sleep lighting when iPhone sleep focus turns on
+description: Activates sleep lighting when iPhone sleep focus turns on. Turns off
+  Color Mode first so RGB lights yield to the bedtime red sequence.
 triggers:
 - trigger: state
   entity_id:
@@ -8,6 +9,9 @@ triggers:
   to: 'on'
 conditions: []
 actions:
+- action: input_boolean.turn_off
+  target:
+    entity_id: input_boolean.adaptive_lighting_paused
 - type: turn_off
   device_id: 208694a8d5e7948b810321bfff0d2235
   entity_id: 99c5de87c3c1866fd98a968688443c06
