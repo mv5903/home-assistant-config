@@ -110,141 +110,6 @@
     target:
       entity_id: script.nintendo_toy_alternating
   mode: restart
-- id: '1758584148000'
-  alias: 'Lighting: Bathroom Presence'
-  description: Presence-based bathroom lighting with sleep mode awareness
-  triggers:
-  - entity_id:
-    - binary_sensor.bathroom_presence_presence
-    platform: state
-    to: 'on'
-  - entity_id:
-    - binary_sensor.bathroom_presence_presence
-    for:
-      seconds: 30
-    platform: state
-    to: 'off'
-  conditions: []
-  actions:
-  - else:
-    - action: light.turn_off
-      data: {}
-      target:
-        entity_id: light.bathroom_light_strip
-    if:
-    - condition: state
-      entity_id: binary_sensor.bathroom_presence_presence
-      state: 'on'
-    then:
-    - condition: state
-      entity_id: light.bathroom_light_strip
-      state: 'off'
-    - else:
-      - if:
-        - condition: state
-          entity_id: input_boolean.adaptive_lighting_paused
-          state: 'off'
-        then:
-        - action: script.apply_adaptive_lighting
-          data:
-            target_lights:
-              entity_id: light.bathroom_light_strip
-            transition: 0
-      if:
-      - condition: state
-        entity_id: input_boolean.iphone_sleep_focus_mode
-        state: 'on'
-      then:
-      - action: script.apply_adaptive_lighting
-        data:
-          override_mode: bedtime
-          target_lights:
-            entity_id: light.bathroom_light_strip
-          transition: 0
-  mode: single
-- id: '1762485541183'
-  alias: 'Lighting: Bedroom Presence'
-  description: Presence-based lighting using adaptive lighting - requires both presence
-    off AND moving distance > 100 to turn off. Time check recovers from brief sensor
-    drops but only if lights just turned off (within 10s).
-  triggers:
-  - entity_id:
-    - binary_sensor.esphome_web_cb9878_presence
-    to: 'off'
-    for:
-      seconds: 5
-    id: presence_off
-    platform: state
-  - seconds: /1
-    id: time_check
-    platform: time_pattern
-  - type: occupied
-    device_id: ddcfc3b69328d9678089d111a1ace821
-    entity_id: 7d42b49068568a0220f2652076c1cb45
-    domain: binary_sensor
-    id: motion_detected
-    platform: device
-  conditions: []
-  actions:
-  - choose:
-    - conditions:
-      - condition: trigger
-        id: presence_off
-      - condition: numeric_state
-        entity_id: sensor.esphome_web_cb9878_moving_distance
-        above: 100
-      sequence:
-      - action: light.turn_off
-        data:
-          transition: 0
-        target:
-          area_id: matthews_bedroom
-    - conditions:
-      - condition: trigger
-        id: motion_detected
-      - condition: state
-        entity_id: input_boolean.iphone_sleep_focus_mode
-        state: 'off'
-      - condition: state
-        entity_id: light.bedroom_nightstand_light_strip
-        state: 'off'
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'off'
-      sequence:
-      - action: script.apply_adaptive_lighting
-        data:
-          target_lights:
-            area_id: matthews_bedroom
-          transition: 0
-    - conditions:
-      - condition: trigger
-        id: time_check
-      - condition: state
-        entity_id: binary_sensor.esphome_web_cb9878_presence
-        state: 'on'
-      - condition: numeric_state
-        entity_id: sensor.esphome_web_cb9878_moving_distance
-        below: 100
-      - condition: state
-        entity_id: input_boolean.iphone_sleep_focus_mode
-        state: 'off'
-      - condition: state
-        entity_id: light.bedroom_nightstand_light_strip
-        state: 'off'
-      - condition: template
-        value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
-          < 10 }}'
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'off'
-      sequence:
-      - action: script.apply_adaptive_lighting
-        data:
-          target_lights:
-            area_id: matthews_bedroom
-          transition: 0
-  mode: single
 - id: '1763575398211'
   alias: 'Lighting: Entrance Presence'
   description: Turns on/updates common area lights when someone enters the apartment,
@@ -2159,4 +2024,156 @@
         - e9afd45f3065823eabf2ebdab37800e9
         - 1bb1b0cdbaa14208e037a5638b9d3210
       transition: 5
+  mode: single
+- id: '1758584148000'
+  alias: 'Lighting: Bathroom Presence'
+  description: Presence-based bathroom lighting with sleep mode awareness
+  triggers:
+  - entity_id:
+    - binary_sensor.bathroom_presence_presence
+    platform: state
+    to: 'on'
+  - entity_id:
+    - binary_sensor.bathroom_presence_presence
+    for:
+      seconds: 30
+    platform: state
+    to: 'off'
+  conditions: []
+  actions:
+  - if:
+    - condition: state
+      entity_id: binary_sensor.bathroom_presence_presence
+      state: 'on'
+    then:
+    - condition: state
+      entity_id: light.bathroom_light_strip
+      state: 'off'
+    - if:
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'on'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          override_mode: bedtime
+          target_lights:
+            entity_id: light.bathroom_light_strip
+          transition: 0
+      else:
+      - if:
+        - condition: state
+          entity_id: input_boolean.adaptive_lighting_paused
+          state: 'off'
+        then:
+        - action: script.apply_adaptive_lighting
+          data:
+            target_lights:
+              entity_id: light.bathroom_light_strip
+            transition: 0
+        else:
+        - action: light.turn_on
+          target:
+            entity_id: light.bathroom_light_strip
+    else:
+    - action: light.turn_off
+      data: {}
+      target:
+        entity_id: light.bathroom_light_strip
+  mode: single
+- id: '1762485541183'
+  alias: 'Lighting: Bedroom Presence'
+  description: Presence-based lighting using adaptive lighting - requires both presence
+    off AND moving distance > 100 to turn off. Time check recovers from brief sensor
+    drops but only if lights just turned off (within 10s). In Color Mode, restores
+    last light color instead of applying adaptive lighting.
+  triggers:
+  - entity_id:
+    - binary_sensor.esphome_web_cb9878_presence
+    to: 'off'
+    for:
+      seconds: 5
+    id: presence_off
+    platform: state
+  - seconds: /1
+    id: time_check
+    platform: time_pattern
+  - type: occupied
+    device_id: ddcfc3b69328d9678089d111a1ace821
+    entity_id: 7d42b49068568a0220f2652076c1cb45
+    domain: binary_sensor
+    id: motion_detected
+    platform: device
+  conditions: []
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: presence_off
+      - condition: numeric_state
+        entity_id: sensor.esphome_web_cb9878_moving_distance
+        above: 100
+      sequence:
+      - action: light.turn_off
+        data:
+          transition: 0
+        target:
+          area_id: matthews_bedroom
+    - conditions:
+      - condition: trigger
+        id: motion_detected
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'off'
+      - condition: state
+        entity_id: light.bedroom_nightstand_light_strip
+        state: 'off'
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_boolean.adaptive_lighting_paused
+          state: 'off'
+        then:
+        - action: script.apply_adaptive_lighting
+          data:
+            target_lights:
+              area_id: matthews_bedroom
+            transition: 0
+        else:
+        - action: light.turn_on
+          target:
+            area_id: matthews_bedroom
+    - conditions:
+      - condition: trigger
+        id: time_check
+      - condition: state
+        entity_id: binary_sensor.esphome_web_cb9878_presence
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.esphome_web_cb9878_moving_distance
+        below: 100
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'off'
+      - condition: state
+        entity_id: light.bedroom_nightstand_light_strip
+        state: 'off'
+      - condition: template
+        value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
+          < 10 }}'
+      sequence:
+      - if:
+        - condition: state
+          entity_id: input_boolean.adaptive_lighting_paused
+          state: 'off'
+        then:
+        - action: script.apply_adaptive_lighting
+          data:
+            target_lights:
+              area_id: matthews_bedroom
+            transition: 0
+        else:
+        - action: light.turn_on
+          target:
+            area_id: matthews_bedroom
   mode: single

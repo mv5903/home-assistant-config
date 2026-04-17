@@ -2,7 +2,8 @@ id: '1762485541183'
 alias: 'Lighting: Bedroom Presence'
 description: Presence-based lighting using adaptive lighting - requires both presence
   off AND moving distance > 100 to turn off. Time check recovers from brief sensor
-  drops but only if lights just turned off (within 10s).
+  drops but only if lights just turned off (within 10s). In Color Mode, restores last
+  light color instead of applying adaptive lighting.
 triggers:
 - entity_id:
   - binary_sensor.esphome_web_cb9878_presence
@@ -45,11 +46,20 @@ actions:
       entity_id: light.bedroom_nightstand_light_strip
       state: 'off'
     sequence:
-    - action: script.apply_adaptive_lighting
-      data:
-        target_lights:
+    - if:
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state: 'off'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id: matthews_bedroom
+          transition: 0
+      else:
+      - action: light.turn_on
+        target:
           area_id: matthews_bedroom
-        transition: 0
   - conditions:
     - condition: trigger
       id: time_check
@@ -69,10 +79,19 @@ actions:
       value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
         < 10 }}'
     sequence:
-    - action: script.apply_adaptive_lighting
-      data:
-        target_lights:
+    - if:
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state: 'off'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id: matthews_bedroom
+          transition: 0
+      else:
+      - action: light.turn_on
+        target:
           area_id: matthews_bedroom
-        transition: 0
 mode: single
 enabled: true

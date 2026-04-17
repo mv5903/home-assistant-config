@@ -14,6 +14,9 @@ conditions:
   entity_id: input_boolean.iphone_sleep_focus_mode
   state:
   - 'off'
+- condition: state
+  entity_id: input_boolean.adaptive_lighting_paused
+  state: 'off'
 actions:
 - action: script.apply_adaptive_lighting
   data:
