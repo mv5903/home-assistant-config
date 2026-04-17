@@ -2119,3 +2119,30 @@
     target:
       entity_id: automation.lighting_random_rgb_colors
   mode: single
+- id: lighting_color_mode_deactivate
+  alias: 'Lighting: Color Mode Deactivate'
+  description: When Color Mode is turned off, restores all lights apartment-wide to
+    adaptive white lighting. Skips if DND/sleep is active since sleep mode handles
+    that transition itself.
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  actions:
+  - action: script.apply_adaptive_lighting
+    data:
+      target_lights:
+        area_id:
+        - matthews_bedroom
+        - kitchen
+        - living_room
+        - bathroom
+        device_id:
+        - e9afd45f3065823eabf2ebdab37800e9
+        - 1bb1b0cdbaa14208e037a5638b9d3210
+      transition: 5
+  mode: single
