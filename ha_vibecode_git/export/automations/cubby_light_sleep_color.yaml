@@ -30,7 +30,8 @@ actions:
         - 255
         - 0
         - 0
-        brightness: 128
+        effect: Candle Multi
+        brightness_pct: 1
   default:
   - action: light.turn_on
     target:
@@ -40,6 +41,7 @@ actions:
       - 0
       - 255
       - 0
-      brightness: 200
+      effect: Solid
+      brightness_pct: 10
 mode: single
 enabled: true

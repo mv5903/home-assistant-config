@@ -1,20 +1,43 @@
 id: '1768974170420'
 alias: 'Lighting: Party Mode'
-description: Sets random RGB colors on all lights
+description: Sets random RGB colors on all lights and pauses adaptive lighting. Respects
+  theater mode by keeping back lights off unless eating mode is on.
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - input_button.random_scene
+  trigger: state
   to: null
 conditions: []
 actions:
+- action: input_boolean.turn_on
+  target:
+    entity_id: input_boolean.adaptive_lighting_paused
+- variables:
+    theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
+      and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+      != ''music'' }}'
+    eating: '{{ states(''input_boolean.eating_mode'') == ''on'' }}'
+    back_lights:
+    - light.living_room_vertical_light_strip
+    - light.living_room_pegboard_light_strip
 - repeat:
-    for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | list }}'
+    for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | reject(''in'',
+      back_lights if (theater_active and not eating) else []) | list }}'
     sequence:
     - target:
         entity_id: '{{ repeat.item }}'
       data:
-        rgb_color: '{{ [[255,0,0], [0,255,0], [0,0,255]] | random }}'
+        rgb_color: '{{ [[255,0,0],[0,255,0],[0,0,255],[255,165,0],[255,0,255],[0,255,255],[255,255,0]]
+          | random }}'
       action: light.turn_on
+- if:
+  - condition: template
+    value_template: '{{ theater_active and not eating }}'
+  then:
+  - action: light.turn_off
+    target:
+      entity_id:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
 mode: single
 enabled: true

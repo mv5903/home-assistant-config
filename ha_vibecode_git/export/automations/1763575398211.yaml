@@ -1,17 +1,15 @@
 id: '1763575398211'
 alias: 'Lighting: Entrance Presence'
-description: Turns on lights when someone enters the apartment
+description: Turns on/updates common area lights when someone enters the apartment,
+  based on front door motion sensor. Always applies adaptive lighting so color temp
+  is correct for time of day. Excludes bedroom and bathroom.
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - binary_sensor.motion_sensor_occupancy_2
   to:
   - 'on'
+  platform: state
 conditions:
-- condition: state
-  entity_id: light.shoerack_light
-  state:
-  - 'off'
 - condition: state
   entity_id: input_boolean.iphone_sleep_focus_mode
   state:
@@ -20,7 +18,16 @@ actions:
 - action: script.apply_adaptive_lighting
   data:
     target_lights:
-      entity_id: light.lights
+      entity_id:
+      - light.living_room_vertical_light_strip
+      - light.living_room_tv_stand_light_strip
+      - light.living_room_pegboard_light_strip
+      - light.living_room_bookshelf_light_strips
+      - light.desk_light_strips
+      - light.kitchen_sink_light_strip
+      - light.shoerack_light
+      - light.living_room_lamp
+      - light.desk_lamp
     transition: 3
 mode: single
 enabled: true

@@ -7,8 +7,9 @@ triggers:
   offset: 00:15:00
 conditions:
 - condition: state
-  entity_id: device_tracker.matthews_iphone
-  state: Apartment
+  entity_id: device_tracker.matthews_iphone_17_pro
+  state:
+  - home
 actions:
 - action: switch.turn_on
   data: {}

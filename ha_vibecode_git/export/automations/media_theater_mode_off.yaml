@@ -1,7 +1,7 @@
 id: media_theater_mode_off
 alias: 'Media: Theater Mode Off'
 description: Restores living room lights to adaptive lighting when video stops/pauses
-  on Apple TV
+  on Apple TV. Also restores cubby light.
 triggers:
 - trigger: state
   entity_id: media_player.matthews_bedroom_2
@@ -25,5 +25,9 @@ actions:
     target_lights:
       area_id: living_room
     transition: 10
+- action: light.turn_on
+  data: {}
+  target:
+    entity_id: light.cubby
 mode: single
 enabled: true

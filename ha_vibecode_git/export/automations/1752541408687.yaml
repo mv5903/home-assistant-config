@@ -1,29 +1,74 @@
 id: '1752541408687'
 alias: 'Lighting: Wake Up Mode'
-description: Activates adaptive lighting when iPhone sleep focus turns off
+description: Activates adaptive lighting when iPhone sleep focus turns off or All
+  Lights White is pressed. Also clears the adaptive lighting pause flag. Respects
+  theater mode by keeping back lights off unless eating mode is on.
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - input_button.all_lights_white
-- trigger: state
-  entity_id:
+  trigger: state
+- entity_id:
   - input_boolean.iphone_sleep_focus_mode
   to: 'off'
-conditions:
-- condition: state
-  entity_id: device_tracker.matthews_iphone_17_pro
-  state:
-  - home
+  trigger: state
+conditions: []
 actions:
-- action: script.apply_adaptive_lighting
-  data:
-    target_lights:
-      area_id:
-      - matthews_bedroom
-      - kitchen
-      - living_room
-    transition: 60
-- action: script.nintendo_toy_alternating
-  data: {}
-mode: single
+- action: input_boolean.turn_off
+  target:
+    entity_id: input_boolean.adaptive_lighting_paused
+- choose:
+  - alias: Theater mode active - skip back lights unless eating
+    conditions:
+    - condition: state
+      entity_id: media_player.matthews_bedroom_2
+      state: playing
+    - condition: template
+      value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+        != ''music'' }}'
+    sequence:
+    - action: script.apply_adaptive_lighting
+      data:
+        target_lights:
+          area_id:
+          - matthews_bedroom
+          - kitchen
+          entity_id:
+          - light.living_room_tv_stand_light_strip
+          - light.living_room_bookshelf_light_strips
+          - light.living_room_lamp
+          - light.desk_light_strips
+          - light.desk_lamp
+        transition: 2
+    - else:
+      - action: light.turn_off
+        target:
+          entity_id:
+          - light.living_room_vertical_light_strip
+          - light.living_room_pegboard_light_strip
+      if:
+      - condition: state
+        entity_id: input_boolean.eating_mode
+        state: 'on'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            entity_id:
+            - light.living_room_vertical_light_strip
+            - light.living_room_pegboard_light_strip
+          transition: 2
+  default:
+  - action: script.apply_adaptive_lighting
+    alias: No theater mode - all lights adaptive
+    data:
+      target_lights:
+        area_id:
+        - matthews_bedroom
+        - kitchen
+        - living_room
+      transition: 2
+- action: script.turn_on
+  target:
+    entity_id: script.nintendo_toy_alternating
+mode: restart
 enabled: true

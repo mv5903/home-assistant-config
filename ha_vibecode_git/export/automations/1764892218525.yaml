@@ -10,7 +10,7 @@ conditions: []
 actions:
 - action: automation.trigger
   target:
-    entity_id: automation.safety_soldering_iron_alert
+    entity_id: automation.soldering_iron_safety_notification
   data:
     skip_condition: true
 - action: notify.mobile_app_matthews_iphone_17_pro

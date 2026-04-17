@@ -1,11 +1,13 @@
 id: '1766321188342'
 alias: 'Presence: Away Mode'
-description: Disables automations when away mode is enabled
+description: Disables automations when away mode is enabled. When re-enabling, re-applies
+  any still-active modes (guest, sleep) so multi-labeled automations aren't incorrectly
+  turned on.
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - device_tracker.matthews_iphone_17_pro
   attribute: latitude
+  platform: state
 conditions: []
 actions:
 - if:
@@ -18,6 +20,31 @@ actions:
     target:
       label_id: away_mode_disables
     data: {}
+  - if:
+    - condition: state
+      entity_id: input_boolean.guest_mode
+      state: 'on'
+    then:
+    - action: automation.turn_off
+      target:
+        label_id: guest_mode_disabled
+      data:
+        stop_actions: true
+  - if:
+    - condition: and
+      conditions:
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'on'
+      - condition: state
+        entity_id: input_boolean.iphone_charging
+        state: 'on'
+    then:
+    - action: automation.turn_off
+      target:
+        label_id: sleeping_disabled
+      data:
+        stop_actions: true
   else:
   - action: automation.turn_off
     target:

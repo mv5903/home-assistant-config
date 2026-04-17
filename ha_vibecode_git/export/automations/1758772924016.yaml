@@ -27,6 +27,7 @@ actions:
     - living_room
     - bathroom
     - kitchen
+    entity_id: light.cubby
 - action: script.nintendo_toy_off
   metadata: {}
   data: {}

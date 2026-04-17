@@ -1,11 +1,13 @@
 id: '1763097958611'
 alias: 'Presence: Guest Mode'
-description: Disables automations when guest mode is enabled
+description: Disables automations when guest mode is enabled. When re-enabling, re-applies
+  any still-active modes (away, sleep) so multi-labeled automations aren't incorrectly
+  turned on.
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - input_boolean.guest_mode
   to: null
+  platform: state
 conditions: []
 actions:
 - choose:
@@ -30,5 +32,32 @@ actions:
       data: {}
       target:
         label_id: guest_mode_disabled
+    - if:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: device_tracker.matthews_iphone_17_pro
+          state: home
+      then:
+      - action: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          label_id: away_mode_disables
+    - if:
+      - condition: and
+        conditions:
+        - condition: state
+          entity_id: input_boolean.iphone_sleep_focus_mode
+          state: 'on'
+        - condition: state
+          entity_id: input_boolean.iphone_charging
+          state: 'on'
+      then:
+      - action: automation.turn_off
+        data:
+          stop_actions: true
+        target:
+          label_id: sleeping_disabled
 mode: single
 enabled: true

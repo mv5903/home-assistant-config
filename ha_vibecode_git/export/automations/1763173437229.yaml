@@ -7,6 +7,11 @@ triggers:
   - sensor.minecraft_server_player_count
   above: 0
 conditions: []
-actions: []
+actions:
+- action: notify.mobile_app_matthews_iphone_17_pro
+  data:
+    title: Minecraft Server
+    message: A player joined! {{ states('sensor.minecraft_server_player_count') }}
+      player(s) online.
 mode: single
 enabled: true

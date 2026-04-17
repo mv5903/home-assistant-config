@@ -1,24 +1,25 @@
 id: '1762485541183'
 alias: 'Lighting: Bedroom Presence'
 description: Presence-based lighting using adaptive lighting - requires both presence
-  off AND moving distance > 100 to turn off
+  off AND moving distance > 100 to turn off. Time check recovers from brief sensor
+  drops but only if lights just turned off (within 10s).
 triggers:
-- trigger: state
-  entity_id:
+- entity_id:
   - binary_sensor.esphome_web_cb9878_presence
   to: 'off'
   for:
     seconds: 5
   id: presence_off
-- trigger: time_pattern
-  seconds: /1
+  platform: state
+- seconds: /1
   id: time_check
-- trigger: device
-  type: occupied
+  platform: time_pattern
+- type: occupied
   device_id: ddcfc3b69328d9678089d111a1ace821
   entity_id: 7d42b49068568a0220f2652076c1cb45
   domain: binary_sensor
   id: motion_detected
+  platform: device
 conditions: []
 actions:
 - choose:
@@ -64,6 +65,9 @@ actions:
     - condition: state
       entity_id: light.bedroom_nightstand_light_strip
       state: 'off'
+    - condition: template
+      value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
+        < 10 }}'
     sequence:
     - action: script.apply_adaptive_lighting
       data:

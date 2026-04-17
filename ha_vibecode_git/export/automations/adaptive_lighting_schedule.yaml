@@ -1,10 +1,11 @@
 id: adaptive_lighting_schedule
 alias: 'Lighting: Adaptive Sun Schedule'
 description: Updates light color temperature every 30 minutes based on sun elevation.
-  Skips during sleep mode and when watching video.
+  Skips during sleep mode, when Apple TV is playing or reloading (unavailable), or
+  when adaptive lighting is manually paused (e.g. after Random Scene).
 triggers:
 - minutes: /30
-  trigger: time_pattern
+  platform: time_pattern
 conditions:
 - condition: state
   entity_id: light.lights
@@ -12,16 +13,16 @@ conditions:
 - condition: state
   entity_id: input_boolean.iphone_sleep_focus_mode
   state: 'off'
+- condition: state
+  entity_id: input_boolean.adaptive_lighting_paused
+  state: 'off'
 - condition: not
   conditions:
-  - condition: and
-    conditions:
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state: playing
-    - condition: template
-      value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
-        != ''Music'' }}'
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    state:
+    - playing
+    - unavailable
 actions:
 - action: script.apply_adaptive_lighting
   data:
