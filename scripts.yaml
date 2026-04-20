@@ -475,12 +475,12 @@ apply_adaptive_lighting:
       max_elevation: 20
       min_kelvin: 2000
       max_kelvin: 5110
+      sun_elevation: '{{ state_attr("sun.sun", "elevation") | float(0) }}'
       clamped_elevation: '{{ [min_elevation, [max_elevation, sun_elevation] | min]
         | max }}'
       adaptive_kelvin: '{{ (min_kelvin + (max_kelvin - min_kelvin) * (clamped_elevation
         - min_elevation) / (max_elevation - min_elevation)) | round(0) | int }}'
       is_sleep_mode: '{{ states("input_boolean.iphone_sleep_focus_mode") == "on" }}'
-      sun_elevation: '{{ state_attr("sun.sun", "elevation") | float(0) }}'
       all_target_lights: '{% set ns = namespace(lights=[]) %}{% if target_lights.entity_id
         is defined %}{% set entities = target_lights.entity_id if target_lights.entity_id
         is list else [target_lights.entity_id] %}{% for entity in entities %}{% if
