@@ -469,5 +469,140 @@ apply_adaptive_lighting:
       example: 5
   mode: parallel
   sequence:
-  - delay:
-      seconds: 1
+  - variables:
+      trans: '{{ transition | default(2) }}'
+      min_elevation: -6
+      max_elevation: 20
+      min_kelvin: 2000
+      max_kelvin: 5110
+      clamped_elevation: '{{ [min_elevation, [max_elevation, sun_elevation] | min]
+        | max }}'
+      adaptive_kelvin: '{{ (min_kelvin + (max_kelvin - min_kelvin) * (clamped_elevation
+        - min_elevation) / (max_elevation - min_elevation)) | round(0) | int }}'
+      is_sleep_mode: '{{ states("input_boolean.iphone_sleep_focus_mode") == "on" }}'
+      sun_elevation: '{{ state_attr("sun.sun", "elevation") | float(0) }}'
+      all_target_lights: '{% set ns = namespace(lights=[]) %}{% if target_lights.entity_id
+        is defined %}{% set entities = target_lights.entity_id if target_lights.entity_id
+        is list else [target_lights.entity_id] %}{% for entity in entities %}{% if
+        entity.startswith("light.") %}{% set ns.lights = ns.lights + [entity] %}{%
+        endif %}{% endfor %}{% endif %}{% if target_lights.area_id is defined %}{%
+        set areas = target_lights.area_id if target_lights.area_id is list else [target_lights.area_id]
+        %}{% for area in areas %}{% for entity in area_entities(area) if entity.startswith("light.")
+        %}{% set ns.lights = ns.lights + [entity] %}{% endfor %}{% endfor %}{% endif
+        %}{% if target_lights.device_id is defined %}{% set devices = target_lights.device_id
+        if target_lights.device_id is list else [target_lights.device_id] %}{% for
+        device in devices %}{% for entity in device_entities(device) if entity.startswith("light.")
+        %}{% set ns.lights = ns.lights + [entity] %}{% endfor %}{% endfor %}{% endif
+        %}{{ ns.lights | unique | list }}'
+  - choose:
+    - conditions: '{{ override_mode is defined and override_mode == "sleep" }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          brightness_pct: 1
+          effect: Candle Multi
+          transition: '{{ trans }}'
+        target: '{{ target_lights }}'
+      - action: script.nintendo_toy_set_mode
+        data:
+          mode: 'Off'
+    - conditions: '{{ override_mode is defined and override_mode == "bedtime" }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          brightness_pct: 100
+          effect: Candle Multi
+          transition: '{{ trans }}'
+        target: '{{ target_lights }}'
+      - action: script.nintendo_toy_set_mode
+        data:
+          mode: Alternating
+    - conditions: '{{ override_mode is defined and override_mode == "theater" }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          color_temp_kelvin: 2000
+          brightness_pct: 6
+          effect: Solid
+          transition: '{{ trans }}'
+        target: '{{ target_lights }}'
+      - action: script.nintendo_toy_set_mode
+        data:
+          mode: All
+    - conditions: '{{ is_sleep_mode }}'
+      sequence:
+      - action: light.turn_on
+        data:
+          rgb_color:
+          - 255
+          - 0
+          - 0
+          brightness_pct: 1
+          effect: Candle Multi
+          transition: '{{ trans }}'
+        target: '{{ target_lights }}'
+      - action: script.nintendo_toy_set_mode
+        data:
+          mode: 'Off'
+    default:
+    - variables:
+        color_temp_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
+          %}{% set modes = state_attr(light, "supported_color_modes") | default([])
+          %}{% if "color_temp" in modes %}{% set cur_k = state_attr(light, "color_temp_kelvin")
+          | int(0) %}{% set cur_fx = state_attr(light, "effect") %}{% set cur_bri
+          = state_attr(light, "brightness") | int(0) %}{% if cur_fx != "Solid" or
+          ((cur_k - adaptive_kelvin) | abs) > 200 or cur_bri < 250 %}{% set ns.lights
+          = ns.lights + [light] %}{% endif %}{% endif %}{% endfor %}{{ ns.lights }}'
+        rgbw_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
+          %}{% set modes = state_attr(light, "supported_color_modes") | default([])
+          %}{% if "color_temp" not in modes and ("rgbw" in modes or "rgb" in modes)
+          %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endfor %}{{ ns.lights
+          }}'
+        adaptive_r: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t <= 66 else [[329.698727446
+          * ((t - 60) ** -0.1332047592), 255] | min, 0] | max | int }}'
+        adaptive_g: '{% set t = adaptive_kelvin / 100 %}{{ ([[99.4708025861 * (t |
+          log) - 161.1195681661, 255] | min, 0] | max | int) if t <= 66 else ([[288.1221695283
+          * ((t - 60) ** -0.0755148492), 255] | min, 0] | max | int) }}'
+        adaptive_b: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t >= 66 else (0
+          if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307, 255]
+          | min, 0] | max | int) }}'
+        adaptive_w: '{{ [adaptive_r, adaptive_g, adaptive_b] | min }}'
+    - if:
+      - condition: template
+        value_template: '{{ color_temp_lights | length > 0 }}'
+      then:
+      - action: light.turn_on
+        data:
+          color_temp_kelvin: '{{ adaptive_kelvin }}'
+          brightness_pct: 100
+          effect: Solid
+          transition: '{{ trans }}'
+        target:
+          entity_id: '{{ color_temp_lights }}'
+    - if:
+      - condition: template
+        value_template: '{{ rgbw_lights | length > 0 }}'
+      then:
+      - action: light.turn_on
+        data:
+          rgbw_color:
+          - '{{ adaptive_r - adaptive_w }}'
+          - '{{ adaptive_g - adaptive_w }}'
+          - '{{ adaptive_b - adaptive_w }}'
+          - '{{ adaptive_w }}'
+          brightness_pct: 100
+          effect: Solid
+          transition: '{{ trans }}'
+        target:
+          entity_id: '{{ rgbw_lights }}'
+    - action: script.nintendo_toy_set_mode
+      data:
+        mode: All
