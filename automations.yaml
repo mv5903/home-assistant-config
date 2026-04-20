@@ -2182,3 +2182,22 @@
     data:
       option: Alternating
   mode: single
+- id: '1776659653318'
+  alias: 'Lighting: Manual Eating Mode Off → Set Cancelled Flag'
+  description: When eating mode is manually turned off (not by the auto-off automation),
+    set the user_cancelled flag so auto-detect won't re-trigger for this session.
+    The auto-off automation clears the flag when appropriate (Apple TV stops, 30min
+    timeout, or midnight).
+  triggers:
+  - platform: state
+    entity_id: input_boolean.eating_mode
+    to: 'off'
+  conditions:
+  - condition: state
+    entity_id: input_boolean.eating_mode_user_cancelled
+    state: 'off'
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.eating_mode_user_cancelled
+  mode: single
