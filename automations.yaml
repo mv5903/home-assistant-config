@@ -2203,3 +2203,51 @@
     target:
       entity_id: input_boolean.eating_mode_user_cancelled
   mode: single
+- id: lighting_color_mode_activate
+  alias: 'Lighting: Color Mode Activate'
+  description: When Color Mode is turned on via the dashboard toggle, immediately
+    fires the party lights automation to set random RGB colors apartment-wide. Music
+    sync then takes over as tracks change.
+  triggers:
+  - entity_id: input_boolean.adaptive_lighting_paused
+    to: 'on'
+    platform: state
+  conditions: []
+  actions:
+  - action: automation.trigger
+    data:
+      skip_condition: true
+    target:
+      entity_id: automation.lighting_random_rgb_colors
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: Alternating
+  mode: single
+- id: '1776706100250'
+  alias: 'System: Nintendo Toy Disconnected'
+  description: When the ESP toy disconnects, clears the processing lock so the UI
+    doesn't stay locked.
+  triggers:
+  - platform: state
+    entity_id: sensor.nintendo_toy_toy_mode
+    to: unavailable
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.nintendo_toy_processing
+  mode: single
+- id: '1776706102098'
+  alias: 'System: Nintendo Toy Reconnected'
+  description: When the ESP toy reconnects after being unavailable, sets mode to Off
+    as a safe default.
+  triggers:
+  - platform: state
+    entity_id: sensor.nintendo_toy_toy_mode
+    from: unavailable
+  conditions: []
+  actions:
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: 'Off'
+  mode: single
