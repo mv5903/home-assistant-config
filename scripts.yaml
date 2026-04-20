@@ -284,98 +284,6 @@ google_tv_select_pc_input:
       device_id: 39e3cfe7df0b796f66ce3371953f1490
   alias: Google TV - Select PC Input
   description: ''
-nintendo_toy_off:
-  sequence:
-  - repeat:
-      while:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state:
-          - 'Off'
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.nintendo_toy_cycle_mode
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-  alias: Nintendo Toy Off
-  description: ''
-nintendo_toy_alternating:
-  sequence:
-  - repeat:
-      while:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state:
-          - Alternating
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.nintendo_toy_cycle_mode
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-  alias: Nintendo Toy Alternating
-  description: ''
-nintendo_toy_alternating_all:
-  sequence:
-  - repeat:
-      while:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state:
-          - All
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.nintendo_toy_cycle_mode
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-  alias: Nintendo Toy All
-  description: ''
-nintendo_toy_alternating_microphone:
-  sequence:
-  - repeat:
-      while:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state:
-          - Microphone
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.nintendo_toy_cycle_mode
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 1
-          milliseconds: 0
-  alias: Nintendo Toy Microphone
-  description: ''
 lights_daytime:
   sequence:
   - action: light.turn_on
@@ -476,167 +384,72 @@ lights_bedtime:
       effect: Solid
   alias: Lights Bedtime
   description: ''
-apply_adaptive_lighting:
-  alias: Apply Adaptive Lighting
-  description: Continuous adaptive lighting based on sun elevation. Converts kelvin
-    to RGBW for strip lights.
+nintendo_toy_set_mode:
+  alias: Nintendo Toy Set Mode
+  description: Sets the Nintendo toy to a target mode by cycling until confirmed.
+    Queues requests so they run one at a time. Stops cleanly if device becomes unavailable.
+  mode: queued
+  max: 10
   fields:
-    override_mode:
-      description: 'Optional: Force a specific mode (sleep, bedtime, theater)'
-      example: theater
-    target_lights:
-      description: Light entities, areas, or groups to control
-      example: light.living_room_lamp
-    transition:
-      description: 'Transition time in seconds (default: 2)'
-      example: 5
-  mode: parallel
+    mode:
+      description: Target mode (Off, All, Alternating, Microphone)
+      required: true
+      example: 'Off'
   sequence:
-  - variables:
-      is_sleep_mode: '{{ states(''input_boolean.iphone_sleep_focus_mode'') == ''on''
-        }}'
-      sun_elevation: '{{ state_attr(''sun.sun'', ''elevation'') | float(0) }}'
-      min_elevation: -6
-      max_elevation: 20
-      min_kelvin: 2000
-      max_kelvin: 5110
-      clamped_elevation: '{{ [min_elevation, [max_elevation, sun_elevation] | min]
-        | max }}'
-      adaptive_kelvin: '{{ (min_kelvin + (max_kelvin - min_kelvin) * (clamped_elevation
-        - min_elevation) / (max_elevation - min_elevation)) | round(0) | int }}'
-      trans: '{{ transition | default(2) }}'
-      all_target_lights: '{% set ns = namespace(lights=[]) %}{% if target_lights.entity_id
-        is defined %}{% set entities = target_lights.entity_id if target_lights.entity_id
-        is list else [target_lights.entity_id] %}{% for entity in entities %}{% if
-        entity.startswith(''light.'') %}{% set ns.lights = ns.lights + [entity] %}{%
-        endif %}{% endfor %}{% endif %}{% if target_lights.area_id is defined %}{%
-        set areas = target_lights.area_id if target_lights.area_id is list else [target_lights.area_id]
-        %}{% for area in areas %}{% for entity in area_entities(area) if entity.startswith(''light.'')
-        %}{% set ns.lights = ns.lights + [entity] %}{% endfor %}{% endfor %}{% endif
-        %}{% if target_lights.device_id is defined %}{% set devices = target_lights.device_id
-        if target_lights.device_id is list else [target_lights.device_id] %}{% for
-        device in devices %}{% for entity in device_entities(device) if entity.startswith(''light.'')
-        %}{% set ns.lights = ns.lights + [entity] %}{% endfor %}{% endfor %}{% endif
-        %}{{ ns.lights | unique | list }}'
-  - choose:
-    - conditions: '{{ override_mode is defined and override_mode == ''sleep'' }}'
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.nintendo_toy_processing
+  - repeat:
+      while:
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: sensor.nintendo_toy_toy_mode
+          state: '{{ mode }}'
+      - condition: not
+        conditions:
+        - condition: state
+          entity_id: sensor.nintendo_toy_toy_mode
+          state: unavailable
       sequence:
-      - action: light.turn_on
-        data:
-          rgb_color:
-          - 255
-          - 0
-          - 0
-          brightness_pct: 1
-          effect: Candle Multi
-          transition: '{{ trans }}'
-        target: '{{ target_lights }}'
-      - action: select.select_option
+      - action: button.press
+        metadata: {}
+        data: {}
         target:
-          entity_id: select.nintendo_toy_mode_selector
-        data:
-          option: 'Off'
-    - conditions: '{{ override_mode is defined and override_mode == ''bedtime'' }}'
-      sequence:
-      - action: light.turn_on
-        data:
-          rgb_color:
-          - 255
-          - 0
-          - 0
-          brightness_pct: 100
-          effect: Candle Multi
-          transition: '{{ trans }}'
-        target: '{{ target_lights }}'
-      - action: select.select_option
-        target:
-          entity_id: select.nintendo_toy_mode_selector
-        data:
-          option: Alternating
-    - conditions: '{{ override_mode is defined and override_mode == ''theater'' }}'
-      sequence:
-      - action: light.turn_on
-        data:
-          color_temp_kelvin: 2000
-          brightness_pct: 6
-          effect: Solid
-          transition: '{{ trans }}'
-        target: '{{ target_lights }}'
-      - action: select.select_option
-        target:
-          entity_id: select.nintendo_toy_mode_selector
-        data:
-          option: All
-    - conditions: '{{ is_sleep_mode }}'
-      sequence:
-      - action: light.turn_on
-        data:
-          rgb_color:
-          - 255
-          - 0
-          - 0
-          brightness_pct: 1
-          effect: Candle Multi
-          transition: '{{ trans }}'
-        target: '{{ target_lights }}'
-      - action: select.select_option
-        target:
-          entity_id: select.nintendo_toy_mode_selector
-        data:
-          option: 'Off'
-    default:
-    - variables:
-        color_temp_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
-          %}{% set modes = state_attr(light, ''supported_color_modes'') | default([])
-          %}{% if ''color_temp'' in modes %}{% set cur_k = state_attr(light, ''color_temp_kelvin'')
-          | int(0) %}{% set cur_fx = state_attr(light, ''effect'') %}{% set cur_bri
-          = state_attr(light, ''brightness'') | int(0) %}{% if cur_fx != ''Solid''
-          or ((cur_k - adaptive_kelvin) | abs) > 200 or cur_bri < 250 %}{% set ns.lights
-          = ns.lights + [light] %}{% endif %}{% endif %}{% endfor %}{{ ns.lights }}'
-        rgbw_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
-          %}{% set modes = state_attr(light, ''supported_color_modes'') | default([])
-          %}{% if ''color_temp'' not in modes and (''rgbw'' in modes or ''rgb'' in
-          modes) %}{% set ns.lights = ns.lights + [light] %}{% endif %}{% endfor %}{{
-          ns.lights }}'
-        adaptive_r: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t <= 66 else [[329.698727446
-          * ((t - 60) ** -0.1332047592), 255] | min, 0] | max | int }}'
-        adaptive_g: '{% set t = adaptive_kelvin / 100 %}{{ ([[99.4708025861 * (t |
-          log) - 161.1195681661, 255] | min, 0] | max | int) if t <= 66 else ([[288.1221695283
-          * ((t - 60) ** -0.0755148492), 255] | min, 0] | max | int) }}'
-        adaptive_b: '{% set t = adaptive_kelvin / 100 %}{{ 255 if t >= 66 else (0
-          if t <= 19 else [[138.5177312231 * ((t - 10) | log) - 305.0447927307, 255]
-          | min, 0] | max | int) }}'
-        adaptive_w: '{{ [adaptive_r, adaptive_g, adaptive_b] | min }}'
-    - if:
-      - condition: template
-        value_template: '{{ color_temp_lights | length > 0 }}'
-      then:
-      - action: light.turn_on
-        data:
-          color_temp_kelvin: '{{ adaptive_kelvin }}'
-          brightness_pct: 100
-          effect: Solid
-          transition: '{{ trans }}'
-        target:
-          entity_id: '{{ color_temp_lights }}'
-    - if:
-      - condition: template
-        value_template: '{{ rgbw_lights | length > 0 }}'
-      then:
-      - action: light.turn_on
-        data:
-          rgbw_color:
-          - '{{ adaptive_r - adaptive_w }}'
-          - '{{ adaptive_g - adaptive_w }}'
-          - '{{ adaptive_b - adaptive_w }}'
-          - '{{ adaptive_w }}'
-          brightness_pct: 100
-          effect: Solid
-          transition: '{{ trans }}'
-        target:
-          entity_id: '{{ rgbw_lights }}'
-    - action: select.select_option
-      target:
-        entity_id: select.nintendo_toy_mode_selector
-      data:
-        option: All
+          entity_id: button.nintendo_toy_cycle_mode
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.nintendo_toy_processing
+nintendo_toy_off:
+  alias: Nintendo Toy Off
+  description: ''
+  sequence:
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: 'Off'
+nintendo_toy_alternating:
+  alias: Nintendo Toy Alternating
+  description: ''
+  sequence:
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: Alternating
+nintendo_toy_alternating_all:
+  alias: Nintendo Toy All
+  description: ''
+  sequence:
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: All
+nintendo_toy_alternating_microphone:
+  alias: Nintendo Toy Microphone
+  description: ''
+  sequence:
+  - action: script.nintendo_toy_set_mode
+    data:
+      mode: Microphone
