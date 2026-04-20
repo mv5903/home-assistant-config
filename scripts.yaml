@@ -453,3 +453,21 @@ nintendo_toy_alternating_microphone:
   - action: script.nintendo_toy_set_mode
     data:
       mode: Microphone
+apply_adaptive_lighting:
+  alias: Apply Adaptive Lighting
+  description: Continuous adaptive lighting based on sun elevation. Converts kelvin
+    to RGBW for strip lights.
+  fields:
+    override_mode:
+      description: 'Optional: Force a specific mode (sleep, bedtime, theater)'
+      example: theater
+    target_lights:
+      description: Light entities, areas, or groups to control
+      example: light.living_room_lamp
+    transition:
+      description: 'Transition time in seconds (default: 2)'
+      example: 5
+  mode: parallel
+  sequence:
+  - delay:
+      seconds: 1
