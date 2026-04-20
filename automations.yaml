@@ -308,13 +308,14 @@
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
   description: Dims living room lights when video starts playing on Apple TV. Respects
-    eating mode for back lights. Turns off cubby light.
+    eating mode for back lights. Turns off cubby light. When Color Mode is active,
+    skips the area-wide adaptive override so album art colors are preserved.
   triggers:
   - device_id: 208694a8d5e7948b810321bfff0d2235
     domain: media_player
     entity_id: b451ca0d99fa64340608813604902977
     type: playing
-    trigger: device
+    platform: device
   conditions:
   - condition: device
     type: is_on
@@ -333,6 +334,9 @@
       - condition: sun
         after: sunset
         after_offset: 00:30:00
+    - condition: state
+      entity_id: input_boolean.adaptive_lighting_paused
+      state: 'off'
     then:
     - action: script.apply_adaptive_lighting
       data:
