@@ -432,13 +432,6 @@ nintendo_toy_off:
   - action: script.nintendo_toy_set_mode
     data:
       mode: 'Off'
-nintendo_toy_alternating:
-  alias: Nintendo Toy Alternating
-  description: ''
-  sequence:
-  - action: script.nintendo_toy_set_mode
-    data:
-      mode: Alternating
 nintendo_toy_alternating_all:
   alias: Nintendo Toy All
   description: ''
