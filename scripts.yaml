@@ -384,47 +384,6 @@ lights_bedtime:
       effect: Solid
   alias: Lights Bedtime
   description: ''
-nintendo_toy_set_mode:
-  alias: Nintendo Toy Set Mode
-  description: Sets the Nintendo toy to a target mode by cycling until confirmed.
-    Queues requests so they run one at a time. Stops cleanly if device becomes unavailable.
-  mode: queued
-  max: 10
-  fields:
-    mode:
-      description: Target mode (Off, All, Alternating, Microphone)
-      required: true
-      example: 'Off'
-  sequence:
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.nintendo_toy_processing
-  - repeat:
-      while:
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state: '{{ mode }}'
-      - condition: not
-        conditions:
-        - condition: state
-          entity_id: sensor.nintendo_toy_toy_mode
-          state: unavailable
-      sequence:
-      - action: button.press
-        metadata: {}
-        data: {}
-        target:
-          entity_id: button.nintendo_toy_cycle_mode
-      - delay:
-          hours: 0
-          minutes: 0
-          seconds: 2
-          milliseconds: 0
-  - action: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.nintendo_toy_processing
 nintendo_toy_off:
   alias: Nintendo Toy Off
   description: ''
