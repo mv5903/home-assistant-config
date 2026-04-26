@@ -31,12 +31,12 @@ const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html"
  *
  * Author: eyalgal
  * License: MIT
- * Version: 2.2.1
+ * Version: 2.2.4
  * For more information, visit: https://github.com/eyalgal/simple-timer-card
  */
 
 
-const cardVersion="2.2.1";
+const cardVersion="2.2.4";
 
 const DAY_IN_MS = 86400000;
 const YEAR_IN_MS = 365 * DAY_IN_MS;
@@ -96,12 +96,12 @@ const TRANSLATIONS = {
     paused: "Paused",
     times_up: "Time's up!",
     timer: "Timer",
-    hour_ago: "hour ago",
-    hours_ago: "hours ago",
-    minute_ago: "minute ago",
-    minutes_ago: "minutes ago",
-    second_ago: "second ago",
-    seconds_ago: "seconds ago",
+    hour_ago: "{n} hour ago",
+    hours_ago: "{n} hours ago",
+    minute_ago: "{n} minute ago",
+    minutes_ago: "{n} minutes ago",
+    second_ago: "{n} second ago",
+    seconds_ago: "{n} seconds ago",
     h: "h", m: "m", s: "s", d: "d",
     w_short: "w", mo_short: "mo", y_short: "y",
     day: "day", days: "days", week: "week", weeks: "weeks",
@@ -125,12 +125,12 @@ const TRANSLATIONS = {
     paused: "Pausiert",
     times_up: "Zeit abgelaufen!",
     timer: "Timer",
-    hour_ago: "Stunde her",
-    hours_ago: "Stunden her",
-    minute_ago: "Minute her",
-    minutes_ago: "Minuten her",
-    second_ago: "Sekunde her",
-    seconds_ago: "Sekunden her",
+    hour_ago: "vor {n} Stunde",
+    hours_ago: "vor {n} Stunden",
+    minute_ago: "vor {n} Minute",
+    minutes_ago: "vor {n} Minuten",
+    second_ago: "vor {n} Sekunde",
+    seconds_ago: "vor {n} Sekunden",
     h: "h", m: "m", s: "s", d: "T",
     w_short: "W", mo_short: "Mo", y_short: "J",
     day: "Tag", days: "Tage", week: "Woche", weeks: "Wochen",
@@ -154,12 +154,12 @@ const TRANSLATIONS = {
     paused: "Pausado",
     times_up: "¡Se acabó el tiempo!",
     timer: "Temporizador",
-    hour_ago: "hora atrás",
-    hours_ago: "horas atrás",
-    minute_ago: "minuto atrás",
-    minutes_ago: "minutos atrás",
-    second_ago: "segundo atrás",
-    seconds_ago: "segundos atrás",
+    hour_ago: "hace {n} hora",
+    hours_ago: "hace {n} horas",
+    minute_ago: "hace {n} minuto",
+    minutes_ago: "hace {n} minutos",
+    second_ago: "hace {n} segundo",
+    seconds_ago: "hace {n} segundos",
     h: "h", m: "m", s: "s", d: "d",
     w_short: "sem", mo_short: "mes", y_short: "a",
     day: "día", days: "días", week: "semana", weeks: "semanas",
@@ -183,18 +183,76 @@ const TRANSLATIONS = {
     paused: "På pause",
     times_up: "Tid udløbet!",
     timer: "Timer",
-    hour_ago: "time siden",
-    hours_ago: "timer siden",
-    minute_ago: "minut siden",
-    minutes_ago: "minutter siden",
-    second_ago: "sekund siden",
-    seconds_ago: "sekunder siden",
+    hour_ago: "for {n} time siden",
+    hours_ago: "for {n} timer siden",
+    minute_ago: "for {n} minut siden",
+    minutes_ago: "for {n} minutter siden",
+    second_ago: "for {n} sekund siden",
+    seconds_ago: "for {n} sekunder siden",
     h: "t", m: "m", s: "s", d: "d",
     w_short: "u", mo_short: "må", y_short: "å",
     day: "dag", days: "dage", week: "uge", weeks: "uger",
     month: "måned", months: "måneder", year: "år", years: "år",
     hour: "time", hours: "timer", minute: "minut", minutes: "minutter",
     second: "sekund", seconds: "sekunder",
+  },
+  it: {
+    no_timers: "Nessun timer",
+    click_to_start: "Clicca per avviare",
+    no_active_timers: "Nessun timer attivo",
+    active_timers: "Timer attivi",
+    add: "Aggiungi",
+    custom: "Personalizzato",
+    cancel: "Annulla",
+    save: "Salva",
+    start: "Avvia",
+    snooze: "Rimanda",
+    dismiss: "Ignora",
+    ready: "Pronto",
+    paused: "In pausa",
+    times_up: "Tempo finito!",
+    timer: "Timer",
+    hour_ago: "{n} ora fa",
+    hours_ago: "{n} ore fa",
+    minute_ago: "{n} minuto fa",
+    minutes_ago: "{n} minuti fa",
+    second_ago: "{n} secondo fa",
+    seconds_ago: "{n} secondi fa",
+    h: "h", m: "m", s: "s", d: "g",
+    w_short: "set", mo_short: "me", y_short: "a",
+    day: "giorno", days: "giorni", week: "settimana", weeks: "settimane",
+    month: "mese", months: "mesi", year: "anno", years: "anni",
+    hour: "ora", hours: "ore", minute: "minuto", minutes: "minuti",
+    second: "secondo", seconds: "secondi",
+  },
+  fr: {
+    no_timers: "Aucun minuteur",
+    click_to_start: "Cliquez pour démarrer",
+    no_active_timers: "Aucun minuteur actif",
+    active_timers: "Minuteurs actifs",
+    add: "Ajouter",
+    custom: "Personnalisé",
+    cancel: "Annuler",
+    save: "Sauvegarder",
+    start: "Démarrer",
+    snooze: "Répéter",
+    dismiss: "Rejeter",
+    ready: "Prêt",
+    paused: "En pause",
+    times_up: "Le temps est écoulé !",
+    timer: "Minuteur",
+    hour_ago: "il y a {n} heure",
+    hours_ago: "il y a {n} heures",
+    minute_ago: "il y a {n} minute",
+    minutes_ago: "il y a {n} minutes",
+    second_ago: "il y a {n} seconde",
+    seconds_ago: "il y a {n} secondes",
+    h: "h", m: "m", s: "s", d: "j",
+    w_short: "sem", mo_short: "mo", y_short: "a",
+    day: "jour", days: "jours", week: "semaine", weeks: "semaines",
+    month: "mois", months: "mois", year: "année", years: "années",
+    hour: "heure", hours: "heures", minute: "minute", minutes: "minutes",
+    second: "seconde", seconds: "secondes",
   }
 };
 
@@ -230,7 +288,8 @@ class SimpleTimerCard extends i {
   }
 
   _localize(key) {
-    const lang = this._config?.language || "en";
+    const raw = this._config?.language || this.hass?.language || "en";
+    const lang = String(raw).toLowerCase().split(/[-_]/)[0];
     return TRANSLATIONS[lang]?.[key] || TRANSLATIONS["en"][key] || key;
   }
 
@@ -402,7 +461,6 @@ class SimpleTimerCard extends i {
     this._config = {
       layout,
       style,
-      language: "en",
       snooze_duration: 5,
       timer_presets: [5, 15, 30],
       timer_name_presets: [],
@@ -2194,9 +2252,10 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
-    if (hours > 0) return hours === 1 ? `1 ${this._localize("hour_ago")}` : `${hours} ${this._localize("hours_ago")}`;
-    if (minutes > 0) return minutes === 1 ? `1 ${this._localize("minute_ago")}` : `${minutes} ${this._localize("minutes_ago")}`;
-    return seconds === 1 ? `1 ${this._localize("second_ago")}` : `${seconds} ${this._localize("seconds_ago")}`;
+    const fmt = (key, n) => this._localize(key).replace("{n}", n);
+    if (hours > 0) return fmt(hours === 1 ? "hour_ago" : "hours_ago", hours);
+    if (minutes > 0) return fmt(minutes === 1 ? "minute_ago" : "minutes_ago", minutes);
+    return fmt(seconds === 1 ? "second_ago" : "seconds_ago", seconds);
   }
 
   _formatClock(totalSeconds, includeDays = false) {
@@ -2594,6 +2653,21 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
             icon: stateObj.attributes.icon || ""
         });
     } catch(e) {
+        if (this.hass.services?.timer?.set_duration) {
+            try {
+                await this.hass.callService("timer", "set_duration", {
+                    entity_id: t.source_entity,
+                    duration: durationStr
+                });
+                return;
+            } catch(e2) {
+                console.error("Error updating timer via set_duration", e2);
+            }
+        }
+        if (e.code === "not_found") {
+            console.warn(`Timer ${t.source_entity} is not registry-managed (likely YAML-defined). Config update skipped.`);
+            return;
+        }
         console.error("Error updating timer", e);
         this._toast(`Error: ${e.message}`);
         throw e;
@@ -3542,8 +3616,13 @@ class SimpleTimerCardEditor extends i {
     const key = target.configValue ?? target.dataset?.configValue ?? target.getAttribute?.("configValue");
     if (!key) return;
     ev.stopPropagation();
-    const value = ev.detail?.value !== undefined ? ev.detail.value : target.value;
+    // HA 2026.2+ ha-select fires `selected` with ev.detail.value but does NOT update
+    // its own .value property first. Older ha-select (mwc-select based) only sets target.value.
+    // Read detail.value first, fall back to target.value. Matches HA's own ha-selector-select.
+    let value = ev?.detail?.value;
+    if (value === undefined || value === null) value = target.value;
     if (typeof value !== "string" || value === "") return;
+    if (value === this._config[key]) return;
     if (key === "style") {
       const styleValue = value.toLowerCase();
       const validStyles = ["fill_vertical", "fill_horizontal", "bar_vertical", "bar_horizontal", "circle"];
@@ -3573,9 +3652,14 @@ class SimpleTimerCardEditor extends i {
     if (!key) return;
     let value;
     if (target.checked !== undefined) value = target.checked;
-    else if (e.detail && e.detail.value !== undefined) value = e.detail.value;
-    else if (target.value !== undefined) value = target.value;
-    else return;
+    else {
+      // HA 2026.2+ ha-select fires `selected` event with ev.detail.value; older mwc-select
+      // only sets target.value. Try detail first, then fall back to target.value.
+      if (e && e.detail && e.detail.value !== undefined && e.detail.value !== null) value = e.detail.value;
+      if (value === undefined && typeof target.selected?.value === "string" && target.selected.value !== "") value = target.selected.value;
+      if (value === undefined && target.value !== undefined) value = target.value;
+      if (value === undefined) return;
+    }
     const newConfig = { ...this._config };
     const entities = [...(newConfig.entities || [])];
     let entityConf;
@@ -3696,7 +3780,6 @@ _pinnedTimerValueChanged(ev, index) {
       default_timer_color: "var(--primary-color)",
       default_timer_entity: null,
       keep_timer_visible_when_idle: false,
-      language: "en",
       milestone_unit: "auto",
       milestone_pulse: true,
     };
@@ -3861,12 +3944,12 @@ _pinnedTimerValueChanged(ev, index) {
       <ha-textfield label="Title (Optional)" .value=${this._config.title || ""} .configValue=${"title"} @input=${this._valueChanged}></ha-textfield>
 
       <div class="side-by-side">
-        <ha-select label="Layout" .value=${this._config.layout || "horizontal"} .configValue=${"layout"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Layout" .value=${this._config.layout || "horizontal"} .configValue=${"layout"} .options=${[{value:"horizontal",label:"Horizontal"},{value:"vertical",label:"Vertical"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
           <mwc-list-item value="vertical">Vertical</mwc-list-item>
         </ha-select>
 
-        <ha-select label="Style" .value=${this._getDisplayStyleValue()} .configValue=${"style"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Style" .value=${this._getDisplayStyleValue()} .configValue=${"style"} .options=${[{value:"fill_vertical",label:"Background fill (vertical)"},{value:"fill_horizontal",label:"Background fill (horizontal)"},{value:"bar_vertical",label:"Progress bar (vertical)"},{value:"bar_horizontal",label:"Progress bar (horizontal)"},{value:"circle",label:"Circle"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="fill_vertical">Background fill (vertical)</mwc-list-item>
           <mwc-list-item value="fill_horizontal">Background fill (horizontal)</mwc-list-item>
           <mwc-list-item value="bar_vertical">Progress bar (vertical)</mwc-list-item>
@@ -3875,12 +3958,12 @@ _pinnedTimerValueChanged(ev, index) {
         </ha-select>
       </div>
       <div class="side-by-side">
-        <ha-select label="Sort by" .value=${this._config.sort_by || "time_left"} .configValue=${"sort_by"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Sort by" .value=${this._config.sort_by || "time_left"} .configValue=${"sort_by"} .options=${[{value:"time_left",label:"Time left"},{value:"name",label:"Name"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="time_left">Time left</mwc-list-item>
           <mwc-list-item value="name">Name</mwc-list-item>
         </ha-select>
 
-        <ha-select label="Sort order" .value=${this._config.sort_order || "asc"} .configValue=${"sort_order"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Sort order" .value=${this._config.sort_order || "asc"} .configValue=${"sort_order"} .options=${[{value:"asc",label:"Ascending"},{value:"desc",label:"Descending"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="asc">Ascending</mwc-list-item>
           <mwc-list-item value="desc">Descending</mwc-list-item>
         </ha-select>
@@ -3888,23 +3971,25 @@ _pinnedTimerValueChanged(ev, index) {
 
 
       <div class="side-by-side">
-        <ha-select label="Progress Mode" .value=${this._config.progress_mode || "drain"} .configValue=${"progress_mode"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Progress Mode" .value=${this._config.progress_mode || "drain"} .configValue=${"progress_mode"} .options=${[{value:"drain",label:"Drain"},{value:"fill",label:"Fill"},{value:"milestones",label:"Milestones (bar styles only)"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="drain">Drain</mwc-list-item>
           <mwc-list-item value="fill">Fill</mwc-list-item>
           <mwc-list-item value="milestones">Milestones (bar styles only)</mwc-list-item>
         </ha-select>
 
-        <ha-select label="Language" .value=${this._config.language || "en"} .configValue=${"language"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="Language" .value=${(String(this._config.language || this.hass?.language || "en").toLowerCase().split(/[-_]/)[0])} .configValue=${"language"} .options=${[{value:"en",label:"English"},{value:"de",label:"Deutsch"},{value:"es",label:"Español"},{value:"da",label:"Dansk"},{value:"it",label:"Italiano"},{value:"fr",label:"Français"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="en">English</mwc-list-item>
           <mwc-list-item value="de">Deutsch</mwc-list-item>
           <mwc-list-item value="es">Español</mwc-list-item>
-		  <mwc-list-item value="da">Dansk</mwc-list-item>
+		      <mwc-list-item value="da">Dansk</mwc-list-item>
+		      <mwc-list-item value="it">Italiano</mwc-list-item>
+          <mwc-list-item value="fr">Français</mwc-list-item>
         </ha-select>
       </div>
     `;
 
     const timeContent = b`
-      <ha-select label="Time format" .value=${this._config.time_format || "hms"} .configValue=${"time_format"} @selected=${this._selectChanged} @closed=${(e)=>{e.stopPropagation();this._selectChanged(e); }}>
+      <ha-select label="Time format" .value=${this._config.time_format || "hms"} .configValue=${"time_format"} .options=${[{value:"hms",label:"HH:MM:SS"},{value:"hm",label:"HH:MM"},{value:"ss",label:"Seconds only"},{value:"dhms",label:"DD:HH:MM:SS"},{value:"human_compact",label:"Unit style, compact"},{value:"human_short",label:"Unit style, short labels"},{value:"human_natural",label:"Unit style, natural language"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
         <mwc-list-item value="hms">HH:MM:SS</mwc-list-item>
         <mwc-list-item value="hm">HH:MM</mwc-list-item>
         <mwc-list-item value="ss">Seconds only</mwc-list-item>
@@ -3919,7 +4004,7 @@ _pinnedTimerValueChanged(ev, index) {
       ${showMilestonesSection ? b`
         <div class="subsection-title">Progress milestones</div>
         <div class="side-by-side" style="align-items:flex-start;">
-          <ha-select label="Milestone unit" .value=${this._config.milestone_unit || "auto"} .configValue=${"milestone_unit"} @selected=${this._selectChanged} @closed=${(e)=>{e.stopPropagation();this._selectChanged(e); }}>
+          <ha-select label="Milestone unit" .value=${this._config.milestone_unit || "auto"} .configValue=${"milestone_unit"} .options=${[{value:"auto",label:"Auto (default)"},{value:"none",label:"None"},{value:"years",label:"Years"},{value:"months",label:"Months"},{value:"weeks",label:"Weeks"},{value:"days",label:"Days"},{value:"hours",label:"Hours"},{value:"minutes",label:"Minutes"},{value:"seconds",label:"Seconds"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
             <mwc-list-item value="auto">Auto (default)</mwc-list-item>
             <mwc-list-item value="none">None</mwc-list-item>
             <mwc-list-item value="years">Years</mwc-list-item>
@@ -3948,7 +4033,7 @@ _pinnedTimerValueChanged(ev, index) {
       </div>
 
       <div class="side-by-side">
-        <ha-select label="When timer reaches 0" .value=${this._config.expire_action || "keep"} .configValue=${"expire_action"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+        <ha-select label="When timer reaches 0" .value=${this._config.expire_action || "keep"} .configValue=${"expire_action"} .options=${[{value:"keep",label:"Keep visible"},{value:"dismiss",label:"Dismiss"},{value:"remove",label:"Remove"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="keep">Keep visible</mwc-list-item>
           <mwc-list-item value="dismiss">Dismiss</mwc-list-item>
           <mwc-list-item value="remove">Remove</mwc-list-item>
@@ -3990,7 +4075,7 @@ _pinnedTimerValueChanged(ev, index) {
     </button>
   </div>
 
-  <ha-select label="Pinned timers position" style="margin-bottom: 12px;" .value=${this._config.pinned_timers_position || "inline"} .configValue=${"pinned_timers_position"} @selected=${this._selectChanged} @closed=${(e) => { e.stopPropagation(); this._selectChanged(e); }}>
+  <ha-select label="Pinned timers position" style="margin-bottom: 12px;" .value=${this._config.pinned_timers_position || "inline"} .configValue=${"pinned_timers_position"} .options=${[{value:"inline",label:"Mixed with timers"},{value:"top",label:"Top"},{value:"bottom",label:"Bottom"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
     <mwc-list-item value="inline">Mixed with timers</mwc-list-item>
     <mwc-list-item value="top">Top</mwc-list-item>
     <mwc-list-item value="bottom">Bottom</mwc-list-item>
@@ -4171,8 +4256,8 @@ const storageContent = b`
                 <div class="entity-options">
                   <div class="side-by-side" style="align-items:flex-start;">
                     <div style="flex:1;">
-                      <ha-select label="Mode" .value=${conf.mode || "auto"} .configValue=${"mode"}
-                        @selected=${(e) => { e.stopPropagation(); this._entityValueChanged(e, index); }} @closed=${(e) => { e.stopPropagation(); this._entityValueChanged(e, index); }}>
+                      <ha-select label="Mode" .value=${conf.mode || "auto"} .configValue=${"mode"} .options=${[{value:"auto",label:"Auto (Default)"},{value:"alexa",label:"Alexa"},{value:"timer",label:"Timer"},{value:"voice_pe",label:"Voice PE"},{value:"helper",label:"Helper (input_text/text)"},{value:"timestamp",label:"Timestamp sensor"},{value:"minutes_attr",label:"Minutes attribute"}]}
+                        @selected=${(e) => { e.stopPropagation(); this._entityValueChanged(e, index); }} @closed=${(e) => e.stopPropagation()}>
                         <mwc-list-item value="auto">Auto (Default)</mwc-list-item>
                         <mwc-list-item value="alexa">Alexa</mwc-list-item>
                         <mwc-list-item value="timer">Timer</mwc-list-item>
