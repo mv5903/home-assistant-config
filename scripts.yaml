@@ -420,7 +420,7 @@ nintendo_toy_set_mode:
       - delay:
           hours: 0
           minutes: 0
-          seconds: 1
+          seconds: 2
           milliseconds: 0
   - action: input_boolean.turn_off
     target:
