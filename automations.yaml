@@ -106,9 +106,12 @@
           - kitchen
           - living_room
         transition: 2
-  - action: script.turn_on
+  - action: select.select_option
+    metadata: {}
     target:
-      entity_id: script.nintendo_toy_alternating
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: All
   mode: restart
 - id: '1763575398211'
   alias: 'Lighting: Entrance Presence'
@@ -259,9 +262,12 @@
       - bathroom
       - kitchen
       entity_id: light.cubby
-  - action: script.nintendo_toy_off
+  - action: select.select_option
     metadata: {}
-    data: {}
+    target:
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: 'Off'
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
@@ -2010,6 +2016,12 @@
         - e9afd45f3065823eabf2ebdab37800e9
         - 1bb1b0cdbaa14208e037a5638b9d3210
       transition: 5
+  - action: select.select_option
+    metadata: {}
+    target:
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: All
   mode: single
 - id: '1758584148000'
   alias: 'Lighting: Bathroom Presence'
@@ -2219,7 +2231,7 @@
   triggers:
   - entity_id: input_boolean.adaptive_lighting_paused
     to: 'on'
-    platform: state
+    trigger: state
   conditions: []
   actions:
   - action: automation.trigger
@@ -2227,9 +2239,12 @@
       skip_condition: true
     target:
       entity_id: automation.lighting_random_rgb_colors
-  - action: script.nintendo_toy_set_mode
+  - action: select.select_option
+    metadata: {}
+    target:
+      entity_id: select.nintendo_toy_mode_selector
     data:
-      mode: Alternating
+      option: Alternating
   mode: single
 - id: '1776706100250'
   alias: 'System: Nintendo Toy Disconnected'
