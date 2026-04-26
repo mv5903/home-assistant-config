@@ -34,8 +34,12 @@
         - 1bb1b0cdbaa14208e037a5638b9d3210
       override_mode: bedtime
       transition: 10
-  - action: script.nintendo_toy_off
-    data: {}
+  - action: select.select_option
+    metadata: {}
+    target:
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: 'Off'
   mode: single
 - id: '1752541408687'
   alias: 'Lighting: Wake Up Mode'

@@ -384,27 +384,6 @@ lights_bedtime:
       effect: Solid
   alias: Lights Bedtime
   description: ''
-nintendo_toy_off:
-  alias: Nintendo Toy Off
-  description: ''
-  sequence:
-  - action: script.nintendo_toy_set_mode
-    data:
-      mode: 'Off'
-nintendo_toy_alternating_all:
-  alias: Nintendo Toy All
-  description: ''
-  sequence:
-  - action: script.nintendo_toy_set_mode
-    data:
-      mode: All
-nintendo_toy_alternating_microphone:
-  alias: Nintendo Toy Microphone
-  description: ''
-  sequence:
-  - action: script.nintendo_toy_set_mode
-    data:
-      mode: Microphone
 apply_adaptive_lighting:
   alias: Apply Adaptive Lighting
   description: Continuous adaptive lighting based on sun elevation. Converts kelvin
@@ -447,7 +426,10 @@ apply_adaptive_lighting:
         %}{% set ns.lights = ns.lights + [entity] %}{% endfor %}{% endfor %}{% endif
         %}{{ ns.lights | unique | list }}'
   - choose:
-    - conditions: '{{ override_mode is defined and override_mode == "sleep" }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ override_mode is defined and override_mode == "sleep"
+          }}'
       sequence:
       - action: light.turn_on
         data:
@@ -459,10 +441,10 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
-      - action: script.nintendo_toy_set_mode
-        data:
-          mode: 'Off'
-    - conditions: '{{ override_mode is defined and override_mode == "bedtime" }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ override_mode is defined and override_mode == "bedtime"
+          }}'
       sequence:
       - action: light.turn_on
         data:
@@ -474,10 +456,10 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
-      - action: script.nintendo_toy_set_mode
-        data:
-          mode: Alternating
-    - conditions: '{{ override_mode is defined and override_mode == "theater" }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ override_mode is defined and override_mode == "theater"
+          }}'
       sequence:
       - action: light.turn_on
         data:
@@ -486,10 +468,9 @@ apply_adaptive_lighting:
           effect: Solid
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
-      - action: script.nintendo_toy_set_mode
-        data:
-          mode: All
-    - conditions: '{{ is_sleep_mode }}'
+    - conditions:
+      - condition: template
+        value_template: '{{ is_sleep_mode }}'
       sequence:
       - action: light.turn_on
         data:
@@ -501,9 +482,6 @@ apply_adaptive_lighting:
           effect: Candle Multi
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
-      - action: script.nintendo_toy_set_mode
-        data:
-          mode: 'Off'
     default:
     - variables:
         color_temp_lights: '{% set ns = namespace(lights=[]) %}{% for light in all_target_lights
@@ -561,6 +539,3 @@ apply_adaptive_lighting:
           transition: '{{ trans }}'
         target:
           entity_id: '{{ rgbw_lights }}'
-    - action: script.nintendo_toy_set_mode
-      data:
-        mode: All
