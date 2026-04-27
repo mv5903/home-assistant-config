@@ -303,7 +303,8 @@
       - target:
           entity_id: '{{ repeat.item }}'
         data:
-          effect: "{{\n [\n   \"Lake\",\n   \"Plasma\"\n ]\n| random }}"
+          effect: "{{\n [\n   \"Lake\",\n   \"Plasma\",\n   \"Noise 2\"\n ]\n| random
+            }}"
           rgb_color: "{{ [\n  [255,100,0],[255,100,0],[255,100,0],\n  [180,0,255],[180,0,255],\n
             \ [0,180,100],\n  [255,30,60],\n  [80,0,120]\n] | random }}"
         action: light.turn_on
