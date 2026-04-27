@@ -287,6 +287,7 @@
   - action: input_boolean.turn_on
     target:
       entity_id: input_boolean.adaptive_lighting_paused
+    data: {}
   - variables:
       theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
         and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
@@ -302,8 +303,8 @@
       - target:
           entity_id: '{{ repeat.item }}'
         data:
-          rgb_color: '{{ [[255,0,0],[0,255,0],[0,0,255],[255,165,0],[255,0,255],[0,255,255],[255,255,0]]
-            | random }}'
+          rgb_color: '{{ [[255,0,110],[150,0,255],[0,255,180],[180,255,0]] | random
+            }}'
         action: light.turn_on
   - if:
     - condition: template
@@ -2263,18 +2264,4 @@
   - action: input_boolean.turn_off
     target:
       entity_id: input_boolean.nintendo_toy_processing
-  mode: single
-- id: '1776706102098'
-  alias: 'System: Nintendo Toy Reconnected'
-  description: When the ESP toy reconnects after being unavailable, sets mode to Off
-    as a safe default.
-  triggers:
-  - platform: state
-    entity_id: sensor.nintendo_toy_toy_mode
-    from: unavailable
-  conditions: []
-  actions:
-  - action: script.nintendo_toy_set_mode
-    data:
-      mode: 'Off'
   mode: single
