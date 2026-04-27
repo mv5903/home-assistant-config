@@ -303,6 +303,7 @@
       - target:
           entity_id: '{{ repeat.item }}'
         data:
+          effect: "{{\n [\n   \"Lake\",\n   \"Plasma\"\n ]\n| random }}"
           rgb_color: "{{ [\n  [255,100,0],[255,100,0],[255,100,0],\n  [180,0,255],[180,0,255],\n
             \ [0,180,100],\n  [255,30,60],\n  [80,0,120]\n] | random }}"
         action: light.turn_on
@@ -1055,15 +1056,15 @@
     Uses input_select helpers for per-light effect selection. Only sends commands
     if effect needs to change.
   triggers:
-  - platform: state
-    entity_id:
+  - entity_id:
     - media_player.matthews_bedroom_2
     for:
       hours: 0
       minutes: 0
       seconds: 5
-  - platform: time_pattern
-    seconds: /30
+    trigger: state
+  - seconds: /30
+    trigger: time_pattern
   conditions:
   - condition: not
     conditions:
@@ -1156,6 +1157,10 @@
           entity_id: light.living_room_vertical_light_strip
           state:
           - 'on'
+        - condition: state
+          entity_id: input_boolean.adaptive_lighting_paused
+          state:
+          - 'off'
       then:
       - action: light.turn_on
         data:
