@@ -194,6 +194,7 @@ homekit:
         - camera.main
     entity_config:
       camera.main:
+        stream_source: "rtsp://127.0.0.1:8554/main_1"
         video_codec: copy
         support_audio: false
 
@@ -205,6 +206,7 @@ homekit:
         - camera.bedroom
     entity_config:
       camera.bedroom:
+        stream_source: "rtsp://127.0.0.1:8554/bedroom"
         video_codec: copy
         support_audio: false
 
