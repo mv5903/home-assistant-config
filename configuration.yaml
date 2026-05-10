@@ -191,9 +191,9 @@ homekit:
     port: 21072
     filter:
       include_entities:
-        - camera.main_homekit
+        - camera.main_2
     entity_config:
-      camera.main_homekit:
+      camera.main_2:
         video_codec: copy
         support_audio: false
 
@@ -202,9 +202,9 @@ homekit:
     port: 21073
     filter:
       include_entities:
-        - camera.bedroom_homekit
+        - camera.bedroom_2
     entity_config:
-      camera.bedroom_homekit:
+      camera.bedroom_2:
         video_codec: copy
         support_audio: false
 
