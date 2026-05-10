@@ -184,3 +184,28 @@ input_select:
       - heat_cool
       - off
     initial: cool
+
+homekit:
+  - name: "Main Camera"
+    mode: accessory
+    port: 21072
+    filter:
+      include_entities:
+        - camera.main_camera_main
+    entity_config:
+      camera.main_camera_main:
+        video_codec: copy
+        support_audio: false
+
+  - name: "Bedroom Camera"
+    mode: accessory
+    port: 21073
+    filter:
+      include_entities:
+        - camera.bedroom_camera
+    entity_config:
+      camera.bedroom_camera:
+        video_codec: copy
+        support_audio: false
+
+        
