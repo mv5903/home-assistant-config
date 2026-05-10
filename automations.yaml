@@ -953,8 +953,12 @@
     event: shutdown
   conditions: []
   actions:
-  - action: script.nintendo_toy_off
-    data: {}
+  - action: select.select_option
+    metadata: {}
+    target:
+      entity_id: select.nintendo_toy_mode_selector
+    data:
+      option: 'Off'
   mode: single
 - id: '1764825627873'
   alias: 'System: Nintendo Toy Button'
