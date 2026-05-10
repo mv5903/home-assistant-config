@@ -756,25 +756,6 @@
       title: Soldering Iron Timer Reset
       message: Timer reset. You have another 5 minutes.
   mode: single
-- id: '1764892233300'
-  alias: 'Safety: Soldering Iron Turn Off'
-  description: Handles Turn Off Now notification action for soldering iron
-  triggers:
-  - trigger: event
-    event_type: mobile_app_notification_action
-    event_data:
-      action: TURN_OFF_NOW
-  conditions: []
-  actions:
-  - action: switch.turn_off
-    data: {}
-    target:
-      entity_id: switch.tapo_smart_plug_2
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: Soldering Iron Off
-      message: Soldering iron turned off
-  mode: single
 - id: '1765080604283'
   alias: 'Safety: Soldering Pegboard Light'
   description: Shows red plasma effect on pegboard when soldering iron is on
@@ -959,19 +940,6 @@
       entity_id: select.nintendo_toy_mode_selector
     data:
       option: 'Off'
-  mode: single
-- id: '1764825627873'
-  alias: 'System: Nintendo Toy Button'
-  description: Turns off Nintendo toy when button helper is pressed
-  triggers:
-  - trigger: state
-    entity_id:
-    - input_button.turn_off_nintendo_toy_helper
-    to:
-  conditions: []
-  actions:
-  - action: script.nintendo_toy_off
-    data: {}
   mode: single
 - id: '1742846170666'
   alias: 'Notification: Jellyseerr'
