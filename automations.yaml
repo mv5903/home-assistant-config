@@ -2175,10 +2175,11 @@
     target:
       entity_id: input_boolean.nintendo_toy_processing
   mode: single
-- id: climate_sleep_fan_auto_off
-  alias: 'Climate: Sleep Fan Auto-Off'
-  description: 'Safety cutoff: if sleep focus never turns off, automatically stops
-    the apartment fan after 12 hours.'
+- id: climate_sleep_fan_keep_alive
+  alias: 'Climate: Sleep Fan Keep Alive'
+  description: Resets the Nest fan timer every 14 minutes during sleep mode. Necessary
+    because Nest's fan_mode 'on' via the SDM API only runs for 15 minutes by default
+    — there's no way to pass a longer duration through HA's climate service.
   triggers:
   - trigger: state
     entity_id:
@@ -2186,16 +2187,17 @@
     to: 'on'
   conditions: []
   actions:
-  - delay:
-      hours: 12
-  - if:
-    - condition: template
-      value_template: '{{ state_attr(''climate.living_room'', ''fan_mode'') == ''on''
-        }}'
-    then:
-    - action: climate.set_fan_mode
-      data:
-        fan_mode: 'off'
-      target:
-        entity_id: climate.living_room
+  - repeat:
+      while:
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'on'
+      sequence:
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: 'on'
+        target:
+          entity_id: climate.living_room
+      - delay:
+          minutes: 14
   mode: restart
