@@ -1,7 +1,8 @@
 id: '1752541263640'
 alias: 'Lighting: Sleep Mode'
 description: Activates sleep lighting when iPhone sleep focus turns on. Turns off
-  Color Mode first so RGB lights yield to the bedtime red sequence.
+  Color Mode first so RGB lights yield to the bedtime red sequence. Also turns on
+  thermostat fan and sets temperature to 68°F.
 triggers:
 - trigger: state
   entity_id:
@@ -40,5 +41,15 @@ actions:
     entity_id: select.nintendo_toy_mode_selector
   data:
     option: 'Off'
+- action: climate.set_fan_mode
+  data:
+    fan_mode: 'on'
+  target:
+    entity_id: climate.living_room
+- action: climate.set_temperature
+  data:
+    temperature: 68
+  target:
+    entity_id: climate.living_room
 mode: single
 enabled: true

@@ -99,5 +99,6 @@ automation_ids:
 - '1762485541183'
 - '1776659653318'
 - '1776706100250'
-exported_at: '2026-05-14T21:19:54.808487'
-total_count: 100
+- climate_sleep_fan_auto_off
+exported_at: '2026-05-14T21:38:04.161160'
+total_count: 101
