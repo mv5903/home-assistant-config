@@ -6,3 +6,11 @@ music_lights:
   - light.desk_light_strips
   - light.living_room_pegboard_light_strip
   name: Music Lights
+theater_lights:
+  entities:
+  - light.living_room_bookshelf_light_strips
+  - light.living_room_vertical_light_strip
+  - light.living_room_pegboard_light_strip
+  - light.living_room_tv_stand_light_strip
+  - light.living_room_lamp
+  name: Theater Lights

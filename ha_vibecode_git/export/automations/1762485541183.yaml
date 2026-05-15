@@ -12,7 +12,7 @@ triggers:
     seconds: 5
   id: presence_off
   platform: state
-- seconds: /1
+- seconds: /10
   id: time_check
   platform: time_pattern
 - type: occupied
@@ -21,9 +21,38 @@ triggers:
   domain: binary_sensor
   id: motion_detected
   platform: device
+- entity_id:
+  - binary_sensor.esphome_web_cb9878_presence
+  to: 'on'
+  id: presence_on
+  platform: state
 conditions: []
 actions:
 - choose:
+  - conditions:
+    - condition: trigger
+      id: presence_on
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state: 'off'
+    - condition: state
+      entity_id: light.bedroom_nightstand_light_strip
+      state: 'off'
+    sequence:
+    - if:
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state: 'off'
+      then:
+      - action: script.apply_adaptive_lighting
+        data:
+          target_lights:
+            area_id: matthews_bedroom
+          transition: 0
+      else:
+      - action: light.turn_on
+        target:
+          area_id: matthews_bedroom
   - conditions:
     - condition: trigger
       id: presence_off

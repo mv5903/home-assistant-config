@@ -4,15 +4,15 @@ description: Changes light effects based on Apple TV media type (music vs video)
   Uses input_select helpers for per-light effect selection. Only sends commands if
   effect needs to change.
 triggers:
-- platform: state
-  entity_id:
+- entity_id:
   - media_player.matthews_bedroom_2
   for:
     hours: 0
     minutes: 0
     seconds: 5
-- platform: time_pattern
-  seconds: /30
+  trigger: state
+- seconds: /30
+  trigger: time_pattern
 conditions:
 - condition: not
   conditions:
@@ -105,6 +105,10 @@ actions:
         entity_id: light.living_room_vertical_light_strip
         state:
         - 'on'
+      - condition: state
+        entity_id: input_boolean.adaptive_lighting_paused
+        state:
+        - 'off'
     then:
     - action: light.turn_on
       data:

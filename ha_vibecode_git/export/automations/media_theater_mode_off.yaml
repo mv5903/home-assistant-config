@@ -1,21 +1,22 @@
 id: media_theater_mode_off
 alias: 'Media: Theater Mode Off'
 description: Restores living room lights when video stops/pauses on Apple TV. If Color
-  Mode (RGB) was active, re-applies the last album art color. Otherwise restores adaptive
-  white lighting. Also restores cubby light.
+  Mode (RGB) was active, re-applies the last album art color to main lights and turns
+  back lights on to their last color. Otherwise restores all adaptive white lighting.
+  Also restores cubby light.
 triggers:
-- trigger: state
-  entity_id: media_player.matthews_bedroom_2
+- entity_id: media_player.matthews_bedroom_2
   from: playing
   to: paused
-- trigger: state
-  entity_id: media_player.matthews_bedroom_2
+  platform: state
+- entity_id: media_player.matthews_bedroom_2
   from: playing
   to: idle
-- trigger: state
-  entity_id: media_player.matthews_bedroom_2
+  platform: state
+- entity_id: media_player.matthews_bedroom_2
   from: playing
   to: standby
+  platform: state
 conditions:
 - condition: state
   entity_id: input_boolean.iphone_sleep_focus_mode
@@ -37,6 +38,15 @@ actions:
       data: {}
       target:
         entity_id: light.cubby
+    - action: light.turn_on
+      target:
+        entity_id:
+        - light.living_room_vertical_light_strip
+        - light.living_room_pegboard_light_strip
+        - light.desk_light_strips
+        - light.desk_lamp
+      data:
+        transition: 5
   - alias: White mode - restore adaptive lighting
     conditions:
     - condition: state

@@ -1,8 +1,9 @@
 id: adaptive_lighting_schedule
 alias: 'Lighting: Adaptive Sun Schedule'
 description: Updates light color temperature every 30 minutes based on sun elevation.
-  Skips during sleep mode, when Apple TV is playing or reloading (unavailable), or
-  when adaptive lighting is manually paused (e.g. after Random Scene).
+  Skips during sleep mode or when adaptive lighting is manually paused (e.g. after
+  Random Scene). When Apple TV is playing, skips theater lights since theater mode
+  already controls them.
 triggers:
 - minutes: /30
   platform: time_pattern
@@ -16,19 +17,15 @@ conditions:
 - condition: state
   entity_id: input_boolean.adaptive_lighting_paused
   state: 'off'
-- condition: not
-  conditions:
-  - condition: state
-    entity_id: media_player.matthews_bedroom_2
-    state:
-    - playing
-    - unavailable
 actions:
 - action: script.apply_adaptive_lighting
   data:
     target_lights:
-      entity_id: '{{ expand(''light.lights'') | selectattr(''state'', ''eq'', ''on'')
-        | map(attribute=''entity_id'') | list }}'
+      entity_id: '{% set all = expand(''light.lights'') | selectattr(''state'', ''eq'',
+        ''on'') | map(attribute=''entity_id'') | list %}{% if is_state(''media_player.matthews_bedroom_2'',
+        ''playing'') %}{% set theater = expand(''group.theater_lights'') | map(attribute=''entity_id'')
+        | list %}{{ all | reject(''in'', theater) | list }}{% else %}{{ all }}{% endif
+        %}'
     transition: 10
 mode: single
 enabled: true

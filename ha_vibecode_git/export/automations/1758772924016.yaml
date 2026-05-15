@@ -28,8 +28,11 @@ actions:
     - bathroom
     - kitchen
     entity_id: light.cubby
-- action: script.nintendo_toy_off
+- action: select.select_option
   metadata: {}
-  data: {}
+  target:
+    entity_id: select.nintendo_toy_mode_selector
+  data:
+    option: 'Off'
 mode: single
 enabled: true

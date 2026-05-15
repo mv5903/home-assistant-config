@@ -67,8 +67,11 @@ actions:
         - kitchen
         - living_room
       transition: 2
-- action: script.turn_on
+- action: select.select_option
+  metadata: {}
   target:
-    entity_id: script.nintendo_toy_alternating
+    entity_id: select.nintendo_toy_mode_selector
+  data:
+    option: All
 mode: restart
 enabled: true

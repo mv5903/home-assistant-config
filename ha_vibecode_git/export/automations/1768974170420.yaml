@@ -12,6 +12,7 @@ actions:
 - action: input_boolean.turn_on
   target:
     entity_id: input_boolean.adaptive_lighting_paused
+  data: {}
 - variables:
     theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
       and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
@@ -27,8 +28,10 @@ actions:
     - target:
         entity_id: '{{ repeat.item }}'
       data:
-        rgb_color: '{{ [[255,0,0],[0,255,0],[0,0,255],[255,165,0],[255,0,255],[0,255,255],[255,255,0]]
-          | random }}'
+        effect: "{{\n [\n   \"Lake\",\n   \"Plasma\",\n   \"Noise 2\"\n ]\n| random\
+          \ }}"
+        rgb_color: "{{ [\n  [255,100,0],[255,100,0],[255,100,0],\n  [180,0,255],[180,0,255],\n\
+          \  [0,180,100],\n  [255,30,60],\n  [80,0,120]\n] | random }}"
       action: light.turn_on
 - if:
   - condition: template
