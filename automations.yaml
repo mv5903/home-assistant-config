@@ -1959,9 +1959,6 @@
       entity_id: binary_sensor.bathroom_presence_presence
       state: 'on'
     then:
-    - condition: state
-      entity_id: light.bathroom_light_strip
-      state: 'off'
     - if:
       - condition: state
         entity_id: input_boolean.iphone_sleep_focus_mode
@@ -1974,6 +1971,9 @@
             entity_id: light.bathroom_light_strip
           transition: 0
       else:
+      - condition: state
+        entity_id: light.bathroom_light_strip
+        state: 'off'
       - if:
         - condition: state
           entity_id: input_boolean.adaptive_lighting_paused

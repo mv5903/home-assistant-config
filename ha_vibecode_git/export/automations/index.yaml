@@ -53,6 +53,7 @@ automation_ids:
 - lighting_manual_eating_mode_off_set_cancelled_flag
 - lighting_color_mode_activate
 - system_nintendo_toy_disconnected
+- climate_sleep_fan_keep_alive
 - '1752541263640'
 - '1752541408687'
 - '1763575398211'
@@ -99,6 +100,5 @@ automation_ids:
 - '1762485541183'
 - '1776659653318'
 - '1776706100250'
-- climate_sleep_fan_keep_alive
-exported_at: '2026-05-14T21:42:21.702897'
+exported_at: '2026-05-18T12:34:00.166332'
 total_count: 101
