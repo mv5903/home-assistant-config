@@ -3,26 +3,39 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$2=Symbol(),o$3=new WeakMap;let n$2 = class n{constructor(t,e,o){if(this._$cssResult$=true,o!==s$2)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$2&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=o$3.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&o$3.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new n$2("string"==typeof t?t:t+"",void 0,s$2),i$3=(t,...e)=>{const o=1===t.length?t[0]:e.reduce((e,s,o)=>e+(t=>{if(true===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[o+1],t[0]);return new n$2(o,t,s$2)},S$1=(s,o)=>{if(e$2)s.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of o){const o=document.createElement("style"),n=t$1.litNonce;void 0!==n&&o.setAttribute("nonce",n),o.textContent=e.cssText,s.appendChild(o);}},c$2=e$2?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$2=Symbol(),o$5=new WeakMap;let n$3 = class n{constructor(t,e,o){if(this._$cssResult$=true,o!==s$2)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$2&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=o$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&o$5.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new n$3("string"==typeof t?t:t+"",void 0,s$2),i$4=(t,...e)=>{const o=1===t.length?t[0]:e.reduce((e,s,o)=>e+(t=>{if(true===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[o+1],t[0]);return new n$3(o,t,s$2)},S$1=(s,o)=>{if(e$2)s.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of o){const o=document.createElement("style"),n=t$1.litNonce;void 0!==n&&o.setAttribute("nonce",n),o.textContent=e.cssText,s.appendChild(o);}},c$2=e$2?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const{is:i$2,defineProperty:e$1,getOwnPropertyDescriptor:h$1,getOwnPropertyNames:r$1,getOwnPropertySymbols:o$2,getPrototypeOf:n$1}=Object,a$1=globalThis,c$1=a$1.trustedTypes,l$1=c$1?c$1.emptyScript:"",p$1=a$1.reactiveElementPolyfillSupport,d$1=(t,s)=>t,u$1={toAttribute(t,s){switch(s){case Boolean:t=t?l$1:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,s){let i=t;switch(s){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t);}catch(t){i=null;}}return i}},f$1=(t,s)=>!i$2(t,s),b$1={attribute:true,type:String,converter:u$1,reflect:false,useDefault:false,hasChanged:f$1};Symbol.metadata??=Symbol("metadata"),a$1.litPropertyMetadata??=new WeakMap;let y$1 = class y extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t);}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,s=b$1){if(s.state&&(s.attribute=false),this._$Ei(),this.prototype.hasOwnProperty(t)&&((s=Object.create(s)).wrapped=true),this.elementProperties.set(t,s),!s.noAccessor){const i=Symbol(),h=this.getPropertyDescriptor(t,i,s);void 0!==h&&e$1(this.prototype,t,h);}}static getPropertyDescriptor(t,s,i){const{get:e,set:r}=h$1(this.prototype,t)??{get(){return this[s]},set(t){this[s]=t;}};return {get:e,set(s){const h=e?.call(this);r?.call(this,s),this.requestUpdate(t,h,i);},configurable:true,enumerable:true}}static getPropertyOptions(t){return this.elementProperties.get(t)??b$1}static _$Ei(){if(this.hasOwnProperty(d$1("elementProperties")))return;const t=n$1(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties);}static finalize(){if(this.hasOwnProperty(d$1("finalized")))return;if(this.finalized=true,this._$Ei(),this.hasOwnProperty(d$1("properties"))){const t=this.properties,s=[...r$1(t),...o$2(t)];for(const i of s)this.createProperty(i,t[i]);}const t=this[Symbol.metadata];if(null!==t){const s=litPropertyMetadata.get(t);if(void 0!==s)for(const[t,i]of s)this.elementProperties.set(t,i);}this._$Eh=new Map;for(const[t,s]of this.elementProperties){const i=this._$Eu(t,s);void 0!==i&&this._$Eh.set(i,t);}this.elementStyles=this.finalizeStyles(this.styles);}static finalizeStyles(s){const i=[];if(Array.isArray(s)){const e=new Set(s.flat(1/0).reverse());for(const s of e)i.unshift(c$2(s));}else void 0!==s&&i.push(c$2(s));return i}static _$Eu(t,s){const i=s.attribute;return  false===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=false,this.hasUpdated=false,this._$Em=null,this._$Ev();}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this));}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.();}removeController(t){this._$EO?.delete(t);}_$E_(){const t=new Map,s=this.constructor.elementProperties;for(const i of s.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t);}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return S$1(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(true),this._$EO?.forEach(t=>t.hostConnected?.());}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.());}attributeChangedCallback(t,s,i){this._$AK(t,i);}_$ET(t,s){const i=this.constructor.elementProperties.get(t),e=this.constructor._$Eu(t,i);if(void 0!==e&&true===i.reflect){const h=(void 0!==i.converter?.toAttribute?i.converter:u$1).toAttribute(s,i.type);this._$Em=t,null==h?this.removeAttribute(e):this.setAttribute(e,h),this._$Em=null;}}_$AK(t,s){const i=this.constructor,e=i._$Eh.get(t);if(void 0!==e&&this._$Em!==e){const t=i.getPropertyOptions(e),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:u$1;this._$Em=e;const r=h.fromAttribute(s,t.type);this[e]=r??this._$Ej?.get(e)??r,this._$Em=null;}}requestUpdate(t,s,i,e=false,h){if(void 0!==t){const r=this.constructor;if(false===e&&(h=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??f$1)(h,s)||i.useDefault&&i.reflect&&h===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,s,i);} false===this.isUpdatePending&&(this._$ES=this._$EP());}C(t,s,{useDefault:i,reflect:e,wrapped:h},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??s??this[t]),true!==h||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(s=void 0),this._$AL.set(t,s)),true===e&&this._$Em!==t&&(this._$Eq??=new Set).add(t));}async _$EP(){this.isUpdatePending=true;try{await this._$ES;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,s]of this._$Ep)this[t]=s;this._$Ep=void 0;}const t=this.constructor.elementProperties;if(t.size>0)for(const[s,i]of t){const{wrapped:t}=i,e=this[s];true!==t||this._$AL.has(s)||void 0===e||this.C(s,void 0,i,e);}}let t=false;const s=this._$AL;try{t=this.shouldUpdate(s),t?(this.willUpdate(s),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(s)):this._$EM();}catch(s){throw t=false,this._$EM(),s}t&&this._$AE(s);}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=true,this.firstUpdated(t)),this.updated(t);}_$EM(){this._$AL=new Map,this.isUpdatePending=false;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return  true}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM();}updated(t){}firstUpdated(t){}};y$1.elementStyles=[],y$1.shadowRootOptions={mode:"open"},y$1[d$1("elementProperties")]=new Map,y$1[d$1("finalized")]=new Map,p$1?.({ReactiveElement:y$1}),(a$1.reactiveElementVersions??=[]).push("2.1.2");
+ */const{is:i$3,defineProperty:e$1,getOwnPropertyDescriptor:h$1,getOwnPropertyNames:r$1,getOwnPropertySymbols:o$4,getPrototypeOf:n$2}=Object,a$2=globalThis,c$1=a$2.trustedTypes,l$2=c$1?c$1.emptyScript:"",p$1=a$2.reactiveElementPolyfillSupport,d$1=(t,s)=>t,u$2={toAttribute(t,s){switch(s){case Boolean:t=t?l$2:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,s){let i=t;switch(s){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t);}catch(t){i=null;}}return i}},f$1=(t,s)=>!i$3(t,s),b$1={attribute:true,type:String,converter:u$2,reflect:false,useDefault:false,hasChanged:f$1};Symbol.metadata??=Symbol("metadata"),a$2.litPropertyMetadata??=new WeakMap;let y$1 = class y extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t);}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,s=b$1){if(s.state&&(s.attribute=false),this._$Ei(),this.prototype.hasOwnProperty(t)&&((s=Object.create(s)).wrapped=true),this.elementProperties.set(t,s),!s.noAccessor){const i=Symbol(),h=this.getPropertyDescriptor(t,i,s);void 0!==h&&e$1(this.prototype,t,h);}}static getPropertyDescriptor(t,s,i){const{get:e,set:r}=h$1(this.prototype,t)??{get(){return this[s]},set(t){this[s]=t;}};return {get:e,set(s){const h=e?.call(this);r?.call(this,s),this.requestUpdate(t,h,i);},configurable:true,enumerable:true}}static getPropertyOptions(t){return this.elementProperties.get(t)??b$1}static _$Ei(){if(this.hasOwnProperty(d$1("elementProperties")))return;const t=n$2(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties);}static finalize(){if(this.hasOwnProperty(d$1("finalized")))return;if(this.finalized=true,this._$Ei(),this.hasOwnProperty(d$1("properties"))){const t=this.properties,s=[...r$1(t),...o$4(t)];for(const i of s)this.createProperty(i,t[i]);}const t=this[Symbol.metadata];if(null!==t){const s=litPropertyMetadata.get(t);if(void 0!==s)for(const[t,i]of s)this.elementProperties.set(t,i);}this._$Eh=new Map;for(const[t,s]of this.elementProperties){const i=this._$Eu(t,s);void 0!==i&&this._$Eh.set(i,t);}this.elementStyles=this.finalizeStyles(this.styles);}static finalizeStyles(s){const i=[];if(Array.isArray(s)){const e=new Set(s.flat(1/0).reverse());for(const s of e)i.unshift(c$2(s));}else void 0!==s&&i.push(c$2(s));return i}static _$Eu(t,s){const i=s.attribute;return  false===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=false,this.hasUpdated=false,this._$Em=null,this._$Ev();}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this));}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.();}removeController(t){this._$EO?.delete(t);}_$E_(){const t=new Map,s=this.constructor.elementProperties;for(const i of s.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t);}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return S$1(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(true),this._$EO?.forEach(t=>t.hostConnected?.());}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.());}attributeChangedCallback(t,s,i){this._$AK(t,i);}_$ET(t,s){const i=this.constructor.elementProperties.get(t),e=this.constructor._$Eu(t,i);if(void 0!==e&&true===i.reflect){const h=(void 0!==i.converter?.toAttribute?i.converter:u$2).toAttribute(s,i.type);this._$Em=t,null==h?this.removeAttribute(e):this.setAttribute(e,h),this._$Em=null;}}_$AK(t,s){const i=this.constructor,e=i._$Eh.get(t);if(void 0!==e&&this._$Em!==e){const t=i.getPropertyOptions(e),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:u$2;this._$Em=e;const r=h.fromAttribute(s,t.type);this[e]=r??this._$Ej?.get(e)??r,this._$Em=null;}}requestUpdate(t,s,i,e=false,h){if(void 0!==t){const r=this.constructor;if(false===e&&(h=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??f$1)(h,s)||i.useDefault&&i.reflect&&h===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,s,i);} false===this.isUpdatePending&&(this._$ES=this._$EP());}C(t,s,{useDefault:i,reflect:e,wrapped:h},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??s??this[t]),true!==h||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(s=void 0),this._$AL.set(t,s)),true===e&&this._$Em!==t&&(this._$Eq??=new Set).add(t));}async _$EP(){this.isUpdatePending=true;try{await this._$ES;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,s]of this._$Ep)this[t]=s;this._$Ep=void 0;}const t=this.constructor.elementProperties;if(t.size>0)for(const[s,i]of t){const{wrapped:t}=i,e=this[s];true!==t||this._$AL.has(s)||void 0===e||this.C(s,void 0,i,e);}}let t=false;const s=this._$AL;try{t=this.shouldUpdate(s),t?(this.willUpdate(s),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(s)):this._$EM();}catch(s){throw t=false,this._$EM(),s}t&&this._$AE(s);}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=true,this.firstUpdated(t)),this.updated(t);}_$EM(){this._$AL=new Map,this.isUpdatePending=false;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return  true}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM();}updated(t){}firstUpdated(t){}};y$1.elementStyles=[],y$1.shadowRootOptions={mode:"open"},y$1[d$1("elementProperties")]=new Map,y$1[d$1("finalized")]=new Map,p$1?.({ReactiveElement:y$1}),(a$2.reactiveElementVersions??=[]).push("2.1.2");
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$1=`lit$${Math.random().toFixed(9).slice(2)}$`,n="?"+o$1,r=`<${n}>`,l=document,c=()=>l.createComment(""),a=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u=Array.isArray,d=t=>u(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l.createTreeWalker(l,129);function V(t,i){if(!u(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$1+x):s+o$1+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$1),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$1)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$1),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$1,t+1));)d.push({type:7,index:l}),t+=o$1.length-1;}l++;}}static createElement(t,i){const s=l.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a(this._$AH)?this._$AA.nextSibling.data=t:this.T(l.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$1(t).nextSibling;i$1(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+const t=globalThis,i$2=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$3=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$3,r=`<${n$1}>`,l$1=document,c=()=>l$1.createComment(""),a$1=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,d=t=>u$1(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l$1.createTreeWalker(l$1,129);function V(t,i){if(!u$1(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$3+x):s+o$3+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$3),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$3)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$3),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$3,t+1));)d.push({type:7,index:l}),t+=o$3.length-1;}l++;}}static createElement(t,i){const s=l$1.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a$1(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l$1).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l$1,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a$1(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a$1(this._$AH)?this._$AA.nextSibling.data=t:this.T(l$1.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$2(t).nextSibling;i$2(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a$1(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a$1(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const s=globalThis;class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}}i._$litElement$=true,i["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i});const o=s.litElementPolyfillSupport;o?.({LitElement:i});(s.litElementVersions??=[]).push("4.2.2");
+ */const s=globalThis;let i$1 = class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}};i$1._$litElement$=true,i$1["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i$1});const o$2=s.litElementPolyfillSupport;o$2?.({LitElement:i$1});(s.litElementVersions??=[]).push("4.2.2");
+
+/**
+ * @license
+ * Copyright 2020 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const a=Symbol.for(""),o$1=t=>{if(t?.r===a)return t?._$litStatic$},i=(t,...r)=>({_$litStatic$:r.reduce((r,e,a)=>r+(t=>{if(void 0!==t._$litStatic$)return t._$litStatic$;throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t}. Use 'unsafeStatic' to pass non-literal values, but\n            take care to ensure page security.`)})(e)+t[a+1],t[0]),r:a}),l=new Map,n=t=>(r,...e)=>{const a=e.length;let s,i;const n=[],u=[];let c,$=0,f=false;for(;$<a;){for(c=r[$];$<a&&void 0!==(i=e[$],s=o$1(i));)c+=s+r[++$],f=true;$!==a&&u.push(i),n.push(c),$++;}if($===a&&n.push(r[a]),f){const t=n.join("$$lit$$");void 0===(r=l.get(t))&&(n.raw=n,l.set(t,r=n)),e=u;}return t(r,...e)},u=n(b);
+
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const o=o=>o??A;
 
 /*
  * Simple Timer Card
@@ -36,7 +49,7 @@ const t=globalThis,i$1=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html"
  */
 
 
-const cardVersion="2.3.0";
+const cardVersion="2.4.2";
 
 const DAY_IN_MS = 86400000;
 const YEAR_IN_MS = 365 * DAY_IN_MS;
@@ -311,6 +324,35 @@ const TRANSLATIONS = {
     month: "miesiąc", months: "miesięcy", year: "rok", years: "lat",
     hour: "godzina", hours: "godzin", minute: "minuta", minutes: "minut",
     second: "sekunda", seconds: "sekund",
+  },
+  nl: {
+    no_timers: "Geen timers",
+    click_to_start: "Klik om te starten",
+    no_active_timers: "Geen actieve timers",
+    active_timers: "Actieve timers",
+    add: "Toevoegen",
+    custom: "Aangepast",
+    cancel: "Annuleren",
+    save: "Opslaan",
+    start: "Starten",
+    snooze: "Snoozen",
+    dismiss: "Sluiten",
+    ready: "Klaar",
+    paused: "Gepauzeerd",
+    times_up: "Tijd is om!",
+    timer: "Timer",
+    hour_ago: "{n} uur geleden",
+    hours_ago: "{n} uur geleden",
+    minute_ago: "{n} minuut geleden",
+    minutes_ago: "{n} minuten geleden",
+    second_ago: "{n} seconde geleden",
+    seconds_ago: "{n} seconden geleden",
+    h: "u", m: "m", s: "s", d: "d",
+    w_short: "w", mo_short: "mnd", y_short: "j",
+    day: "dag", days: "dagen", week: "week", weeks: "weken",
+    month: "maand", months: "maanden", year: "jaar", years: "jaren",
+    hour: "uur", hours: "uren", minute: "minuut", minutes: "minuten",
+    second: "seconde", seconds: "seconden",
   }
 };
 
@@ -320,7 +362,7 @@ console.info(
   "color: #4285f4; background: white; font-weight: 700;"
 );
 
-class SimpleTimerCard extends i {
+class SimpleTimerCard extends i$1 {
   static get properties() {
     return {
       hass: {},
@@ -512,7 +554,14 @@ class SimpleTimerCard extends i {
     const style = validStyles.includes((config.style || "").toLowerCase()) ? (config.style || "").toLowerCase() : "bar_horizontal";
     const progressModeOptions = ["drain", "fill", "milestones"];
     const progressMode = progressModeOptions.includes(config.progress_mode) ? config.progress_mode : "drain";
-    this._storageNamespace = config.storage_namespace || config.default_timer_entity || "default";
+    const firstEntityFromList = Array.isArray(config.entities) && config.entities.length
+      ? (typeof config.entities[0] === "string" ? config.entities[0] : config.entities[0]?.entity)
+      : null;
+    this._storageNamespace =
+      config.storage_namespace ||
+      config.default_timer_entity ||
+      firstEntityFromList ||
+      `instance-${this._cardInstanceKey}`;
     const defaultUnits = ["days", "hours", "minutes", "seconds"];
     let timeUnits = defaultUnits;
     if (Array.isArray(config.time_format_units)) {
@@ -1875,6 +1924,13 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
     return null;
   }
 
+  _formatPresetLabel(preset) {
+    const raw = String(preset).trim().toLowerCase();
+    const m = raw.match(/^(\d+)\s*([smhd])?$/);
+    if (!m) return String(preset);
+    return `${m[1]}${this._localize(m[2] || "m")}`;
+  }
+
   _createPresetTimer(preset, entity = null, overrides = {}) {
     const durationMs = this._parseDurationInputToMs(preset);
     if (!durationMs) return;
@@ -2778,9 +2834,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
       const delta = this._parseAdjustmentToSeconds(val);
       const isNegative = sign < 0;
       const isClickable = !isNegative || totalSeconds >= delta;
-      const displayLabel = (typeof val === "string" && val.toLowerCase().endsWith("s"))
-        ? val.toLowerCase()
-        : `${val}${this._localize("m")}`;
+      const displayLabel = this._formatPresetLabel(val);
 
       return b`
         <button class="btn btn-ghost ${isClickable ? "" : "disabled"}"
@@ -3037,7 +3091,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
       const delta = this._parseAdjustmentToSeconds(val);
       const isNegative = sign < 0;
       const isClickable = !isNegative || (currentSecs >= delta);
-      const displayLabel = typeof val === "string" && val.toLowerCase().endsWith("s") ? val.toLowerCase() : `${val}${this._localize("m")}`;
+      const displayLabel = this._formatPresetLabel(val);
       return b`
         <button class="btn btn-ghost ${isClickable ? "" : "disabled"}"
                 @click=${() => isClickable && adjustFunction(whichKey, val, sign)}>
@@ -3312,9 +3366,7 @@ const layout = this._config.layout;
           </div>
           <div style="display:flex; gap:8px;">
             ${presets.map((preset) => {
-              const label = typeof preset === "string" && preset.toLowerCase().endsWith("s")
-                ? preset.toLowerCase()
-                : `${preset}${this._localize("m")}`;
+              const label = this._formatPresetLabel(preset);
               return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
             })}
             ${this._config.show_timer_presets === false ? b`
@@ -3349,9 +3401,7 @@ const layout = this._config.layout;
           </div>
           <div style="display:flex; gap:8px; margin-bottom:8px;">
             ${presets.map((preset) => {
-              const label = typeof preset === "string" && preset.toLowerCase().endsWith("s")
-                ? preset.toLowerCase()
-                : `${preset}${this._localize("m")}`;
+              const label = this._formatPresetLabel(preset);
               return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
             })}
             ${this._config.show_timer_presets === false ? b`
@@ -3391,9 +3441,7 @@ const layout = this._config.layout;
             ${showPresetsInActive ? b`
               <div class="header-actions">
                 ${presets.map((preset) => {
-                  const label = typeof preset === "string" && preset.toLowerCase().endsWith("s")
-                    ? preset.toLowerCase()
-                    : `${preset}${this._localize("m")}`;
+                  const label = this._formatPresetLabel(preset);
                   return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
                 })}
                 <button class="btn btn-ghost" @click=${() => this._toggleActivePicker("fill")}>${this._localize("custom")}</button>
@@ -3429,9 +3477,7 @@ const layout = this._config.layout;
             ${showPresetsInActive ? b`
               <div class="header-actions">
                 ${presets.map((preset) => {
-                  const label = typeof preset === "string" && preset.toLowerCase().endsWith("s")
-                    ? preset.toLowerCase()
-                    : `${preset}${this._localize("m")}`;
+                  const label = this._formatPresetLabel(preset);
                   return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
                 })}
                 <button class="btn btn-ghost" @click=${() => this._toggleActivePicker("bar")}>${this._localize("custom")}</button>
@@ -3469,7 +3515,7 @@ const layout = this._config.layout;
   }
 
   static get styles() {
-    return i$3`
+    return i$4`
       :host { --stc-chip-radius: 9999px; }
       ha-card { border-radius: var(--ha-card-border-radius, 12px); overflow: hidden; padding: 0; background: var(--ha-card-background, var(--card-background-color)); }
       .grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0; margin: -1px 0; }
@@ -3580,7 +3626,7 @@ const layout = this._config.layout;
   }
 }
 
-class SimpleTimerCardEditor extends i {
+class SimpleTimerCardEditor extends i$1 {
   static get properties() { return { hass: {}, _config: {}, _expandedSections: { state: true } }; }
 
   constructor() {
@@ -3588,12 +3634,15 @@ class SimpleTimerCardEditor extends i {
     this._debounceTimeout = null;
     this._emitTimeout = null;
     this._expandedSections = {
-      basics: true,
-      layout: false,
+      appearance: true,
+      entities: true,
+      sorting: false,
+      timeFormat: false,
+      defaults: false,
       presets: false,
       pinned: false,
+      audio: false,
       storage: false,
-      entities: true,
     };
   }
 
@@ -3611,7 +3660,11 @@ class SimpleTimerCardEditor extends i {
     if (typeof c.time_format_units === "string") c.time_format_units = c.time_format_units.split(",").map(s => s.trim()).filter(Boolean);
     this._config = { ...c };
     if (!this._expandedSections) {
-      this._expandedSections = { basic: true, time: false, general: false, presets: false, pinned: false, storage: false, audio: false, entities: true };
+      this._expandedSections = {
+        appearance: true, entities: true,
+        sorting: false, timeFormat: false, defaults: false,
+        presets: false, pinned: false, audio: false, storage: false,
+      };
     }
     this.requestUpdate();
   }
@@ -3625,13 +3678,11 @@ class SimpleTimerCardEditor extends i {
     let value = hasChecked ? target.checked : target.value;
     if (key === "timer_presets" && typeof value === "string") {
       value = value.split(",").map(v => v.trim()).filter(v => v).map(v => {
-        if (v.toLowerCase().endsWith("s")) {
-          const seconds = parseInt(v.slice(0, -1), 10);
-          if (!isNaN(seconds) && seconds > 0) return `${seconds}s`;
-        }
-        const minutes = parseInt(v, 10);
-        if (!isNaN(minutes) && minutes > 0) return minutes;
-        return null;
+        const m = v.toLowerCase().match(/^(\d+)\s*([smhd])?$/);
+        if (!m) return null;
+        const n = parseInt(m[1], 10);
+        if (!Number.isFinite(n) || n <= 0) return null;
+        return m[2] ? `${n}${m[2]}` : n;
       }).filter(v => v !== null);
       if (value.length === 0) value = [5, 15, 30];
     }
@@ -3680,10 +3731,14 @@ class SimpleTimerCardEditor extends i {
     const key = target.configValue ?? target.dataset?.configValue ?? target.getAttribute?.("configValue");
     if (!key) return;
     ev.stopPropagation();
-    // HA 2026.2+ ha-select fires `selected` with ev.detail.value but does NOT update
-    // its own .value property first. Older ha-select (mwc-select based) only sets target.value.
-    // Read detail.value first, fall back to target.value. Matches HA's own ha-selector-select.
+    // HA 2026.x ha-select uses ha-dropdown internally and fires `selected` with
+    // ev.detail.value. Older mwc-select fires `selected` with ev.detail.index and
+    // only sets target.value after the fact. Resolve in this order: detail.value,
+    // detail.index (mapped via target.options), then target.value.
     let value = ev?.detail?.value;
+    if ((value === undefined || value === null) && ev?.detail && typeof ev.detail.index === "number" && Array.isArray(target?.options)) {
+      value = target.options[ev.detail.index]?.value;
+    }
     if (value === undefined || value === null) value = target.value;
     if (typeof value !== "string" || value === "") return;
     if (value === this._config[key]) return;
@@ -3743,6 +3798,7 @@ _addPinnedTimer() {
   const pinned = Array.isArray(this._config.pinned_timers) ? [...this._config.pinned_timers] : [];
   pinned.push({ name: "", duration: "5m" });
   this._config = { ...this._config, pinned_timers: pinned };
+  this.requestUpdate();
   this._emitChange();
 }
 
@@ -3750,6 +3806,7 @@ _removePinnedTimer(index) {
   const pinned = Array.isArray(this._config.pinned_timers) ? [...this._config.pinned_timers] : [];
   pinned.splice(index, 1);
   this._config = { ...this._config, pinned_timers: pinned };
+  this.requestUpdate();
   this._emitChange();
 }
 
@@ -3935,24 +3992,84 @@ _pinnedTimerValueChanged(ev, index) {
 
 
   async firstUpdated() {
-    const tags = ["ha-entity-picker","ha-select","ha-textfield","ha-icon-picker","ha-form","mwc-list-item"];
+    // Note: ha-input is the new (2026.4+) successor of ha-textfield. ha-textfield
+    // is migrated to use ha-input internally and is scheduled for removal in 2026.5.
+    // We wait for either to be defined so our render() can pick the right tag.
+    const tags = ["ha-entity-picker","ha-select","ha-textfield","ha-input","ha-icon-picker","ha-form","mwc-list-item"];
     tags.forEach((t) => { customElements.whenDefined(t).then(() => this.requestUpdate()).catch(() => {}); });
-    this._ensureEntityPickerLoaded();
+    this._ensureHACommonsLoaded();
     this.requestUpdate();
   }
 
-  _ensureEntityPickerLoaded() {
-    if (customElements.get("ha-entity-picker")) return;
+  // Choose between ha-input (HA 2026.4+) and ha-textfield (older HA). ha-input
+  // is loaded by ha-form's text/number selectors in 2026.4+; ha-textfield is
+  // loaded by the same selectors on older HA. We pick whichever is currently
+  // upgraded so the visible element always matches a defined custom element.
+  get _tfTag() {
+    if (customElements.get("ha-input")) return i`ha-input`;
+    return i`ha-textfield`;
+  }
+
+  // Render a text/number input using the chosen tag. Returns a static-html
+  // template so the tag itself can be interpolated. All call sites in the
+  // editor go through this helper so a single switch flips the entire UI.
+  _tf({ label, value, configValue, type, min, max, step, helper, placeholder, change }) {
+    const tag = this._tfTag;
+    return u`<${tag}
+        label=${label ?? ""}
+        .value=${value ?? ""}
+        .configValue=${configValue ?? ""}
+        type=${type ?? "text"}
+        min=${o(min)}
+        max=${o(max)}
+        step=${o(step)}
+        helper=${o(helper)}
+        placeholder=${o(placeholder)}
+        @input=${change}
+        @change=${change}
+      ></${tag}>`;
+  }
+
+  // Force-load HA's lazy-loaded editor components. In HA 2026.x the main app
+  // doesn't define `ha-textfield` / `ha-input` / `ha-entity-picker` /
+  // `ha-icon-picker` until something on screen actually needs them. A card
+  // editor opened from the dashboard sometimes mounts before HA has had a
+  // reason to import those chunks, so our custom elements stay un-upgraded
+  // (empty inline elements with no shadow root - no label, no input visible).
+  //
+  // `ha-form` lazy-loads each selector's underlying component on demand. By
+  // mounting a hidden form with text/number/entity/icon selectors we trigger
+  // HA's loader for everything we use in the editor, then remove the form.
+  // In HA 2026.4+ the text/number selectors load `ha-input`; in older HA they
+  // load `ha-textfield`. The whenDefined hooks in firstUpdated() catch either
+  // case and re-render.
+  _ensureHACommonsLoaded() {
+    const needText = !customElements.get("ha-textfield") && !customElements.get("ha-input");
+    const needEntity = !customElements.get("ha-entity-picker");
+    const needIcon = !customElements.get("ha-icon-picker");
+    if (!needText && !needEntity && !needIcon) return;
     try {
       const loader = document.createElement("ha-form");
       loader.style.display = "none";
-      loader.schema = [{ name: "e", selector: { entity: {} } }];
-      loader.data = {};
+      loader.schema = [
+        { name: "_t", selector: { text: {} } },
+        { name: "_n", selector: { number: { min: 0, mode: "box" } } },
+        { name: "_e", selector: { entity: {} } },
+        { name: "_i", selector: { icon: {} } },
+      ];
+      loader.data = { _t: "", _n: 0, _e: "", _i: "" };
       loader.hass = this.hass;
       this.shadowRoot?.appendChild(loader);
-      setTimeout(() => loader.remove(), 0);
+      // Keep the loader briefly so HA can finish dynamic-importing the
+      // components. Removing it immediately is fine - the imports proceed -
+      // but a small delay also makes diagnostics easier.
+      setTimeout(() => { try { loader.remove(); } catch (_) {} }, 0);
     } catch (_) {}
   }
+
+  // Backward-compatible alias - keep in case anything else in the file
+  // references the old name.
+  _ensureEntityPickerLoaded() { this._ensureHACommonsLoaded(); }
 
   _getDisplayStyleValue() {
     return this._config.style || "bar_horizontal";
@@ -3994,26 +4111,97 @@ _pinnedTimerValueChanged(ev, index) {
     const storageType = this._config.default_timer_entity?.startsWith("sensor.") ? "mqtt" : "local";
     const showMilestonesSection = this._config.progress_mode === "milestones";
 
-    const section = (key, title, content) => b`
-      <div class="section">
-        <div class="section-header" @click=${() => this._toggleSection(key)}>
-          <span class="section-title">${title}</span>
-          <ha-icon icon=${this._expandedSections?.[key] ? "mdi:chevron-up" : "mdi:chevron-down"}></ha-icon>
-        </div>
-        ${this._expandedSections?.[key] ? b`<div class="section-content">${content}</div>` : ""}
-      </div>
-    `;
+    // HA 2026.x rewrote ha-select to use ha-dropdown internally; that variant
+    // renders ONLY from the .options property and ignores slotted <mwc-list-item>
+    // children. We set both .options and keep the slotted items as a fallback
+    // for older HA. Keep these in sync with the slotted items below.
+    const SELECT_OPTIONS = {
+      layout: [
+        { value: "horizontal", label: "Horizontal" },
+        { value: "vertical", label: "Vertical" },
+      ],
+      style: [
+        { value: "fill_vertical", label: "Background fill (vertical)" },
+        { value: "fill_horizontal", label: "Background fill (horizontal)" },
+        { value: "bar_vertical", label: "Progress bar (vertical)" },
+        { value: "bar_horizontal", label: "Progress bar (horizontal)" },
+        { value: "circle", label: "Circle" },
+      ],
+      progress_mode: [
+        { value: "drain", label: "Drain" },
+        { value: "fill", label: "Fill" },
+        { value: "milestones", label: "Milestones (bar styles only)" },
+      ],
+      language: [
+        { value: "da", label: "Dansk" },
+        { value: "de", label: "Deutsch" },
+        { value: "en", label: "English" },
+        { value: "es", label: "Español" },
+        { value: "fr", label: "Français" },
+        { value: "it", label: "Italiano" },
+        { value: "nl", label: "Nederlands" },
+        { value: "pl", label: "Polski" },
+        { value: "he", label: "עברית" },
+      ],
+      sort_by: [
+        { value: "time_left", label: "Time left" },
+        { value: "name", label: "Name" },
+      ],
+      sort_order: [
+        { value: "asc", label: "Ascending" },
+        { value: "desc", label: "Descending" },
+      ],
+      pinned_timers_position: [
+        { value: "inline", label: "Mixed with timers" },
+        { value: "top", label: "Top" },
+        { value: "bottom", label: "Bottom" },
+      ],
+      time_format: [
+        { value: "hms", label: "HH:MM:SS" },
+        { value: "hm", label: "HH:MM" },
+        { value: "ss", label: "Seconds only" },
+        { value: "dhms", label: "DD:HH:MM:SS" },
+        { value: "human_compact", label: "Unit style, compact" },
+        { value: "human_short", label: "Unit style, short labels" },
+        { value: "human_natural", label: "Unit style, natural language" },
+      ],
+      milestone_unit: [
+        { value: "auto", label: "Auto (default)" },
+        { value: "none", label: "None" },
+        { value: "years", label: "Years" },
+        { value: "months", label: "Months" },
+        { value: "weeks", label: "Weeks" },
+        { value: "days", label: "Days" },
+        { value: "hours", label: "Hours" },
+        { value: "minutes", label: "Minutes" },
+        { value: "seconds", label: "Seconds" },
+      ],
+      expire_action: [
+        { value: "keep", label: "Keep visible" },
+        { value: "dismiss", label: "Dismiss" },
+        { value: "remove", label: "Remove" },
+      ],
+      entity_mode: [
+        { value: "auto", label: "Auto (Default)" },
+        { value: "alexa", label: "Alexa" },
+        { value: "timer", label: "Timer" },
+        { value: "voice_pe", label: "Voice PE" },
+        { value: "helper", label: "Helper (input_text/text)" },
+        { value: "timestamp", label: "Timestamp sensor" },
+        { value: "minutes_attr", label: "Minutes attribute" },
+      ],
+    };
 
-    const basicContent = b`
-      <ha-textfield label="Title (Optional)" .value=${this._config.title || ""} .configValue=${"title"} @input=${this._valueChanged}></ha-textfield>
+    const appearanceContent = b`
+      ${this._tf({ label: "Title", placeholder: "Optional", value: this._config.title, configValue: "title", change: this._valueChanged })}
 
-      <div class="side-by-side">
-        <ha-select label="Layout" .value=${this._config.layout || "horizontal"} .configValue=${"layout"} .options=${[{value:"horizontal",label:"Horizontal"},{value:"vertical",label:"Vertical"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+      <div class="row">
+        <ha-select label="Layout" naturalMenuWidth fixedMenuPosition .value=${this._config.layout || "horizontal"} .configValue=${"layout"} .options=${SELECT_OPTIONS.layout} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
           <mwc-list-item value="vertical">Vertical</mwc-list-item>
         </ha-select>
 
-        <ha-select label="Style" .value=${this._getDisplayStyleValue()} .configValue=${"style"} .options=${[{value:"fill_vertical",label:"Background fill (vertical)"},{value:"fill_horizontal",label:"Background fill (horizontal)"},{value:"bar_vertical",label:"Progress bar (vertical)"},{value:"bar_horizontal",label:"Progress bar (horizontal)"},{value:"circle",label:"Circle"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <ha-select label="Style" naturalMenuWidth fixedMenuPosition .value=${this._getDisplayStyleValue()} .configValue=${"style"} .options=${SELECT_OPTIONS.style} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="fill_vertical">Background fill (vertical)</mwc-list-item>
           <mwc-list-item value="fill_horizontal">Background fill (horizontal)</mwc-list-item>
           <mwc-list-item value="bar_vertical">Progress bar (vertical)</mwc-list-item>
@@ -4021,41 +4209,57 @@ _pinnedTimerValueChanged(ev, index) {
           <mwc-list-item value="circle">Circle</mwc-list-item>
         </ha-select>
       </div>
-      <div class="side-by-side">
-        <ha-select label="Sort by" .value=${this._config.sort_by || "time_left"} .configValue=${"sort_by"} .options=${[{value:"time_left",label:"Time left"},{value:"name",label:"Name"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
-          <mwc-list-item value="time_left">Time left</mwc-list-item>
-          <mwc-list-item value="name">Name</mwc-list-item>
-        </ha-select>
 
-        <ha-select label="Sort order" .value=${this._config.sort_order || "asc"} .configValue=${"sort_order"} .options=${[{value:"asc",label:"Ascending"},{value:"desc",label:"Descending"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
-          <mwc-list-item value="asc">Ascending</mwc-list-item>
-          <mwc-list-item value="desc">Descending</mwc-list-item>
-        </ha-select>
-      </div>
-
-
-      <div class="side-by-side">
-        <ha-select label="Progress Mode" .value=${this._config.progress_mode || "drain"} .configValue=${"progress_mode"} .options=${[{value:"drain",label:"Drain"},{value:"fill",label:"Fill"},{value:"milestones",label:"Milestones (bar styles only)"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+      <div class="row">
+        <ha-select label="Progress mode" naturalMenuWidth fixedMenuPosition .value=${this._config.progress_mode || "drain"} .configValue=${"progress_mode"} .options=${SELECT_OPTIONS.progress_mode} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="drain">Drain</mwc-list-item>
           <mwc-list-item value="fill">Fill</mwc-list-item>
           <mwc-list-item value="milestones">Milestones (bar styles only)</mwc-list-item>
         </ha-select>
 
-        <ha-select label="Language" .value=${(String(this._config.language || this.hass?.language || "en").toLowerCase().split(/[-_]/)[0])} .configValue=${"language"} .options=${[{value:"en",label:"English"},{value:"de",label:"Deutsch"},{value:"es",label:"Español"},{value:"da",label:"Dansk"},{value:"it",label:"Italiano"},{value:"fr",label:"Français"},{value:"he",label:"עברית"},{value:"pl",label:"Polski"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <ha-select label="Language" naturalMenuWidth fixedMenuPosition .value=${(String(this._config.language || this.hass?.language || "en").toLowerCase().split(/[-_]/)[0])} .configValue=${"language"} .options=${SELECT_OPTIONS.language} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="en">English</mwc-list-item>
           <mwc-list-item value="de">Deutsch</mwc-list-item>
           <mwc-list-item value="es">Español</mwc-list-item>
-		      <mwc-list-item value="da">Dansk</mwc-list-item>
-		      <mwc-list-item value="it">Italiano</mwc-list-item>
+          <mwc-list-item value="da">Dansk</mwc-list-item>
+          <mwc-list-item value="it">Italiano</mwc-list-item>
           <mwc-list-item value="fr">Français</mwc-list-item>
           <mwc-list-item value="he">עברית</mwc-list-item>
           <mwc-list-item value="pl">Polski</mwc-list-item>
         </ha-select>
       </div>
+
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.show_active_header !== false} .configValue=${"show_active_header"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Show "Active Timers" heading</span>
+          <span class="toggle-desc">Display a heading above timers that are currently running.</span>
+        </div>
+      </label>
     `;
 
-    const timeContent = b`
-      <ha-select label="Time format" .value=${this._config.time_format || "hms"} .configValue=${"time_format"} .options=${[{value:"hms",label:"HH:MM:SS"},{value:"hm",label:"HH:MM"},{value:"ss",label:"Seconds only"},{value:"dhms",label:"DD:HH:MM:SS"},{value:"human_compact",label:"Unit style, compact"},{value:"human_short",label:"Unit style, short labels"},{value:"human_natural",label:"Unit style, natural language"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+    const sortingContent = b`
+      <div class="row">
+        <ha-select label="Sort by" naturalMenuWidth fixedMenuPosition .value=${this._config.sort_by || "time_left"} .configValue=${"sort_by"} .options=${SELECT_OPTIONS.sort_by} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+          <mwc-list-item value="time_left">Time left</mwc-list-item>
+          <mwc-list-item value="name">Name</mwc-list-item>
+        </ha-select>
+
+        <ha-select label="Sort order" naturalMenuWidth fixedMenuPosition .value=${this._config.sort_order || "asc"} .configValue=${"sort_order"} .options=${SELECT_OPTIONS.sort_order} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+          <mwc-list-item value="asc">Ascending</mwc-list-item>
+          <mwc-list-item value="desc">Descending</mwc-list-item>
+        </ha-select>
+      </div>
+
+      <ha-select label="Pinned timers position" naturalMenuWidth fixedMenuPosition .value=${this._config.pinned_timers_position || "inline"} .configValue=${"pinned_timers_position"} .options=${SELECT_OPTIONS.pinned_timers_position} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <mwc-list-item value="inline">Mixed with timers</mwc-list-item>
+        <mwc-list-item value="top">Top</mwc-list-item>
+        <mwc-list-item value="bottom">Bottom</mwc-list-item>
+      </ha-select>
+    `;
+
+    const timeFormatContent = b`
+      <ha-select label="Time format" naturalMenuWidth fixedMenuPosition .value=${this._config.time_format || "hms"} .configValue=${"time_format"} .options=${SELECT_OPTIONS.time_format} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
         <mwc-list-item value="hms">HH:MM:SS</mwc-list-item>
         <mwc-list-item value="hm">HH:MM</mwc-list-item>
         <mwc-list-item value="ss">Seconds only</mwc-list-item>
@@ -4065,12 +4269,12 @@ _pinnedTimerValueChanged(ev, index) {
         <mwc-list-item value="human_natural">Unit style, natural language</mwc-list-item>
       </ha-select>
 
-      <ha-textfield label="Unit order (comma-separated)" helper="years,months,weeks,days,hours,minutes,seconds" .value=${(this._config.time_format_units || ["days","hours","minutes","seconds"]).join(",")} .configValue=${"time_format_units"} @input=${this._valueChanged}></ha-textfield>
+      ${this._tf({ label: "Unit order (comma-separated)", helper: "years,months,weeks,days,hours,minutes,seconds", value: (this._config.time_format_units || ["days","hours","minutes","seconds"]).join(","), configValue: "time_format_units", change: this._valueChanged })}
 
       ${showMilestonesSection ? b`
         <div class="subsection-title">Progress milestones</div>
-        <div class="side-by-side" style="align-items:flex-start;">
-          <ha-select label="Milestone unit" .value=${this._config.milestone_unit || "auto"} .configValue=${"milestone_unit"} .options=${[{value:"auto",label:"Auto (default)"},{value:"none",label:"None"},{value:"years",label:"Years"},{value:"months",label:"Months"},{value:"weeks",label:"Weeks"},{value:"days",label:"Days"},{value:"hours",label:"Hours"},{value:"minutes",label:"Minutes"},{value:"seconds",label:"Seconds"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <div class="row" style="align-items:flex-start;">
+          <ha-select label="Milestone unit" naturalMenuWidth fixedMenuPosition .value=${this._config.milestone_unit || "auto"} .configValue=${"milestone_unit"} .options=${SELECT_OPTIONS.milestone_unit} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
             <mwc-list-item value="auto">Auto (default)</mwc-list-item>
             <mwc-list-item value="none">None</mwc-list-item>
             <mwc-list-item value="years">Years</mwc-list-item>
@@ -4088,212 +4292,174 @@ _pinnedTimerValueChanged(ev, index) {
       ` : ""}
     `;
 
-    const generalContent = b`
-      <ha-formfield label="Show 'Active Timers' header">
-        <ha-switch .checked=${this._config.show_active_header !== false} .configValue=${"show_active_header"} @change=${this._valueChanged}></ha-switch>
-      </ha-formfield>
-
-      <div class="side-by-side">
-        <ha-textfield label="Default Duration (minutes)" type="number" .value=${this._config.default_new_timer_duration_mins ?? 15} .configValue=${"default_new_timer_duration_mins"} @input=${this._valueChanged}></ha-textfield>
-        <ha-textfield label="Snooze Duration (minutes)" type="number" .value=${this._config.snooze_duration ?? 5} .configValue=${"snooze_duration"} @input=${this._valueChanged}></ha-textfield>
+    const defaultsContent = b`
+      <div class="row">
+        ${this._tf({ label: "Default duration (minutes)", type: "number", min: "0", helper: "Starting value when the user opens the custom timer input.", value: this._config.default_new_timer_duration_mins ?? 15, configValue: "default_new_timer_duration_mins", change: this._valueChanged })}
+        ${this._tf({ label: "Snooze duration (minutes)", type: "number", min: "0", value: this._config.snooze_duration ?? 5, configValue: "snooze_duration", change: this._valueChanged })}
       </div>
 
-      <div class="side-by-side">
-        <ha-select label="When timer reaches 0" .value=${this._config.expire_action || "keep"} .configValue=${"expire_action"} .options=${[{value:"keep",label:"Keep visible"},{value:"dismiss",label:"Dismiss"},{value:"remove",label:"Remove"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+      <div class="row">
+        <ha-icon-picker label="Default timer icon" .value=${this._config.default_timer_icon || "mdi:timer-outline"} .configValue=${"default_timer_icon"} @value-changed=${this._detailValueChanged}></ha-icon-picker>
+        ${this._tf({ label: "Default timer color", value: this._config.default_timer_color || "var(--primary-color)", configValue: "default_timer_color", change: this._valueChanged })}
+      </div>
+
+      ${this._tf({ label: "Timer expired message", value: this._config.expired_subtitle, configValue: "expired_subtitle", placeholder: "Time's up!", change: this._valueChanged })}
+
+      <div class="divider"></div>
+
+      <div class="row">
+        <ha-select label="When a timer reaches 0" naturalMenuWidth fixedMenuPosition .value=${this._config.expire_action || "keep"} .configValue=${"expire_action"} .options=${SELECT_OPTIONS.expire_action} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="keep">Keep visible</mwc-list-item>
           <mwc-list-item value="dismiss">Dismiss</mwc-list-item>
           <mwc-list-item value="remove">Remove</mwc-list-item>
         </ha-select>
-        <ha-textfield label="Keep-visible duration (seconds)" type="number" .value=${this._config.expire_keep_for ?? 120} .configValue=${"expire_keep_for"} @input=${this._valueChanged}></ha-textfield>
+        ${this._tf({ label: "Keep-visible duration (seconds)", type: "number", min: "0", value: this._config.expire_keep_for ?? 120, configValue: "expire_keep_for", change: this._valueChanged })}
       </div>
 
-      <ha-formfield label="Auto-dismiss helper timers at 0">
+      <label class="toggle-row">
         <ha-switch .checked=${this._config.auto_dismiss_writable === true} .configValue=${"auto_dismiss_writable"} @change=${this._valueChanged}></ha-switch>
-      </ha-formfield>
-
-      <div class="side-by-side">
-        <ha-icon-picker label="Default timer icon" .value=${this._config.default_timer_icon || "mdi:timer-outline"} .configValue=${"default_timer_icon"} @value-changed=${this._detailValueChanged}></ha-icon-picker>
-        <ha-textfield label="Default timer color" .value=${this._config.default_timer_color || "var(--primary-color)"} .configValue=${"default_timer_color"} @input=${this._valueChanged}></ha-textfield>
-      </div>
-
-      <ha-textfield label="Timer expired message" .value=${this._config.expired_subtitle || ""} .configValue=${"expired_subtitle"} @input=${this._valueChanged} placeholder="Time's up!"></ha-textfield>
-`;
+        <div class="toggle-text">
+          <span class="toggle-title">Auto-dismiss helper timers at 0</span>
+          <span class="toggle-desc">For helper-backed timers (input_text/text), clear the entity when the timer hits zero instead of keeping the expired value.</span>
+        </div>
+      </label>
+    `;
 
     const presetsContent = b`
-      <ha-formfield label="Show timer preset buttons">
+      <label class="toggle-row">
         <ha-switch .checked=${this._config.show_timer_presets !== false} .configValue=${"show_timer_presets"} @change=${this._valueChanged}></ha-switch>
-      </ha-formfield>
+        <div class="toggle-text">
+          <span class="toggle-title">Show timer preset buttons</span>
+          <span class="toggle-desc">Display one-tap quick-start buttons above the empty state.</span>
+        </div>
+      </label>
 
       ${this._config.show_timer_presets !== false ? b`
-        <ha-textfield label="Timer presets (minutes or secs, e.g. 5, 90s)" .value=${(this._config.timer_presets || [5, 15, 30]).join(", ")} .configValue=${"timer_presets"} @input=${this._valueChanged}></ha-textfield>
-        <ha-textfield label="Timer name presets (comma-separated)" .value=${(this._config.timer_name_presets || []).join(", ")} .configValue=${"timer_name_presets"} @input=${this._valueChanged}></ha-textfield>
+        ${this._tf({ label: "Timer presets", helper: "Seconds, minutes, hours, or days. e.g. 5, 15, 90s, 2h", value: (this._config.timer_presets || [5, 15, 30]).join(", "), configValue: "timer_presets", change: this._valueChanged })}
+        ${this._tf({ label: "Timer name presets", helper: "Comma-separated labels shown in the custom-name picker", value: (this._config.timer_name_presets || []).join(", "), configValue: "timer_name_presets", change: this._valueChanged })}
       ` : ""}
 
-      <ha-textfield label="Minute adjustment buttons (comma-separated)" .value=${(this._config.minute_buttons || [1, 5, 10]).join(", ")} .configValue=${"minute_buttons"} @input=${this._valueChanged}></ha-textfield>
-
+      ${this._tf({ label: "Minute adjustment buttons", helper: "Comma-separated (e.g. 1, 5, 10). Buttons to add/subtract from the custom timer input.", value: (this._config.minute_buttons || [1, 5, 10]).join(", "), configValue: "minute_buttons", change: this._valueChanged })}
     `;
 
     const pinnedContent = b`
-  <div class="entities-header">
-    <h3>Pinned timers</h3>
-    <button class="add-entity-button" @click=${this._addPinnedTimer} title="Add pinned timer">
-      <ha-icon icon="mdi:plus"></ha-icon>
-    </button>
-  </div>
+      <p class="hint">One-tap reusable timers shown in the empty state. They hide while running.</p>
 
-  <ha-select label="Pinned timers position" style="margin-bottom: 12px;" .value=${this._config.pinned_timers_position || "inline"} .configValue=${"pinned_timers_position"} .options=${[{value:"inline",label:"Mixed with timers"},{value:"top",label:"Top"},{value:"bottom",label:"Bottom"}]} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
-    <mwc-list-item value="inline">Mixed with timers</mwc-list-item>
-    <mwc-list-item value="top">Top</mwc-list-item>
-    <mwc-list-item value="bottom">Bottom</mwc-list-item>
-  </ha-select>
+      ${(Array.isArray(this._config.pinned_timers) ? this._config.pinned_timers : []).length === 0
+        ? b`<div class="no-entities">No pinned timers configured. Use the button below to add one.</div>`
+        : (this._config.pinned_timers || []).map((t, index) => b`
+            <div class="entity-editor">
+              <div class="entity-options" style="width:100%;">
+                <div class="row">
+                  ${this._tf({ label: "Name", value: t?.name, configValue: "name", change: (e) => this._pinnedTimerValueChanged(e, index) })}
+                  ${this._tf({ label: "Duration", helper: "Examples: 5m, 90s, 1h", value: t?.duration ?? t?.preset ?? "5m", configValue: "duration", change: (e) => this._pinnedTimerValueChanged(e, index) })}
+                </div>
 
-  ${(Array.isArray(this._config.pinned_timers) ? this._config.pinned_timers : []).length === 0
-    ? b`<div class="no-entities">No pinned timers configured. Click the + button above to add one.</div>`
-    : (this._config.pinned_timers || []).map((t, index) => b`
-        <div class="entity-editor">
-          <div class="entity-options" style="width:100%;">
-            <div class="side-by-side">
-              <ha-textfield
-                label="Name"
-                .value=${t?.name || ""}
-                .configValue=${"name"}
-                @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-              ></ha-textfield>
+                <div class="row">
+                  <ha-icon-picker label="Icon" .value=${t?.icon || ""} .configValue=${"icon"} @value-changed=${(e) => { e.target.configValue = "icon"; this._pinnedTimerValueChanged(e, index); }}></ha-icon-picker>
+                  ${this._tf({ label: "Color", value: t?.color, configValue: "color", change: (e) => this._pinnedTimerValueChanged(e, index) })}
+                </div>
 
-              <ha-textfield
-                label="Duration"
-                .value=${t?.duration ?? t?.preset ?? "5m"}
-                .configValue=${"duration"}
-                @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-                helper-text="Examples: 5m, 90s, 1h"
-              ></ha-textfield>
-            </div>
+                ${this._tf({ label: "Expired message", value: t?.expired_subtitle, configValue: "expired_subtitle", change: (e) => this._pinnedTimerValueChanged(e, index) })}
 
-            <div class="side-by-side">
-              <ha-icon-picker
-                label="Icon"
-                .value=${t?.icon || ""}
-                .configValue=${"icon"}
-                @value-changed=${(e) => { e.target.configValue = "icon"; this._pinnedTimerValueChanged(e, index); }}
-              ></ha-icon-picker>
+                <ha-formfield label="Enable specific audio">
+                  <ha-switch .checked=${t?.audio_enabled === true} .configValue=${"audio_enabled"} @change=${(e) => this._pinnedTimerValueChanged(e, index)}></ha-switch>
+                </ha-formfield>
 
-              <ha-textfield
-                label="Color"
-                .value=${t?.color || ""}
-                .configValue=${"color"}
-                @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-              ></ha-textfield>
-            </div>
+                ${t?.audio_enabled ? b`
+                  <div class="row">
+                    ${this._tf({ label: "Audio file URL", value: t?.audio_file_url, configValue: "audio_file_url", change: (e) => this._pinnedTimerValueChanged(e, index) })}
+                    ${this._tf({ label: "Repeat count", type: "number", min: "1", max: "10", value: t?.audio_repeat_count ?? 1, configValue: "audio_repeat_count", change: (e) => this._pinnedTimerValueChanged(e, index) })}
+                  </div>
 
-            <ha-textfield
-              label="Expired message"
-              .value=${t?.expired_subtitle || ""}
-              .configValue=${"expired_subtitle"}
-              @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-            ></ha-textfield>
-
-            <ha-formfield label="Enable specific audio">
-              <ha-switch
-                .checked=${t?.audio_enabled === true}
-                .configValue=${"audio_enabled"}
-                @change=${(e) => this._pinnedTimerValueChanged(e, index)}
-              ></ha-switch>
-            </ha-formfield>
-
-            ${t?.audio_enabled ? b`
-              <div class="side-by-side">
-                <ha-textfield
-                  label="Audio file URL"
-                  .value=${t?.audio_file_url || ""}
-                  .configValue=${"audio_file_url"}
-                  @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-                ></ha-textfield>
-
-                <ha-textfield
-                  label="Repeat count"
-                  type="number"
-                  min="1"
-                  max="10"
-                  .value=${t?.audio_repeat_count ?? 1}
-                  .configValue=${"audio_repeat_count"}
-                  @input=${(e) => this._pinnedTimerValueChanged(e, index)}
-                ></ha-textfield>
+                  <ha-formfield label="Play until dismissed or snoozed">
+                    <ha-switch .checked=${t?.audio_play_until_dismissed === true} .configValue=${"audio_play_until_dismissed"} @change=${(e) => this._pinnedTimerValueChanged(e, index)}></ha-switch>
+                  </ha-formfield>
+                ` : ""}
               </div>
 
-              <ha-formfield label="Play until dismissed or snoozed">
-                <ha-switch
-                  .checked=${t?.audio_play_until_dismissed === true}
-                  .configValue=${"audio_play_until_dismissed"}
-                  @change=${(e) => this._pinnedTimerValueChanged(e, index)}
-                ></ha-switch>
-              </ha-formfield>
-            ` : ""}
-          </div>
+              <button class="remove-entity" @click=${() => this._removePinnedTimer(index)} title="Remove pinned timer">
+                <ha-icon icon="mdi:delete"></ha-icon>
+              </button>
+            </div>
+          `)}
 
-          <button class="remove-entity" @click=${() => this._removePinnedTimer(index)} title="Remove pinned timer">
-            <ha-icon icon="mdi:delete"></ha-icon>
-          </button>
+      <button class="add-button" @click=${this._addPinnedTimer}>
+        <ha-icon icon="mdi:plus"></ha-icon>
+        <span>Add pinned timer</span>
+      </button>
+    `;
+
+    const audioContent = b`
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.audio_enabled === true} .configValue=${"audio_enabled"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Enable audio notifications</span>
+          <span class="toggle-desc">Play a sound when any timer expires (per-entity overrides also apply).</span>
         </div>
-      `)}
-`;
+      </label>
 
-const storageContent = b`
+      ${this._config.audio_enabled ? b`
+        ${this._tf({ label: "Audio file URL or path", value: this._config.audio_file_url, configValue: "audio_file_url", placeholder: "/local/sounds/done.mp3", change: this._valueChanged })}
+        <div class="row">
+          ${this._tf({ label: "Completion delay (seconds)", type: "number", min: "1", max: "30", value: this._config.audio_completion_delay ?? 4, configValue: "audio_completion_delay", change: this._valueChanged })}
+          ${this._tf({ label: "Number of times to play", type: "number", min: "1", max: "10", value: this._config.audio_repeat_count ?? 1, configValue: "audio_repeat_count", change: this._valueChanged })}
+        </div>
+        <label class="toggle-row">
+          <ha-switch .checked=${this._config.audio_play_until_dismissed === true} .configValue=${"audio_play_until_dismissed"} @change=${this._valueChanged}></ha-switch>
+          <div class="toggle-text">
+            <span class="toggle-title">Play until dismissed or snoozed</span>
+            <span class="toggle-desc">Override the repeat count and keep playing until the user acts on the timer.</span>
+          </div>
+        </label>
+      ` : ""}
+    `;
+
+    const storageContent = b`
       <ha-entity-picker
         .hass=${this.hass}
         .value=${this._config.default_timer_entity || ""}
         .configValue=${"default_timer_entity"}
         @value-changed=${this._detailValueChanged}
-        label="Default Timer Storage (Optional)"
-        help-text="Select a helper (input_text) or an MQTT sensor to store timers."
+        label="Default timer storage (optional)"
+        help-text="Select a helper (input_text/text) or an MQTT sensor to store timers."
         allow-custom-entity
         .includeDomains=${["input_text", "text", "sensor"]}
       ></ha-entity-picker>
-      <ha-formfield label="Auto use Voice PE (if available)">
-        <ha-switch .checked=${this._config.auto_voice_pe === true} .configValue=${"auto_voice_pe"} @change=${this._valueChanged}></ha-switch>
-      </ha-formfield>
-
-      ${this._config.auto_voice_pe === true
-        ? b`
-            <ha-entity-picker
-              .hass=${this.hass}
-              .value=${this._config.voice_pe_control_entity || ""}
-              .configValue=${"voice_pe_control_entity"}
-              .includeDomains=${["text", "input_text"]}
-              allow-custom-entity
-              label="Voice PE control entity"
-              @value-changed=${this._valueChanged}
-            ></ha-entity-picker>
-          `
-        : ""}
 
       <div class="storage-info">
         <span class="storage-label">Storage type: <strong>${this._getStorageDisplayName(storageType)}</strong></span>
         <small class="storage-description">${this._getStorageDescription(storageType)}</small>
       </div>
-    `;
 
-    const audioContent = b`
-      <ha-formfield label="Enable audio notifications">
-        <ha-switch .checked=${this._config.audio_enabled === true} .configValue=${"audio_enabled"} @change=${this._valueChanged}></ha-switch>
-      </ha-formfield>
-      ${this._config.audio_enabled ? b`
-        <ha-textfield label="Audio file URL or path" .value=${this._config.audio_file_url || ""} .configValue=${"audio_file_url"} @input=${this._valueChanged}></ha-textfield>
-        <ha-textfield label="Audio completion delay (seconds)" type="number" min="1" max="30" .value=${this._config.audio_completion_delay ?? 4} .configValue=${"audio_completion_delay"} @input=${this._valueChanged}></ha-textfield>
-        <ha-textfield label="Number of times to play" type="number" min="1" max="10" .value=${this._config.audio_repeat_count ?? 1} .configValue=${"audio_repeat_count"} @input=${this._valueChanged}></ha-textfield>
-        <ha-formfield label="Play audio until timer is dismissed or snoozed">
-          <ha-switch .checked=${this._config.audio_play_until_dismissed === true} .configValue=${"audio_play_until_dismissed"} @change=${this._valueChanged}></ha-switch>
-        </ha-formfield>
+      <div class="divider"></div>
+
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.auto_voice_pe === true} .configValue=${"auto_voice_pe"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Auto-detect Voice PE timers</span>
+          <span class="toggle-desc">Mirror Voice PE timers automatically when present on the system.</span>
+        </div>
+      </label>
+
+      ${this._config.auto_voice_pe === true ? b`
+        <ha-entity-picker
+          .hass=${this.hass}
+          .value=${this._config.voice_pe_control_entity || ""}
+          .configValue=${"voice_pe_control_entity"}
+          .includeDomains=${["text", "input_text"]}
+          allow-custom-entity
+          label="Voice PE control entity"
+          @value-changed=${this._valueChanged}
+        ></ha-entity-picker>
       ` : ""}
     `;
 
     const entitiesContent = b`
-      <div class="entities-header">
-        <h3>Entities</h3>
-        <button class="add-entity-button" @click=${this._addEntity} title="Add timer entity"><ha-icon icon="mdi:plus"></ha-icon></button>
-      </div>
+      <p class="hint">Bind to <code>timer.*</code>, Alexa, Voice PE, helper or sensor entities. Mode is auto-detected by default.</p>
 
       ${(this._config.entities || []).length === 0
-        ? b`<div class="no-entities">No entities configured. Click the + button above to add timer entities.</div>`
+        ? b`<div class="no-entities">No entities configured. Use the button below to add timer entities.</div>`
         : (this._config.entities || []).map((entityConf, index) => {
             const entityId = typeof entityConf === "string" ? entityConf : (entityConf?.entity || "");
             const conf = typeof entityConf === "string" ? {} : (entityConf || {});
@@ -4312,17 +4478,12 @@ const storageContent = b`
                     @value-changed=${(e) => this._entityValueChanged(e, index)}
                   ></ha-entity-picker>
                 ` : b`
-                  <ha-textfield
-                    label="Entity (type while picker loads)"
-                    .value=${entityId}
-                    .configValue=${"entity"}
-                    @input=${(e) => this._entityValueChanged(e, index)}
-                  ></ha-textfield>
+                  ${this._tf({ label: "Entity (type while picker loads)", value: entityId, configValue: "entity", change: (e) => this._entityValueChanged(e, index) })}
                 `}
                 <div class="entity-options">
-                  <div class="side-by-side" style="align-items:flex-start;">
+                  <div class="row" style="align-items:flex-start;">
                     <div style="flex:1;">
-                      <ha-select label="Mode" .value=${conf.mode || "auto"} .configValue=${"mode"} .options=${[{value:"auto",label:"Auto (Default)"},{value:"alexa",label:"Alexa"},{value:"timer",label:"Timer"},{value:"voice_pe",label:"Voice PE"},{value:"helper",label:"Helper (input_text/text)"},{value:"timestamp",label:"Timestamp sensor"},{value:"minutes_attr",label:"Minutes attribute"}]}
+                      <ha-select label="Mode" naturalMenuWidth fixedMenuPosition .value=${conf.mode || "auto"} .configValue=${"mode"} .options=${SELECT_OPTIONS.entity_mode}
                         @selected=${(e) => { e.stopPropagation(); this._entityValueChanged(e, index); }} @closed=${(e) => e.stopPropagation()}>
                         <mwc-list-item value="auto">Auto (Default)</mwc-list-item>
                         <mwc-list-item value="alexa">Alexa</mwc-list-item>
@@ -4340,7 +4501,7 @@ const storageContent = b`
                     </div>
 
                     ${conf.mode === "minutes_attr" ? b`
-                      <ha-textfield label="Minutes attribute" .value=${conf.minutes_attr || ""} .configValue=${"minutes_attr"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
+                      ${this._tf({ label: "Minutes attribute", value: conf.minutes_attr, configValue: "minutes_attr", change: (e) => this._entityValueChanged(e, index) })}
                     ` : ""}
 
                     ${isTimestampMode ? b`
@@ -4356,31 +4517,25 @@ const storageContent = b`
                   </div>
 
                   ${isTimestampMode ? b`
-                    <ha-textfield
-                      label="Start time attribute (Optional)"
-                      .value=${conf.start_time_attr || ""}
-                      .configValue=${"start_time_attr"}
-                      @input=${(e) => this._entityValueChanged(e, index)}
-                      helper-text="Attribute on this entity containing the start timestamp (e.g., 'last_triggered')."
-                    ></ha-textfield>
+                    ${this._tf({ label: "Start time attribute (optional)", value: conf.start_time_attr, configValue: "start_time_attr", helper: "Attribute on this entity containing the start timestamp (e.g., 'last_triggered').", change: (e) => this._entityValueChanged(e, index) })}
                   ` : ""}
 
-                  <div class="side-by-side">
-                    <ha-textfield label="Name Override" .value=${conf.name || ""} .configValue=${"name"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
-                    <ha-icon-picker label="Icon Override" .value=${conf.icon || ""} .configValue=${"icon"} @value-changed=${(e) => this._entityValueChanged(e, index)}></ha-icon-picker>
-                    <ha-textfield label="Color Override" .value=${conf.color || ""} .configValue=${"color"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
+                  <div class="row">
+                    ${this._tf({ label: "Name override", value: conf.name, configValue: "name", change: (e) => this._entityValueChanged(e, index) })}
+                    <ha-icon-picker label="Icon override" .value=${conf.icon || ""} .configValue=${"icon"} @value-changed=${(e) => this._entityValueChanged(e, index)}></ha-icon-picker>
+                    ${this._tf({ label: "Color override", value: conf.color, configValue: "color", change: (e) => this._entityValueChanged(e, index) })}
                   </div>
 
-                  <ha-textfield label="Expired message override" .value=${conf.expired_subtitle || ""} .configValue=${"expired_subtitle"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
+                  ${this._tf({ label: "Expired message override", value: conf.expired_subtitle, configValue: "expired_subtitle", change: (e) => this._entityValueChanged(e, index) })}
 
                   <ha-formfield label="Enable entity-specific audio">
                     <ha-switch .checked=${conf.audio_enabled === true} .configValue=${"audio_enabled"} @change=${(e) => this._entityValueChanged(e, index)}></ha-switch>
                   </ha-formfield>
 
                   ${conf.audio_enabled ? b`
-                    <div class="side-by-side">
-                      <ha-textfield label="Audio file URL" .value=${conf.audio_file_url || ""} .configValue=${"audio_file_url"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
-                      <ha-textfield label="Audio repeat count" type="number" min="1" max="10" .value=${conf.audio_repeat_count ?? 1} .configValue=${"audio_repeat_count"} @input=${(e) => this._entityValueChanged(e, index)}></ha-textfield>
+                    <div class="row">
+                      ${this._tf({ label: "Audio file URL", value: conf.audio_file_url, configValue: "audio_file_url", change: (e) => this._entityValueChanged(e, index) })}
+                      ${this._tf({ label: "Audio repeat count", type: "number", min: "1", max: "10", value: conf.audio_repeat_count ?? 1, configValue: "audio_repeat_count", change: (e) => this._entityValueChanged(e, index) })}
                     </div>
                   ` : ""}
 
@@ -4399,16 +4554,38 @@ const storageContent = b`
             `;
           })
       }
+
+      <button class="add-button" @click=${this._addEntity}>
+        <ha-icon icon="mdi:plus"></ha-icon>
+        <span>Add timer entity</span>
+      </button>
     `;
+
+    const panel = (key, header, content, opts = {}) => {
+      const expanded = opts.expanded ?? !!this._expandedSections?.[key];
+      return b`
+        <ha-expansion-panel
+          outlined
+          ?expanded=${expanded}
+          .header=${header}
+          @expanded-changed=${(e) => { this._expandedSections = { ...(this._expandedSections || {}), [key]: !!e.detail?.expanded }; }}
+        >
+          <div class="panel-body">${content}</div>
+        </ha-expansion-panel>
+      `;
+    };
 
     return b`
       <div class="card-config">
-        ${section("basics", "Basics", b`${basicContent}<div class="divider"></div>${timeContent}<div class="divider"></div>${audioContent}`)}
-        ${section("layout", "Layout", generalContent)}
-        ${section("presets", "Presets", presetsContent)}
-        ${section("pinned", "Pinned timers", pinnedContent)}
-        ${section("storage", "Storage", storageContent)}
-        ${section("entities", "Entities", entitiesContent)}
+        ${panel("appearance", "Appearance", appearanceContent, { expanded: this._expandedSections?.appearance ?? true })}
+        ${panel("entities", "Timer entities", entitiesContent, { expanded: this._expandedSections?.entities ?? true })}
+        ${panel("sorting", "Sorting", sortingContent)}
+        ${panel("timeFormat", "Time format", timeFormatContent)}
+        ${panel("defaults", "Timer defaults & behavior", defaultsContent)}
+        ${panel("presets", "Quick-start presets", presetsContent)}
+        ${panel("pinned", "Pinned timers", pinnedContent)}
+        ${panel("audio", "Audio notifications", audioContent)}
+        ${panel("storage", "Storage & integrations", storageContent)}
       </div>
     `;
   }
@@ -4432,38 +4609,175 @@ const storageContent = b`
   }
 
   static get styles() {
-    return i$3`
-      .card-config { display: flex; flex-direction: column; gap: 4px; }
+    return i$4`
+      :host { display: block; }
 
-      .section { background: var(--card-background-color); border-radius: 8px; overflow: visible; margin-bottom: 4px; }
-      .section-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; transition: background-color 0.2s; }
-      .section-header:hover { background: rgba(var(--rgb-primary-text-color), 0.04); }
-      .section-title { font-weight: 600; font-size: 14px; color: var(--primary-text-color); margin: 0; }
-      .section-header ha-icon { color: var(--secondary-text-color); }
-      .section-content { padding: 0 16px 16px 16px; display: flex; flex-direction: column; gap: 12px; animation: slideDown 0.2s ease-out; }
+      .card-config { display: flex; flex-direction: column; gap: 12px; }
 
-      @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+      ha-expansion-panel {
+        --expansion-panel-summary-padding: 0 16px;
+        --expansion-panel-content-padding: 0;
+        border: 1px solid var(--divider-color);
+        border-radius: 8px;
+        background: var(--card-background-color);
+        overflow: hidden;
+      }
 
-      .subsection-title { font-weight: 600; margin-top: 8px; margin-bottom: -4px; color: var(--primary-text-color); font-size: 0.9rem; }
-      .side-by-side { display: flex; gap: 12px; }
+      .panel-body {
+        padding: 0 16px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .row,
+      .side-by-side {
+        display: flex;
+        gap: 12px;
+      }
+      .row > *,
       .side-by-side > * { flex: 1; min-width: 0; }
 
-      .divider { height: 1px; background: var(--divider-color); margin: 8px 0; }
+      /* DO NOT force display:block on these. HA's ha-textfield uses
+         :host { display: inline-flex } internally; overriding it breaks its
+         internal layout and collapses the field to 0 height when used as a
+         flex child of .row / .side-by-side. Flex-column parents already
+         stretch their direct children to full width via align-items:stretch. */
+      .panel-body > ha-textfield,
+      .panel-body > ha-input,
+      .panel-body > ha-entity-picker,
+      .panel-body > ha-icon-picker,
+      .panel-body > ha-select,
+      .panel-body > ha-form,
+      .entity-options > ha-textfield,
+      .entity-options > ha-input,
+      .entity-options > ha-entity-picker,
+      .entity-options > ha-icon-picker,
+      .entity-options > ha-select,
+      .entity-options > ha-form { width: 100%; }
 
-      .storage-info { padding: 12px; background: rgba(var(--rgb-primary-text-color), 0.02); border: 1px solid var(--divider-color); border-radius: 8px; display: flex; flex-direction: column; gap: 4px; }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 4px 0;
+        cursor: pointer;
+        user-select: none;
+      }
+      .toggle-row ha-switch { flex-shrink: 0; }
+      .toggle-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+      .toggle-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+      }
+      .toggle-desc {
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--secondary-text-color);
+        margin-top: 2px;
+      }
+
+      .hint {
+        font-size: 12px;
+        line-height: 1.4;
+        color: var(--secondary-text-color);
+        margin: 0;
+      }
+      .hint code {
+        background: rgba(var(--rgb-primary-text-color, 0, 0, 0), 0.08);
+        padding: 1px 4px;
+        border-radius: 3px;
+        font-size: 11px;
+      }
+
+      .subsection-title {
+        font-weight: 600;
+        margin-top: 4px;
+        margin-bottom: -4px;
+        color: var(--primary-text-color);
+        font-size: 0.9rem;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--divider-color);
+        margin: 4px 0;
+      }
+
+      .storage-info {
+        padding: 12px;
+        background: rgba(var(--rgb-primary-text-color), 0.02);
+        border: 1px solid var(--divider-color);
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
       .storage-label { font-size: 0.9rem; color: var(--primary-text-color); }
       .storage-description { color: var(--secondary-text-color); font-size: 0.8rem; line-height: 1.2; }
 
-      .entities-header { display: flex; justify-content: space-between; align-items: center; }
-      .entities-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
-      .add-entity-button { background: var(--primary-color); border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary-color, #fff); }
-      .no-entities { text-align: center; color: var(--secondary-text-color); padding: 16px; font-style: italic; border: 2px dashed var(--divider-color); border-radius: 8px; margin: 8px 0; }
+      .no-entities {
+        text-align: center;
+        color: var(--secondary-text-color);
+        padding: 16px;
+        font-style: italic;
+        border: 2px dashed var(--divider-color);
+        border-radius: 8px;
+      }
 
-      .entity-editor { border: 1px solid var(--divider-color); border-radius: 8px; padding: 12px; position: relative; }
-      .entity-options { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-      .remove-entity { position: absolute; top: 6px; inset-inline-end: 6px; background: var(--error-color, #f44336); border: none; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: white; }
+      .entity-editor {
+        border: 1px solid var(--divider-color);
+        border-radius: 8px;
+        padding: 12px;
+        position: relative;
+      }
+      .entity-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .remove-entity {
+        position: absolute;
+        top: 6px;
+        inset-inline-end: 6px;
+        background: var(--error-color, #f44336);
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: white;
+      }
 
-      .helper-text { font-size: 11px; color: var(--secondary-text-color); margin-top: 4px; margin-inline-start: 4px; }
+      .add-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 14px;
+        background: var(--primary-color);
+        color: var(--text-primary-color, #fff);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 500;
+        align-self: flex-start;
+      }
+      .add-button:hover { filter: brightness(1.08); }
+      .add-button ha-icon { --mdc-icon-size: 18px; }
+
+      .helper-text {
+        font-size: 11px;
+        color: var(--secondary-text-color);
+        margin-top: 4px;
+        margin-inline-start: 4px;
+      }
     `;
   }
 }
