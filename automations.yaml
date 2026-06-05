@@ -1213,11 +1213,14 @@
   description: Schedules vacuum to clean kitchen after extended cooking activity.
     Mops if 3+ days since last mop.
   triggers:
-  - trigger: numeric_state
-    entity_id:
+  - entity_id:
     - sensor.kitchen_motion_sensor_trigger_last_15m
     above: 24
-  conditions: []
+    platform: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
   actions:
   - action: notify.mobile_app_matthews_iphone_17_pro
     data:
@@ -1256,6 +1259,9 @@
     - condition: state
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
       state: 'on'
+    - condition: state
+      entity_id: input_boolean.iphone_sleep_focus_mode
+      state: 'off'
     then:
     - if:
       - condition: template
@@ -1314,12 +1320,15 @@
   alias: 'Cleaning: Weekly Full Clean'
   description: Full apartment vacuum and mop every Tuesday at noon
   triggers:
-  - trigger: time
-    at: '12:00:00'
+  - at: '12:00:00'
+    platform: time
   conditions:
   - condition: time
     weekday:
     - tue
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
   actions:
   - action: notify.mobile_app_matthews_iphone_17_pro
     data:
