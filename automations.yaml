@@ -357,7 +357,7 @@
     domain: media_player
     entity_id: b451ca0d99fa64340608813604902977
     type: playing
-    platform: device
+    trigger: device
   conditions:
   - condition: device
     type: is_on
@@ -368,6 +368,15 @@
     value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
       != ''music'' }}'
   actions:
+  - alias: Snapshot back lights before theater (for color restore on pause)
+    action: scene.create
+    data:
+      scene_id: back_lights_pretheater
+      snapshot_entities:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
+      - light.desk_light_strips
+      - light.desk_lamp
   - if:
     - condition: or
       conditions:
@@ -1374,15 +1383,15 @@
   - entity_id: media_player.matthews_bedroom_2
     from: playing
     to: paused
-    platform: state
+    trigger: state
   - entity_id: media_player.matthews_bedroom_2
     from: playing
     to: idle
-    platform: state
+    trigger: state
   - entity_id: media_player.matthews_bedroom_2
     from: playing
     to: standby
-    platform: state
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
@@ -1404,15 +1413,13 @@
         data: {}
         target:
           entity_id: light.cubby
-      - action: light.turn_on
+      - alias: Restore back lights to pre-theater color
+        action: scene.turn_on
         target:
-          entity_id:
-          - light.living_room_vertical_light_strip
-          - light.living_room_pegboard_light_strip
-          - light.desk_light_strips
-          - light.desk_lamp
+          entity_id: scene.back_lights_pretheater
         data:
           transition: 5
+        continue_on_error: true
     - alias: White mode - restore adaptive lighting
       conditions:
       - condition: state
