@@ -2092,3 +2092,15 @@
       - delay:
           minutes: 14
   mode: restart
+- id: '1781673379940'
+  alias: 'Maint: Restart Home Assistant'
+  description: ''
+  triggers:
+  - trigger: time_pattern
+    hours: '5'
+  conditions: []
+  actions:
+  - action: homeassistant.restart
+    metadata: {}
+    data: {}
+  mode: single
