@@ -349,9 +349,10 @@
   mode: single
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
-  description: Dims living room lights when video starts playing on Apple TV. Respects
-    eating mode for back lights. Turns off cubby light. When Color Mode is active,
-    skips the area-wide adaptive override so album art colors are preserved.
+  description: 'When video (not Music) plays on the Apple TV: vertical + pegboard
+    strips fully OFF; desk lamp, desk strip, and cubby dimmed to 5% (color left as-is,
+    restored on exit). RGB/Color mode does NOT affect this on/off behavior. If eating
+    mode is on, instead raise all five theater lights to full via apply_current_color.'
   triggers:
   - device_id: 208694a8d5e7948b810321bfff0d2235
     domain: media_player
@@ -365,62 +366,49 @@
     entity_id: b3e4d785b798fde8ef39f4b7a591c0ed
     domain: light
   - condition: template
-    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''media_content_type'')
       != ''music'' }}'
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
   actions:
-  - alias: Snapshot back lights before theater (for color restore on pause)
-    action: scene.create
-    data:
-      scene_id: back_lights_pretheater
-      snapshot_entities:
-      - light.living_room_vertical_light_strip
-      - light.living_room_pegboard_light_strip
-      - light.desk_light_strips
-      - light.desk_lamp
-  - if:
-    - condition: or
+  - choose:
+    - alias: Eating mode - keep all theater lights up
       conditions:
-      - condition: sun
-        before: sunrise
-      - condition: sun
-        after: sunset
-        after_offset: 00:30:00
-    - condition: state
-      entity_id: input_boolean.adaptive_lighting_paused
-      state: 'off'
-    then:
-    - action: script.apply_adaptive_lighting
-      data:
-        target_lights:
-          area_id: living_room
-        override_mode: theater
-        transition: 5
-  - if:
-    - condition: state
-      entity_id: input_boolean.eating_mode
-      state: 'on'
-    then:
-    - action: script.apply_adaptive_lighting
-      data:
-        target_lights:
-          entity_id:
+      - condition: state
+        entity_id: input_boolean.eating_mode
+        state: 'on'
+      sequence:
+      - action: script.apply_current_color
+        data:
+          targets:
           - light.living_room_vertical_light_strip
           - light.living_room_pegboard_light_strip
-          - light.desk_light_strips
           - light.desk_lamp
+          - light.desk_light_strips
+          - light.cubby
+          brightness_pct: 100
+          transition: 5
+    default:
+    - alias: Vertical + pegboard off
+      action: light.turn_off
+      data:
         transition: 5
-    else:
-    - action: light.turn_off
-      data: {}
       target:
         entity_id:
         - light.living_room_vertical_light_strip
         - light.living_room_pegboard_light_strip
-  - action: light.turn_off
-    data: {}
-    target:
-      entity_id: light.cubby
-  mode: single
+    - alias: Desk lamp/strip + cubby dim to 5%, keep color
+      action: light.turn_on
+      data:
+        brightness_pct: 5
+        transition: 5
+      target:
+        entity_id:
+        - light.desk_lamp
+        - light.desk_light_strips
+        - light.cubby
+  mode: restart
 - id: '1732932623429'
   alias: 'Media: Jumbotron On'
   description: Turns on Jumbotron at sunset
@@ -1189,13 +1177,13 @@
   mode: single
 - id: adaptive_lighting_schedule
   alias: 'Lighting: Adaptive Sun Schedule'
-  description: Updates light color temperature every 30 minutes based on sun elevation.
-    Skips during sleep mode or when adaptive lighting is manually paused (e.g. after
-    Random Scene). When Apple TV is playing, skips theater lights since theater mode
-    already controls them.
+  description: Every 30 minutes, refresh adaptive white color temperature on all managed
+    lights that are currently on, via apply_current_color (which preserves each light's
+    brightness, so theater-dimmed lights keep their 5% and just track color temp).
+    Skips during sleep mode or Color/RGB mode.
   triggers:
   - minutes: /30
-    platform: time_pattern
+    trigger: time_pattern
   conditions:
   - condition: state
     entity_id: light.lights
@@ -1207,14 +1195,10 @@
     entity_id: input_boolean.adaptive_lighting_paused
     state: 'off'
   actions:
-  - action: script.apply_adaptive_lighting
+  - action: script.apply_current_color
     data:
-      target_lights:
-        entity_id: '{% set all = expand(''light.lights'') | selectattr(''state'',
-          ''eq'', ''on'') | map(attribute=''entity_id'') | list %}{% if is_state(''media_player.matthews_bedroom_2'',
-          ''playing'') %}{% set theater = expand(''group.theater_lights'') | map(attribute=''entity_id'')
-          | list %}{{ all | reject(''in'', theater) | list }}{% else %}{{ all }}{%
-          endif %}'
+      targets: '{{ expand(''light.lights'') | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''entity_id'') | list }}'
       transition: 10
   mode: single
 - id: vacuum_after_cooking
@@ -1375,71 +1359,47 @@
   mode: single
 - id: media_theater_mode_off
   alias: 'Media: Theater Mode Off'
-  description: Restores living room lights when video stops/pauses on Apple TV. If
-    Color Mode (RGB) was active, re-applies the last album art color to main lights
-    and turns back lights on to their last color. Otherwise restores all adaptive
-    white lighting. Also restores cubby light.
+  description: When the Apple TV has been paused/idle/stopped for 10 seconds, bring
+    the five theater lights (vertical, pegboard, desk lamp, desk strip, cubby) back
+    to full brightness at the current color (RGB album-art or adaptive white) via
+    apply_current_color. The 10s hold prevents brief pauses/scrubbing from flapping
+    the lights.
   triggers:
   - entity_id: media_player.matthews_bedroom_2
-    from: playing
     to: paused
+    for:
+      seconds: 10
     trigger: state
   - entity_id: media_player.matthews_bedroom_2
-    from: playing
     to: idle
+    for:
+      seconds: 10
     trigger: state
   - entity_id: media_player.matthews_bedroom_2
-    from: playing
     to: standby
+    for:
+      seconds: 10
     trigger: state
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
     state: 'off'
   actions:
-  - choose:
-    - alias: Color Mode was active - restore last album art colors to all lights
-      conditions:
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'on'
-      sequence:
-      - action: automation.trigger
-        data:
-          skip_condition: true
-        target:
-          entity_id: automation.music_album_art_wled_controller
-      - action: light.turn_on
-        data: {}
-        target:
-          entity_id: light.cubby
-      - alias: Restore back lights to pre-theater color
-        action: scene.turn_on
-        target:
-          entity_id: scene.back_lights_pretheater
-        data:
-          transition: 5
-        continue_on_error: true
-    - alias: White mode - restore adaptive lighting
-      conditions:
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'off'
-      sequence:
-      - action: script.apply_adaptive_lighting
-        data:
-          target_lights:
-            area_id: living_room
-          transition: 10
-      - action: light.turn_on
-        data: {}
-        target:
-          entity_id: light.cubby
-  mode: single
+  - action: script.apply_current_color
+    data:
+      brightness_pct: 100
+      targets:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
+      - light.desk_lamp
+      - light.desk_light_strips
+      - light.cubby
+      transition: 3
+  mode: restart
 - id: eating_mode_on
   alias: 'Eating: Restore Back Lights'
-  description: When eating mode is turned on during theater mode, restore back lights
-    to adaptive lighting
+  description: When eating mode turns on during theater, raise all five theater lights
+    to full brightness at current color so you can see your food.
   triggers:
   - trigger: state
     entity_id: input_boolean.eating_mode
@@ -1450,34 +1410,35 @@
     entity_id: media_player.matthews_bedroom_2
     state: playing
   - condition: template
-    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''app_name'')
       != ''Music'' }}'
   actions:
-  - action: script.apply_adaptive_lighting
+  - action: script.apply_current_color
     data:
-      target_lights:
-        entity_id:
-        - light.living_room_vertical_light_strip
-        - light.living_room_pegboard_light_strip
-        - light.desk_light_strips
-        - light.desk_lamp
+      brightness_pct: 100
+      targets:
+      - light.living_room_vertical_light_strip
+      - light.living_room_pegboard_light_strip
+      - light.desk_lamp
+      - light.desk_light_strips
+      - light.cubby
       transition: 5
   mode: single
 - id: eating_mode_off
   alias: 'Eating: Dim Back Lights'
-  description: When eating mode is turned off during theater mode, turn off back lights
-    again
+  description: 'When eating mode turns off during theater, re-apply the theater layout:
+    vertical + pegboard off, desk lamp/strip + cubby back to 5%.'
   triggers:
-  - trigger: state
-    entity_id: input_boolean.eating_mode
+  - entity_id: input_boolean.eating_mode
     from: 'on'
     to: 'off'
+    trigger: state
   conditions:
   - condition: state
     entity_id: media_player.matthews_bedroom_2
     state: playing
   - condition: template
-    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''app_name'')
       != ''Music'' }}'
   actions:
   - action: light.turn_off
@@ -1487,8 +1448,15 @@
       entity_id:
       - light.living_room_vertical_light_strip
       - light.living_room_pegboard_light_strip
-      - light.desk_light_strips
+  - action: light.turn_on
+    data:
+      brightness_pct: 5
+      transition: 5
+    target:
+      entity_id:
       - light.desk_lamp
+      - light.desk_light_strips
+      - light.cubby
   mode: single
 - id: cubby_light_sleep_color
   alias: 'Lighting: Cubby Sleep Color'
@@ -1777,17 +1745,15 @@
   mode: restart
 - id: music_album_art_wled_controller
   alias: 'Music: Album Art WLED Controller'
-  description: 'When Node-RED writes album art RGB to input_text.album_art_color,
-    extract hue at max saturation and apply to all WLED strips and Kasa bulbs apartment-wide.
-    In random scene mode: apply effects to living room WLED strips + album art color;
-    solid color to remaining WLED strips; Kasa bulbs get solid album art color. If
-    the color is vivid (distinct hue), the pegboard gets the complementary hue while
-    the desk keeps the primary — they face each other so the colors blend on the white
-    wall between them. In white lights mode: only TV stand gets Solid + album art
-    color.'
+  description: 'When Node-RED writes album art RGB to input_text.album_art_color (Music
+    playing): In random/color mode (adaptive_lighting_paused on), recolor ONLY the
+    album-art lights that are currently on, via apply_current_color (primary hue everywhere,
+    complementary on pegboard, per-light music effects, brightness preserved). Off
+    lights are left alone and pick up the latest color when next turned on. In white
+    mode, only the TV stand strip gets the album color (if on).'
   triggers:
-  - platform: state
-    entity_id: input_text.album_art_color
+  - entity_id: input_text.album_art_color
+    trigger: state
   conditions:
   - condition: state
     entity_id: media_player.matthews_bedroom_2
@@ -1801,157 +1767,67 @@
       }}'
   actions:
   - choose:
-    - alias: Random scene active - all WLED strips + Kasa bulbs apartment-wide
+    - alias: Random/color mode - recolor only lights that are on
       conditions:
       - condition: state
         entity_id: input_boolean.adaptive_lighting_paused
         state: 'on'
       sequence:
-      - parallel:
-        - target:
-            entity_id: light.living_room_vertical_light_strip
-          data:
-            effect: '{{ states(''input_select.music_effect_vertical_strip'') }}'
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.living_room_tv_stand_light_strip
-          data:
-            effect: '{{ states(''input_select.music_effect_tv_stand_strip'') }}'
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.living_room_bookshelf_light_strips
-          data:
-            effect: '{{ states(''input_select.music_effect_bookshelf_strips'') }}'
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.desk_light_strips
-          data:
-            effect: '{{ states(''input_select.music_effect_desk_strips'') }}'
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.living_room_pegboard_light_strip
-          data:
-            effect: '{{ states(''input_select.music_effect_pegboard_strip'') }}'
-            hs_color: '{{ pegboard_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.kitchen_sink_light_strip
-          data:
-            effect: Solid
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.bedroom_nightstand_light_strip
-          data:
-            effect: Solid
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.bed_frame_light_strips
-          data:
-            effect: Solid
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.bathroom_light_strip
-          data:
-            effect: Solid
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.cubby
-          data:
-            effect: Solid
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-          action: light.turn_on
-        - target:
-            entity_id: light.desk_lamp
-          data:
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-            transition: 1
-          action: light.turn_on
-        - target:
-            entity_id: light.living_room_lamp
-          data:
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-            transition: 1
-          action: light.turn_on
-        - target:
-            entity_id: light.bed_lamp
-          data:
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-            transition: 1
-          action: light.turn_on
-        - target:
-            entity_id: light.shoerack_light
-          data:
-            hs_color: '{{ sat_hs }}'
-            brightness: 255
-            transition: 1
-          action: light.turn_on
-    - alias: White lights mode - only TV stand with Solid
+      - action: script.apply_current_color
+        data:
+          targets: '{{ on_album_lights }}'
+          transition: 1
+    - alias: White mode - TV stand only gets album color
       conditions:
       - condition: state
         entity_id: input_boolean.adaptive_lighting_paused
         state: 'off'
+      - condition: state
+        entity_id: light.living_room_tv_stand_light_strip
+        state: 'on'
       sequence:
-      - target:
-          entity_id: light.living_room_tv_stand_light_strip
+      - action: light.turn_on
         data:
           effect: Solid
-          hs_color: '{{ sat_hs }}'
+          hs_color: '{{ primary_hs }}'
           brightness: 255
-        action: light.turn_on
+        target:
+          entity_id: light.living_room_tv_stand_light_strip
   mode: restart
+  variables:
+    art_hue: '{% set p=states(''input_text.album_art_color'').split('','') %}{% set
+      r=p[0]|int(0)/255 %}{% set g=p[1]|int(0)/255 %}{% set b=p[2]|int(0)/255 %}{%
+      set mx=[r,g,b]|max %}{% set mn=[r,g,b]|min %}{% set d=mx-mn %}{% set h=0 if
+      d==0 else (60*(((g-b)/d)%6) if mx==r else (60*((b-r)/d+2) if mx==g else 60*((r-g)/d+4)))
+      %}{{ ((h+360)%360)|round(1) }}'
+    primary_hs: '{{ [art_hue|float(0), 100] }}'
+    on_album_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_tv_stand_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.kitchen_sink_light_strip'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
+      | select(''is_state'',''on'') | list }}'
 - id: lighting_color_mode_deactivate
   alias: 'Lighting: Color Mode Deactivate'
-  description: When Color Mode is turned off, restores all lights apartment-wide to
-    adaptive white lighting. Skips if DND/sleep is active since sleep mode handles
-    that transition itself.
+  description: When Color/RGB mode is turned off, recolor all managed lights that
+    are currently ON back to adaptive white via apply_current_color. Does NOT turn
+    any lights on or off - RGB mode only affects color, never on/off state. Skips
+    if sleep mode is active.
   triggers:
-  - trigger: state
-    entity_id: input_boolean.adaptive_lighting_paused
+  - entity_id: input_boolean.adaptive_lighting_paused
     to: 'off'
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
     state: 'off'
   actions:
-  - action: script.apply_adaptive_lighting
+  - action: script.apply_current_color
     data:
-      target_lights:
-        area_id:
-        - matthews_bedroom
-        - kitchen
-        - living_room
-        - bathroom
-        device_id:
-        - e9afd45f3065823eabf2ebdab37800e9
-        - 1bb1b0cdbaa14208e037a5638b9d3210
+      targets: '{{ expand(''light.lights'') | selectattr(''state'',''eq'',''on'')
+        | map(attribute=''entity_id'') | list }}'
       transition: 5
   - action: select.select_option
-    metadata: {}
-    target:
-      entity_id: select.nintendo_toy_mode_selector
     data:
       option: All
+    target:
+      entity_id: select.nintendo_toy_mode_selector
   mode: single
 - id: '1758584148000'
   alias: 'Lighting: Bathroom Presence'
