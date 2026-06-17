@@ -152,7 +152,7 @@ google_assistant:
     - light
 
 shell_command:
-  git_push_config: 'git -C /config add -u . && git -C /config commit -m "server update" && git -C /config pull && git -C /config push >> /config/cron.log 2>&1'
+  git_push_config: 'git -C /config add -u . && git -C /config commit -m "server update" && git -C /config pull && git -C /config push 2>&1 | awk '{ print strftime("[%Y-%m-%d %H:%M:%S]"), $0; fflush() }' >> /config/cron.log'
 
 input_number: !include input_number.yaml
 
