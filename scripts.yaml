@@ -539,3 +539,124 @@ apply_adaptive_lighting:
           transition: '{{ trans }}'
         target:
           entity_id: '{{ rgbw_lights }}'
+apply_current_color:
+  alias: Apply Current Color
+  description: Color primitive. Applies the CURRENT color regime to a set of lights
+    and nothing else about on/off policy. RGB mode (input_boolean.adaptive_lighting_paused
+    = on) -> album-art hue from input_text.album_art_color (pegboard gets the complementary
+    hue); white mode -> adaptive kelvin/rgbw from sun elevation. Preserves each light's
+    current brightness unless brightness_pct is passed; off lights default to 100.
+    Capability (effect/color mode) is detected at runtime. This is the single place
+    color is decided, so on-lights recolor live and off-lights get the latest color
+    whenever they are next turned on (recompute-on-turn-on).
+  fields:
+    brightness_pct:
+      description: Optional 1-100. Omit to preserve each light's current brightness
+        (off lights -> 100).
+      example: 100
+    targets:
+      description: List of light entity_ids to recolor.
+      example: '[''light.desk_lamp'',''light.cubby'']'
+    transition:
+      description: Transition seconds (default 2).
+      example: 2
+  max: 25
+  mode: parallel
+  sequence:
+  - variables:
+      ab: '{% set t=(2000 + 3110 * ([-6, [20, state_attr(''sun.sun'',''elevation'')|float(0)]|min]|max
+        + 6) / 26)/100 %}{{ 255 if t>=66 else (0 if t<=19 else [[138.5177312231*((t-10)|log)-305.0447927307,255]|min,0]|max|int)
+        }}'
+      adaptive_kelvin: '{{ (2000 + 3110 * ([-6, [20, state_attr(''sun.sun'',''elevation'')|float(0)]|min]|max
+        + 6) / 26) | round(0) | int }}'
+      ag: '{% set t=(2000 + 3110 * ([-6, [20, state_attr(''sun.sun'',''elevation'')|float(0)]|min]|max
+        + 6) / 26)/100 %}{{ ([[99.4708025861*(t|log)-161.1195681661,255]|min,0]|max|int)
+        if t<=66 else ([[288.1221695283*((t-60)**-0.0755148492),255]|min,0]|max|int)
+        }}'
+      ar: '{% set t=(2000 + 3110 * ([-6, [20, state_attr(''sun.sun'',''elevation'')|float(0)]|min]|max
+        + 6) / 26)/100 %}{{ 255 if t<=66 else [[329.698727446*((t-60)**-0.1332047592),255]|min,0]|max|int
+        }}'
+      art_hue: '{% set p = states(''input_text.album_art_color'').split('','') %}{%
+        set r = p[0]|int(0)/255 %}{% set g = p[1]|int(0)/255 %}{% set b = p[2]|int(0)/255
+        %}{% set mx=[r,g,b]|max %}{% set mn=[r,g,b]|min %}{% set d=mx-mn %}{% set
+        h = 0 if d==0 else (60*(((g-b)/d)%6) if mx==r else (60*((b-r)/d+2) if mx==g
+        else 60*((r-g)/d+4))) %}{{ ((h+360)%360)|round(1) }}'
+      aw: '{{ [ar|int, ag|int, ab|int]|min }}'
+      comp_hs: '{{ [(art_hue|float(0)+180)%360, 100] }}'
+      music_map:
+        light.desk_light_strips: input_select.music_effect_desk_strips
+        light.living_room_bookshelf_light_strips: input_select.music_effect_bookshelf_strips
+        light.living_room_pegboard_light_strip: input_select.music_effect_pegboard_strip
+        light.living_room_tv_stand_light_strip: input_select.music_effect_tv_stand_strip
+        light.living_room_vertical_light_strip: input_select.music_effect_vertical_strip
+      primary_hs: '{{ [art_hue|float(0), 100] }}'
+      rgb_mode: '{{ is_state(''input_boolean.adaptive_lighting_paused'',''on'') }}'
+      trans: '{{ transition | default(2) }}'
+  - repeat:
+      for_each: '{{ targets }}'
+      sequence:
+      - variables:
+          b255: '{% if brightness_pct is defined and brightness_pct not in [none,'''']
+            %}{{ (brightness_pct|float*255/100)|round(0)|int }}{% elif is_state(repeat.item,''on'')
+            %}{{ state_attr(repeat.item,''brightness'')|int(255) }}{% else %}255{%
+            endif %}'
+          fx_capable: '{{ state_attr(repeat.item,''effect_list'') is not none }}'
+          is_peg: '{{ repeat.item == ''light.living_room_pegboard_light_strip'' }}'
+          modes: '{{ state_attr(repeat.item,''supported_color_modes'') | map(''string'')
+            | list }}'
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ rgb_mode and fx_capable and (''rgbw'' in modes or
+              ''rgb'' in modes or ''hs'' in modes or ''xy'' in modes) }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
+              effect: '{{ states(music_map[repeat.item]) if repeat.item in music_map
+                else ''Solid'' }}'
+              hs_color: '{{ comp_hs if is_peg else primary_hs }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ rgb_mode and (''rgbw'' in modes or ''rgb'' in modes
+              or ''hs'' in modes or ''xy'' in modes) }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
+              hs_color: '{{ comp_hs if is_peg else primary_hs }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ not rgb_mode and ''color_temp'' in modes }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
+              color_temp_kelvin: '{{ adaptive_kelvin }}'
+              effect: '{{ ''Solid'' if fx_capable else none }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ not rgb_mode and (''rgbw'' in modes or ''rgb'' in
+              modes) }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
+              effect: '{{ ''Solid'' if fx_capable else none }}'
+              rgbw_color:
+              - '{{ ar|int - aw|int }}'
+              - '{{ ag|int - aw|int }}'
+              - '{{ ab|int - aw|int }}'
+              - '{{ aw|int }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
