@@ -2104,3 +2104,31 @@
     metadata: {}
     data: {}
   mode: single
+- id: '1781800384750'
+  alias: Apartment Watch — New Availability Push
+  description: Pushes a high-importance notification when changedetection.io reports
+    a new unit at a watched JC building. Triggered by webhook 'apartment_watch'.
+  triggers:
+  - trigger: webhook
+    webhook_id: apartment_watch
+    allowed_methods:
+    - POST
+    local_only: false
+  actions:
+  - action: notify.mobile_app_matthews_iphone_17_pro
+    data:
+      title: "{{ trigger.json.title | default('\U0001F3E0 New apartment availability',
+        true) }}"
+      message: '{{ trigger.json.message | default(''A new unit was just listed.'',
+        true) }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+          sound: default
+        url: https://watch.mattvandenberg.com
+        tag: apartments
+        channel: Apartments
+        importance: high
+        notification_icon: mdi:home-search
+  mode: queued
+  max: 10
