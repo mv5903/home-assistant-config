@@ -54,6 +54,8 @@ automation_ids:
 - lighting_color_mode_activate
 - system_nintendo_toy_disconnected
 - climate_sleep_fan_keep_alive
+- maint_restart_home_assistant
+- apartment_watch_new_availability_push
 - '1752541263640'
 - '1752541408687'
 - '1763575398211'
@@ -100,5 +102,8 @@ automation_ids:
 - '1762485541183'
 - '1776659653318'
 - '1776706100250'
-exported_at: '2026-05-18T12:34:00.166332'
-total_count: 101
+- '1781673379940'
+- '1781800384750'
+- ps5_pro_watch_price_drop
+exported_at: '2026-06-21T17:00:44.424371'
+total_count: 106

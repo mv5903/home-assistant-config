@@ -2,12 +2,15 @@ id: weekly_full_clean
 alias: 'Cleaning: Weekly Full Clean'
 description: Full apartment vacuum and mop every Tuesday at noon
 triggers:
-- trigger: time
-  at: '12:00:00'
+- at: '12:00:00'
+  platform: time
 conditions:
 - condition: time
   weekday:
   - tue
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state: 'off'
 actions:
 - action: notify.mobile_app_matthews_iphone_17_pro
   data:

@@ -2132,3 +2132,31 @@
         notification_icon: mdi:home-search
   mode: queued
   max: 10
+- id: ps5_pro_watch_price_drop
+  alias: PS5 Pro Watch — Price Drop Push
+  description: Pushes a notification when the PS5 Pro price watcher (Playwright on
+    docker.home) POSTs a price drop to the webhook.
+  triggers:
+  - platform: webhook
+    webhook_id: ps5_pro_watch
+    local_only: false
+    allowed_methods:
+    - POST
+  conditions: []
+  actions:
+  - data:
+      title: "{{ trigger.json.title | default('\U0001F3AE PS5 Pro price drop', true)
+        }}"
+      message: '{{ trigger.json.message | default(''A PS5 Pro price changed.'', true)
+        }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+          sound: default
+        tag: ps5-pro
+        channel: PS5 Pro
+        importance: high
+        notification_icon: mdi:sony-playstation
+        color: '#003791'
+    action: notify.mobile_app_matthews_iphone_17_pro
+  mode: queued

@@ -1,14 +1,15 @@
 id: '1756866282389'
 alias: 'Media: Theater Mode On'
-description: Dims living room lights when video starts playing on Apple TV. Respects
-  eating mode for back lights. Turns off cubby light. When Color Mode is active, skips
-  the area-wide adaptive override so album art colors are preserved.
+description: 'When video (not Music) plays on the Apple TV: vertical + pegboard strips
+  fully OFF; desk lamp, desk strip, and cubby dimmed to 5% (color left as-is, restored
+  on exit). RGB/Color mode does NOT affect this on/off behavior. If eating mode is
+  on, instead raise all five theater lights to full via apply_current_color.'
 triggers:
 - device_id: 208694a8d5e7948b810321bfff0d2235
   domain: media_player
   entity_id: b451ca0d99fa64340608813604902977
   type: playing
-  platform: device
+  trigger: device
 conditions:
 - condition: device
   type: is_on
@@ -16,51 +17,47 @@ conditions:
   entity_id: b3e4d785b798fde8ef39f4b7a591c0ed
   domain: light
 - condition: template
-  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''media_content_type'')
     != ''music'' }}'
+- condition: state
+  entity_id: input_boolean.iphone_sleep_focus_mode
+  state: 'off'
 actions:
-- if:
-  - condition: or
+- choose:
+  - alias: Eating mode - keep all theater lights up
     conditions:
-    - condition: sun
-      before: sunrise
-    - condition: sun
-      after: sunset
-      after_offset: 00:30:00
-  - condition: state
-    entity_id: input_boolean.adaptive_lighting_paused
-    state: 'off'
-  then:
-  - action: script.apply_adaptive_lighting
-    data:
-      target_lights:
-        area_id: living_room
-      override_mode: theater
-      transition: 5
-- if:
-  - condition: state
-    entity_id: input_boolean.eating_mode
-    state: 'on'
-  then:
-  - action: script.apply_adaptive_lighting
-    data:
-      target_lights:
-        entity_id:
+    - condition: state
+      entity_id: input_boolean.eating_mode
+      state: 'on'
+    sequence:
+    - action: script.apply_current_color
+      data:
+        targets:
         - light.living_room_vertical_light_strip
         - light.living_room_pegboard_light_strip
-        - light.desk_light_strips
         - light.desk_lamp
+        - light.desk_light_strips
+        - light.cubby
+        brightness_pct: 100
+        transition: 5
+  default:
+  - alias: Vertical + pegboard off
+    action: light.turn_off
+    data:
       transition: 5
-  else:
-  - action: light.turn_off
-    data: {}
     target:
       entity_id:
       - light.living_room_vertical_light_strip
       - light.living_room_pegboard_light_strip
-- action: light.turn_off
-  data: {}
-  target:
-    entity_id: light.cubby
-mode: single
+  - alias: Desk lamp/strip + cubby dim to 5%, keep color
+    action: light.turn_on
+    data:
+      brightness_pct: 5
+      transition: 5
+    target:
+      entity_id:
+      - light.desk_lamp
+      - light.desk_light_strips
+      - light.cubby
+mode: restart
 enabled: true

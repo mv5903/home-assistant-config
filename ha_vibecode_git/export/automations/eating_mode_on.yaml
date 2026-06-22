@@ -1,7 +1,7 @@
 id: eating_mode_on
 alias: 'Eating: Restore Back Lights'
-description: When eating mode is turned on during theater mode, restore back lights
-  to adaptive lighting
+description: When eating mode turns on during theater, raise all five theater lights
+  to full brightness at current color so you can see your food.
 triggers:
 - trigger: state
   entity_id: input_boolean.eating_mode
@@ -12,17 +12,18 @@ conditions:
   entity_id: media_player.matthews_bedroom_2
   state: playing
 - condition: template
-  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''app_name'')
     != ''Music'' }}'
 actions:
-- action: script.apply_adaptive_lighting
+- action: script.apply_current_color
   data:
-    target_lights:
-      entity_id:
-      - light.living_room_vertical_light_strip
-      - light.living_room_pegboard_light_strip
-      - light.desk_light_strips
-      - light.desk_lamp
+    brightness_pct: 100
+    targets:
+    - light.living_room_vertical_light_strip
+    - light.living_room_pegboard_light_strip
+    - light.desk_lamp
+    - light.desk_light_strips
+    - light.cubby
     transition: 5
 mode: single
 enabled: true

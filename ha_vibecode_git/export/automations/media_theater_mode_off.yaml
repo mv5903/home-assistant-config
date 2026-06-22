@@ -1,66 +1,39 @@
 id: media_theater_mode_off
 alias: 'Media: Theater Mode Off'
-description: Restores living room lights when video stops/pauses on Apple TV. If Color
-  Mode (RGB) was active, re-applies the last album art color to main lights and turns
-  back lights on to their last color. Otherwise restores all adaptive white lighting.
-  Also restores cubby light.
+description: When the Apple TV has been paused/idle/stopped for 10 seconds, bring
+  the five theater lights (vertical, pegboard, desk lamp, desk strip, cubby) back
+  to full brightness at the current color (RGB album-art or adaptive white) via apply_current_color.
+  The 10s hold prevents brief pauses/scrubbing from flapping the lights.
 triggers:
 - entity_id: media_player.matthews_bedroom_2
-  from: playing
   to: paused
-  platform: state
+  for:
+    seconds: 10
+  trigger: state
 - entity_id: media_player.matthews_bedroom_2
-  from: playing
   to: idle
-  platform: state
+  for:
+    seconds: 10
+  trigger: state
 - entity_id: media_player.matthews_bedroom_2
-  from: playing
   to: standby
-  platform: state
+  for:
+    seconds: 10
+  trigger: state
 conditions:
 - condition: state
   entity_id: input_boolean.iphone_sleep_focus_mode
   state: 'off'
 actions:
-- choose:
-  - alias: Color Mode was active - restore last album art colors to all lights
-    conditions:
-    - condition: state
-      entity_id: input_boolean.adaptive_lighting_paused
-      state: 'on'
-    sequence:
-    - action: automation.trigger
-      data:
-        skip_condition: true
-      target:
-        entity_id: automation.music_album_art_wled_controller
-    - action: light.turn_on
-      data: {}
-      target:
-        entity_id: light.cubby
-    - action: light.turn_on
-      target:
-        entity_id:
-        - light.living_room_vertical_light_strip
-        - light.living_room_pegboard_light_strip
-        - light.desk_light_strips
-        - light.desk_lamp
-      data:
-        transition: 5
-  - alias: White mode - restore adaptive lighting
-    conditions:
-    - condition: state
-      entity_id: input_boolean.adaptive_lighting_paused
-      state: 'off'
-    sequence:
-    - action: script.apply_adaptive_lighting
-      data:
-        target_lights:
-          area_id: living_room
-        transition: 10
-    - action: light.turn_on
-      data: {}
-      target:
-        entity_id: light.cubby
-mode: single
+- action: script.apply_current_color
+  data:
+    brightness_pct: 100
+    targets:
+    - light.living_room_vertical_light_strip
+    - light.living_room_pegboard_light_strip
+    - light.desk_lamp
+    - light.desk_light_strips
+    - light.cubby
+    transition: 3
+mode: restart
 enabled: true

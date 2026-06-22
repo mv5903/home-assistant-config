@@ -1,18 +1,18 @@
 id: eating_mode_off
 alias: 'Eating: Dim Back Lights'
-description: When eating mode is turned off during theater mode, turn off back lights
-  again
+description: 'When eating mode turns off during theater, re-apply the theater layout:
+  vertical + pegboard off, desk lamp/strip + cubby back to 5%.'
 triggers:
-- trigger: state
-  entity_id: input_boolean.eating_mode
+- entity_id: input_boolean.eating_mode
   from: 'on'
   to: 'off'
+  trigger: state
 conditions:
 - condition: state
   entity_id: media_player.matthews_bedroom_2
   state: playing
 - condition: template
-  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''app_name'')
+  value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''app_name'')
     != ''Music'' }}'
 actions:
 - action: light.turn_off
@@ -22,7 +22,14 @@ actions:
     entity_id:
     - light.living_room_vertical_light_strip
     - light.living_room_pegboard_light_strip
-    - light.desk_light_strips
+- action: light.turn_on
+  data:
+    brightness_pct: 5
+    transition: 5
+  target:
+    entity_id:
     - light.desk_lamp
+    - light.desk_light_strips
+    - light.cubby
 mode: single
 enabled: true
