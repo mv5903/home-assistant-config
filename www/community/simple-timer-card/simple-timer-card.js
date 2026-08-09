@@ -16,7 +16,7 @@ const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.na
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t=globalThis,i$2=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$3=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$3,r=`<${n$1}>`,l$1=document,c=()=>l$1.createComment(""),a$1=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,d=t=>u$1(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l$1.createTreeWalker(l$1,129);function V(t,i){if(!u$1(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$3+x):s+o$3+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$3),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$3)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$3),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$3,t+1));)d.push({type:7,index:l}),t+=o$3.length-1;}l++;}}static createElement(t,i){const s=l$1.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a$1(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l$1).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l$1,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a$1(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a$1(this._$AH)?this._$AA.nextSibling.data=t:this.T(l$1.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$2(t).nextSibling;i$2(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a$1(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a$1(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.2");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+const t=globalThis,i$2=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$3=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$3,r=`<${n$1}>`,l$1=document,c=()=>l$1.createComment(""),a$1=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,d=t=>u$1(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l$1.createTreeWalker(l$1,129);function V(t,i){if(!u$1(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$3+x):s+o$3+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$3),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$3)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$3),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$3,t+1));)d.push({type:7,index:l}),t+=o$3.length-1;}l++;}}static createElement(t,i){const s=l$1.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a$1(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l$1).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l$1,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a$1(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a$1(this._$AH)?this._$AA.nextSibling.data=t:this.T(l$1.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$2(t).nextSibling;i$2(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a$1(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a$1(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
 
 /**
  * @license
@@ -49,7 +49,7 @@ const a=Symbol.for(""),o$1=t=>{if(t?.r===a)return t?._$litStatic$},i=(t,...r)=>(
  */
 
 
-const cardVersion="2.6.0";
+const cardVersion="2.7.4";
 
 const DAY_IN_MS = 86400000;
 const YEAR_IN_MS = 365 * DAY_IN_MS;
@@ -365,6 +365,36 @@ const TRANSLATIONS = {
     month: "maand", months: "maanden", year: "jaar", years: "jaren",
     hour: "uur", hours: "uren", minute: "minuut", minutes: "minuten",
     second: "seconde", seconds: "seconden",
+  },
+  sv: {
+    no_timers: "Ingen timer",
+    timer_name_optional: "Namn på timer (frivilligt)",
+    click_to_start: "Tryck för att starta",
+    no_active_timers: "Ingen pågående timer",
+    active_timers: "Pågående timers",
+    add: "Lägg till",
+    custom: "Anpassa",
+    cancel: "Avbryt",
+    save: "Spara",
+    start: "Start",
+    snooze: "Snooze",
+    dismiss: "Avfärda",
+    ready: "Redo",
+    paused: "Pausad",
+    times_up: "Tiden är ute!",
+    timer: "Timer",
+    hour_ago: "{n} timme sedan",
+    hours_ago: "{n} timmar sedan",
+    minute_ago: "{n} minut sedan",
+    minutes_ago: "{n} minuter sedan",
+    second_ago: "{n} sekund sedan",
+    seconds_ago: "{n} sekunder sedan",
+    h: "t", m: "m", s: "s", d: "d",
+    w_short: "v", mo_short: "må", y_short: "å",
+    day: "dag", days: "dagar", week: "vecka", weeks: "veckor",
+    month: "månad", months: "månader", year: "år", years: "år",
+    hour: "timme", hours: "timmar", minute: "minut", minutes: "minuter",
+    second: "sekund", seconds: "sekunder",
   }
 };
 
@@ -458,6 +488,7 @@ class SimpleTimerCard extends i$1 {
     this._expirationTimes = new Map();
     this._lastCleanupTime = 0;
     this._mqttShadow = null;
+    this._mqttLastLoadSource = "none";
     this._ui = {
       noTimerHorizontalOpen: false,
       noTimerVerticalOpen: false,
@@ -759,13 +790,19 @@ class SimpleTimerCard extends i$1 {
 
   _loadTimersFromStorage_mqtt() {
     try {
+      this._mqttLastLoadSource = "none";
       const cached = this._readMqttCache();
       const sensor = this._config?.mqtt?.sensor_entity;
-      if (!sensor) return Array.isArray(this._mqttShadow?.timers) ? this._mqttShadow.timers : cached;
+      if (!sensor) {
+        const usingShadow = Array.isArray(this._mqttShadow?.timers);
+        this._mqttLastLoadSource = usingShadow ? "shadow" : "cache";
+        return usingShadow ? this._mqttShadow.timers : cached;
+      }
       const entity = this.hass?.states?.[sensor];
       const timers = entity?.attributes?.timers;
 
       if (Array.isArray(timers)) {
+        this._mqttLastLoadSource = "sensor";
         this._writeMqttCache(timers);
         if (this._mqttShadow?.lastUpdated && entity?.attributes?.lastUpdated && entity.attributes.lastUpdated >= this._mqttShadow.lastUpdated) {
           this._mqttShadow = null;
@@ -776,10 +813,14 @@ class SimpleTimerCard extends i$1 {
         return timers;
       }
 
-      return Array.isArray(this._mqttShadow?.timers) ? this._mqttShadow.timers : cached;
+      const usingShadow = Array.isArray(this._mqttShadow?.timers);
+      this._mqttLastLoadSource = usingShadow ? "shadow" : "cache";
+      return usingShadow ? this._mqttShadow.timers : cached;
     } catch (e) {
       const cached = this._readMqttCache();
-      return Array.isArray(this._mqttShadow?.timers) ? this._mqttShadow.timers : cached;
+      const usingShadow = Array.isArray(this._mqttShadow?.timers);
+      this._mqttLastLoadSource = usingShadow ? "shadow" : "cache";
+      return usingShadow ? this._mqttShadow.timers : cached;
     }
   }
 
@@ -894,7 +935,15 @@ class SimpleTimerCard extends i$1 {
       return c;
     });
 
-    if (changed) this._saveTimersToStorage(timers, storage);
+    if (changed) {
+      // Never persist/publish normalized data that came from a stale cache or
+      // shadow snapshot. A device waking from background would otherwise write
+      // its old timer list back onto the retained MQTT topic and resurrect
+      // timers that were already dismissed on another device. Only re-save when
+      // the data is authoritative: local storage, or a fresh MQTT sensor read.
+      const isMqttNonAuthoritative = storage === "mqtt" && this._mqttLastLoadSource !== "sensor";
+      if (!isMqttNonAuthoritative) this._saveTimersToStorage(timers, storage);
+    }
     return timers;
   }
 
@@ -1468,7 +1517,14 @@ class SimpleTimerCard extends i$1 {
       }
     }
     if (this._config.storage === "local" || this._config.storage === "mqtt") {
-      collected.push(...this._loadTimersFromStorage());
+      const storageTimers = this._loadTimersFromStorage();
+      if (this._config.storage === "mqtt" && this._mqttLastLoadSource !== "sensor") {
+        // Cache/shadow data can be stale after wake-up. Keep rendering it, but
+        // block automatic expiry mutations until a fresh sensor snapshot arrives.
+        collected.push(...storageTimers.map((t) => ({ ...t, _mqtt_untrusted: true })));
+      } else {
+        collected.push(...storageTimers);
+      }
     }
     const filtered = collected.filter((t) => !(this._dismissed.has(`${t.source_entity}:${t.id}`)));
     const now = Date.now();
@@ -1536,16 +1592,23 @@ class SimpleTimerCard extends i$1 {
         timer.idle = false;
         timer.remaining = 0;
       }
-      const isNowRinging = timer.remaining <= 0 && !timer.paused && !timer.idle;
+      // Untrusted (stale cache/shadow) MQTT timers must not ring, play audio, or
+      // emit expired events. A backgrounded device waking up could otherwise
+      // re-announce a timer that was already dismissed on another device. Once a
+      // fresh sensor snapshot arrives the timer becomes trusted and rings then.
+      const isNowRinging = timer.remaining <= 0 && !timer.paused && !timer.idle && !(timer.source === "mqtt" && timer._mqtt_untrusted);
       if (isNowRinging && !wasRinging) {
         this._ringingTimers.add(timer.id);
-        this._playAudioNotification(timer.id, timer);
-        this._publishTimerEvent("expired", timer);
+        if (this._ringingInitialized) {
+          this._playAudioNotification(timer.id, timer);
+          this._publishTimerEvent("expired", timer);
+        }
       } else if (!isNowRinging && wasRinging) {
         this._ringingTimers.delete(timer.id);
         this._stopAudioForTimer(timer.id);
       }
     }
+    this._ringingInitialized = true;
     const ids = new Set(this._timers.map((t) => t.id));
     for (const r of this._ringingTimers) {
       if (!ids.has(r)) {
@@ -1557,6 +1620,7 @@ class SimpleTimerCard extends i$1 {
     const audioDelay = (this._config.audio_completion_delay || 4) * 1000;
     for (const timer of [...this._timers]) {
       if (timer.idle || timer.remaining > 0 || timer.paused) continue;
+      if (timer.source === "mqtt" && timer._mqtt_untrusted) continue;
       const action = this._config.expire_action;
       if (action === "dismiss") continue;
       if (action === "keep") {
@@ -1609,17 +1673,22 @@ class SimpleTimerCard extends i$1 {
     }
   }
 
+  _ensureAlarmAudio() {
+    if (this._alarmAudio) return this._alarmAudio;
+    const a = new Audio();
+    a.preload = "auto";
+    this._alarmAudio = a;
+    return a;
+  }
+
   _unlockAudio() {
     if (this._audioUnlocked) return;
-    // iOS Safari and the HA Companion App webview block audio.play() unless the
-    // page has received a user gesture that engaged audio. We run two unlock
-    // paths on the first tap so later alarm sounds (which fire from a timer
-    // callback, not a gesture) are allowed by the autoplay policy:
-    //   1. Resume a Web Audio context and play a single silent sample. iOS
-    //      treats a resumed AudioContext as a page-wide audio capability grant,
-    //      which is what HTMLAudioElement.play() in a timer callback needs.
-    //   2. Play a 1-sample silent WAV through a plain <audio> element, which
-    //      helps older iOS versions.
+    // iOS Safari and the HA Companion App webview gate audio per HTMLAudioElement:
+    // a Web Audio context unlock alone is not enough, because each <audio> element
+    // needs its own user-gesture-initiated play() before later programmatic plays
+    // succeed. We therefore (1) prime a page-wide Web Audio context, and
+    // (2) touch the single shared alarm <audio> element that _playAudioNotification
+    // will reuse so later alarms (fired from timer callbacks) are allowed.
     let unlocked = false;
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -1644,15 +1713,71 @@ class SimpleTimerCard extends i$1 {
       }
     } catch (_) {}
     try {
-      const a = new Audio("data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQEAAACA");
-      a.volume = 0;
-      const p = a.play();
-      if (p && typeof p.catch === "function") {
-        p.catch(() => {});
+      const audio = this._ensureAlarmAudio();
+      audio.src = "data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQEAAACA";
+      audio.volume = 0;
+      const restore = () => {
+        try { audio.pause(); audio.currentTime = 0; audio.volume = 1; } catch (_) {}
+      };
+      const p = audio.play();
+      if (p && typeof p.then === "function") {
+        // Track the unlock's play promise so _playAudioNotification can wait for it
+        // to settle before changing src and starting the real alarm — otherwise the
+        // unlock's restore() (which calls audio.pause()) races with the alarm play
+        // and produces spurious 'audio failed' signals on the first timer of a session.
+        this._audioUnlockPlay = p.then(() => { restore(); }, () => { restore(); });
+      } else {
+        restore();
+        this._audioUnlockPlay = Promise.resolve();
       }
       unlocked = true;
     } catch (_) {}
     this._audioUnlocked = unlocked;
+  }
+
+  _resolveNotifyConfig() {
+    const n = this._config && this._config.notify;
+    if (!n || typeof n !== "object") return null;
+    if (!n.service || typeof n.service !== "string") return null;
+    return n;
+  }
+
+  _notifyContext(timer) {
+    const name = (timer && (timer.name || timer.friendly_name)) ||
+      ((timer && timer.source_entity) ? String(timer.source_entity).split(".").pop() : "Timer");
+    return {
+      name,
+      entity_id: (timer && (timer.source_entity || timer.entity_id)) || "",
+      duration: (timer && timer.duration) || "",
+    };
+  }
+
+  _formatNotifyText(s, ctx) {
+    if (typeof s !== "string") return s;
+    return s.replace(/\{(name|entity_id|duration)\}/g, (_, k) => (ctx[k] != null ? String(ctx[k]) : ""));
+  }
+
+  _dispatchNotify(notifyConf, timer) {
+    try {
+      const m = String(notifyConf.service).match(/^([a-z0-9_]+)\.([a-z0-9_]+)$/i);
+      if (!m) {
+        console.warn("[simple-timer-card] notify.service must be in 'domain.service' form, got:", notifyConf.service);
+        return;
+      }
+      const domain = m[1];
+      const service = m[2];
+      const ctx = this._notifyContext(timer);
+      const payload = {};
+      if (notifyConf.message != null) payload.message = this._formatNotifyText(String(notifyConf.message), ctx);
+      if (notifyConf.title != null) payload.title = this._formatNotifyText(String(notifyConf.title), ctx);
+      if (notifyConf.data && typeof notifyConf.data === "object") {
+        payload.data = notifyConf.data;
+      }
+      if (payload.message == null) payload.message = `Timer ${ctx.name} finished`;
+      this.hass.callService(domain, service, payload);
+    } catch (e) {
+      console.warn("[simple-timer-card] notify service call failed:", e?.message || e);
+    }
   }
 
   _playAudioNotification(timerId,timer){
@@ -1695,39 +1820,105 @@ class SimpleTimerCard extends i$1 {
       audioRepeatCount = this._config.audio_repeat_count;
       audioPlayUntilDismissed = this._config.audio_play_until_dismissed;
     }
-if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) return;
+
+    const notifyConf = this._resolveNotifyConfig();
+    const notifyWhen = (notifyConf && notifyConf.when) || "on_audio_fail";
+    const fireNotify = (outcome) => {
+      if (!notifyConf) return;
+      if (notifyWhen === "on_audio_fail" && outcome === "audio_ok") return;
+      if (notifyWhen !== "always" && notifyWhen !== "on_audio_fail") return;
+      this._dispatchNotify(notifyConf, timer);
+    };
+
+    if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) {
+      fireNotify("no_audio");
+      return;
+    }
+    if (notifyConf && notifyWhen === "always") {
+      fireNotify("always");
+    }
     this._stopAudioForTimer(timerId);
     try {
-      const audio = new Audio(audioFileUrl);
+      const audio = this._ensureAlarmAudio();
+      // Wait for any in-flight unlock play to settle so its async restore()
+      // (audio.pause()) cannot race with our alarm playback. Falls through
+      // immediately if there is no unlock in flight.
+      const unlockSettled = (this._audioUnlockPlay && typeof this._audioUnlockPlay.then === "function")
+        ? this._audioUnlockPlay
+        : Promise.resolve();
+      unlockSettled.then(() => {
+        // Bail if the timer was dismissed while we were waiting.
+        if (!this._ringingTimers.has(timerId)) return;
+        audio.src = audioFileUrl;
+        audio.volume = 1;
       let playCount = 0;
+      let firstPlayResolved = false;
       const maxPlays = audioPlayUntilDismissed ? Infinity : Math.max(1, Math.min(10, audioRepeatCount || 1));
       const playNext = () => {
-        if (this._ringingTimers.has(timerId) && playCount < maxPlays) {
+        if (this._ringingTimers.has(timerId) && this._activeAudioInstances.has(timerId) && playCount < maxPlays) {
           playCount++;
-          audio.currentTime = 0;
-          audio.play().catch((err) => {
-            console.warn("[simple-timer-card] Alarm audio.play() rejected (likely iOS autoplay policy; tap the card once to unlock):", err?.message || err);
-          });
+          try { audio.currentTime = 0; } catch (_) {}
+          const isFirstAttempt = playCount === 1;
+          let sawPlayingEvent = false;
+          let promiseRejected = false;
+          let rejectionError = null;
+          const onPlayingOnce = () => {
+            sawPlayingEvent = true;
+            firstPlayResolved = true;
+          };
+          if (isFirstAttempt) {
+            try { audio.addEventListener("playing", onPlayingOnce, { once: true }); } catch (_) {}
+          }
+          const p = audio.play();
+          if (p && typeof p.then === "function") {
+            p.then(() => { firstPlayResolved = true; }).catch((err) => {
+              promiseRejected = true;
+              rejectionError = err;
+              if (!isFirstAttempt) return;
+              // The play() promise rejection is unreliable on iOS Safari (it can
+              // reject with AbortError/NotAllowedError even when playback succeeds).
+              // Wait a generous window, then trust the audio element's own state
+              // (playing event, !paused, currentTime advanced) as ground truth.
+              setTimeout(() => {
+                try { audio.removeEventListener("playing", onPlayingOnce); } catch (_) {}
+                const audioIsActuallyPlaying =
+                  firstPlayResolved ||
+                  sawPlayingEvent ||
+                  (audio && !audio.paused && audio.currentTime > 0);
+                if (audioIsActuallyPlaying) return;
+                console.warn("[simple-timer-card] Alarm audio.play() rejected and never started (likely iOS autoplay policy; tap the card once to unlock):", rejectionError?.message || rejectionError);
+                fireNotify("audio_fail");
+              }, 1500);
+            });
+          }
         } else {
           this._stopAudioForTimer(timerId);
         }
       };
-      const audioData = { audio, playNext };
+      const onError = () => {
+        // Audio element 'error' fires for various reasons (src reset, network blip,
+        // decoder transient). The authoritative signal for "alarm did not play" is
+        // the rejected play() promise handled above, so do NOT fire notify from here.
+        this._stopAudioForTimer(timerId);
+      };
+      const audioData = { audio, playNext, onError };
       audio.addEventListener("ended", playNext);
-      audio.addEventListener("error", () => this._stopAudioForTimer(timerId));
+      audio.addEventListener("error", onError);
       this._activeAudioInstances.set(timerId, audioData);
       playNext();
-    } catch (e) {}
+      }).catch(() => { /* unlock promise should never reject visibly */ });
+    } catch (e) {
+      fireNotify("audio_fail");
+    }
   }
 
   _stopAudioForTimer(timerId) {
     const audioData = this._activeAudioInstances.get(timerId);
     if (audioData) {
-      const { audio, playNext } = audioData;
-      audio.removeEventListener("ended", playNext);
-      audio.pause();
-      audio.currentTime = 0;
-      audio.src = "";
+      const { audio, playNext, onError } = audioData;
+      try { audio.removeEventListener("ended", playNext); } catch (_) {}
+      try { if (onError) audio.removeEventListener("error", onError); } catch (_) {}
+      try { audio.pause(); audio.currentTime = 0; } catch (_) {}
       this._activeAudioInstances.delete(timerId);
     }
   }
@@ -1781,6 +1972,28 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
 
     const discovered = this._discoverVoicePEEntities();
     return discovered.length ? discovered[0] : null;
+  }
+
+  _resolveNativeTimerTarget() {
+    // Preset chips and the custom picker start a native HA timer.* entity via the
+    // timer.start service so timer.started / timer.finished events fire for
+    // automations. This resolves which timer to start: an explicit
+    // default_timer_entity that is a timer.*, otherwise the single native timer
+    // entity configured on the card (ambiguous when there are several).
+    const def = this._config?.default_timer_entity;
+    if (typeof def === "string" && def.startsWith("timer.")) return def;
+    try {
+      const cfg = Array.isArray(this._config?.entities) ? this._config.entities : [];
+      const nativeTimers = [];
+      for (const entityConf of cfg) {
+        const entityId = typeof entityConf === "string" ? entityConf : entityConf?.entity;
+        const mode = typeof entityConf === "string" ? null : entityConf?.mode;
+        if (!entityId) continue;
+        if (entityId.startsWith("timer.") && (!mode || mode === "auto" || mode === "timer")) nativeTimers.push(entityId);
+      }
+      if (nativeTimers.length === 1) return nativeTimers[0];
+    } catch (_) {}
+    return null;
   }
 
   _ensureAutoVoicePEEntities() {
@@ -2044,6 +2257,17 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
       return;
     }
 
+    // Start a native HA timer.* entity through the timer.start service so the
+    // standard timer.started / timer.finished events fire for automations.
+    const nativeTimerTarget = (targetEntity && targetEntity.startsWith("timer.")) ? targetEntity : this._resolveNativeTimerTarget();
+    if (nativeTimerTarget) {
+      const serviceDuration = this._formatDurationForService(Math.round(durationMs / 1000));
+      this.hass.callService("timer", "start", { entity_id: nativeTimerTarget, duration: serviceDuration });
+      this._publishTimerEvent("started", { source: "timer", source_entity: nativeTimerTarget, label, duration: durationMs });
+      this.requestUpdate();
+      return;
+    }
+
     const now = Date.now();
     const newTimer = {
       id: overrides.id || `preset-${now}`,
@@ -2059,6 +2283,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
 
       pinned_id: overrides.pinned_id,
       expired_subtitle: overrides.expired_subtitle ?? this._config.expired_subtitle,
+      ...(Array.isArray(overrides.buttons) && overrides.buttons.length ? { buttons: overrides.buttons } : {}),
       ...(overrides.audio_enabled !== undefined ? { audio_enabled: overrides.audio_enabled } : {}),
       ...(overrides.audio_file_url !== undefined ? { audio_file_url: overrides.audio_file_url } : {}),
       ...(overrides.audio_repeat_count !== undefined ? { audio_repeat_count: overrides.audio_repeat_count } : {}),
@@ -2236,6 +2461,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
             expired_subtitle: timer.expired_subtitle,
             pinned_id: timer.pinned_id || timer.id,
           };
+          if (Array.isArray(timer.buttons) && timer.buttons.length) overrides.buttons = timer.buttons;
           if (timer.audio_enabled === true || timer.audio_enabled === false) overrides.audio_enabled = timer.audio_enabled;
           if (timer.audio_file_url) overrides.audio_file_url = timer.audio_file_url;
           if (timer.audio_repeat_count !== undefined) overrides.audio_repeat_count = timer.audio_repeat_count;
@@ -2666,6 +2892,90 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
     }
   }
 
+  _handleAddTime(t, deltaSeconds) {
+    if (this._isActionThrottled("add_time", t.id, 200)) return;
+    const deltaMs = Math.round(Number(deltaSeconds) * 1000);
+    if (!Number.isFinite(deltaMs) || deltaMs === 0) return;
+    const curRemaining = Math.max(0, Number(t.remaining_ms) || 0);
+    const newRemaining = curRemaining + deltaMs;
+    const now = Date.now();
+
+    // Reducing past the time left finishes the timer.
+    if (newRemaining <= 0) {
+      this._handleFinish(t);
+      return;
+    }
+
+    const newDuration = Math.max(0, (Number(t.duration) || 0) + deltaMs);
+    if (t.source === "helper") {
+      this._mutateHelper(t.source_entity, (data) => {
+        const idx = data.timers.findIndex((x) => x.id === t.id);
+        if (idx === -1) return;
+        const tm = data.timers[idx];
+        tm.duration = newDuration;
+        if (tm.paused) tm.remaining_ms = newRemaining;
+        else tm.end_ts = now + newRemaining;
+      });
+    } else if (["local", "mqtt"].includes(t.source)) {
+      const updates = { duration: newDuration };
+      if (t.paused) updates.remaining_ms = newRemaining;
+      else updates.end_ts = now + newRemaining;
+      this._updateTimerInStorage(t.id, updates, t.source);
+      this.requestUpdate();
+    } else if (t.source === "timer") {
+      // timer.change caps the remaining at the timer's configured duration, so
+      // adding above it does nothing. When the new remaining would exceed the
+      // configured duration, start the timer with the new value instead. That
+      // runs this one session at the larger value without saving it as the
+      // helper's default duration.
+      const configuredMs = Math.max(0, Number(t.duration) || 0);
+      if (newRemaining > configuredMs) {
+        const serviceDuration = this._formatDurationForService(Math.round(newRemaining / 1000));
+        this.hass.callService("timer", "start", { entity_id: t.source_entity, duration: serviceDuration });
+      } else {
+        this.hass.callService("timer", "change", { entity_id: t.source_entity, duration: Math.round(deltaMs / 1000) });
+      }
+    } else {
+      this._toast("Time can only be added to helper, local, MQTT, and timer entities.");
+    }
+  }
+
+  _handleRestart(t) {
+    if (this._isActionThrottled("restart", t.id, 300)) return;
+    const durationMs = Math.max(0, Number(t.duration) || 0);
+    if (durationMs <= 0) { this._toast("This timer has no duration to restart."); return; }
+    const now = Date.now();
+    this._ringingTimers.delete(t.id);
+    this._stopAudioForTimer(t.id);
+    if (t.source === "helper") {
+      this._mutateHelper(t.source_entity, (data) => {
+        const idx = data.timers.findIndex((x) => x.id === t.id);
+        if (idx === -1) return;
+        const tm = data.timers[idx];
+        tm.start_ts = now;
+        tm.end_ts = now + durationMs;
+        tm.duration = durationMs;
+        tm.paused = false;
+        tm.state = "active";
+        tm.finished = false;
+        tm.idle = false;
+        if (tm.remaining_ms != null) delete tm.remaining_ms;
+      });
+    } else if (["local", "mqtt"].includes(t.source)) {
+      this._updateTimerInStorage(
+        t.id,
+        { start_ts: now, end_ts: now + durationMs, duration: durationMs, paused: false, state: "active", remaining_ms: undefined, finished: false, idle: false },
+        t.source
+      );
+      this.requestUpdate();
+    } else if (t.source === "timer") {
+      const serviceDuration = this._formatDurationForService(Math.round(durationMs / 1000));
+      this.hass.callService("timer", "start", { entity_id: t.source_entity, duration: serviceDuration });
+    } else {
+      this._toast("Only helper, local, MQTT, and timer entities can be restarted here.");
+    }
+  }
+
   _formatTimeAgo(ms) {
     if (ms < 1000) return null;
     const seconds = Math.floor(ms / 1000);
@@ -2872,6 +3182,17 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
     }
 
 
+
+    // Start a native HA timer.* entity through the timer.start service so the
+    // standard timer.started / timer.finished events fire for automations.
+    const nativeTimerTarget = (targetEntity && targetEntity.startsWith("timer.")) ? targetEntity : this._resolveNativeTimerTarget();
+    if (nativeTimerTarget) {
+      const serviceDuration = this._formatDurationForService(Math.round(durationMs / 1000));
+      this.hass.callService("timer", "start", { entity_id: nativeTimerTarget, duration: serviceDuration });
+      this._publishTimerEvent("started", { source: "timer", source_entity: nativeTimerTarget, label: finalLabel, duration: durationMs });
+      this.requestUpdate();
+      return;
+    }
 
     if (targetEntity && (targetEntity.startsWith("input_text.") || targetEntity.startsWith("text."))) {
       const now = Date.now();
@@ -3259,6 +3580,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
               <div class="status">${timeStr}</div>
             </div>
             <div class="actions" @click=${(e) => e.stopPropagation()}>
+              ${this._renderCustomActionButtons(t, state)}
               ${isIdle && supportsManualControls ? b`
                 <button class="action-btn" title="${this._localize("start")}" @click=${() => this._handleStart(t)}>
                   <ha-icon icon="mdi:play"></ha-icon>
@@ -3282,6 +3604,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
               <ha-icon icon="mdi:close"></ha-icon>
             </button>
           ` : ""}
+          ${this._renderCircleCustomButtons(t, state)}
           <div class="vcol">
             <div class="vcircle-wrap"
                  title="${isIdle ? "Start" : (t.paused ? "Resume" : "Pause")}"
@@ -3318,6 +3641,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
               ${this._renderProgressTrack(t, style, pct, pctLeft)}
             </div>
             <div class="actions" @click=${(e) => e.stopPropagation()}>
+              ${this._renderCustomActionButtons(t, state)}
               ${isIdle && supportsManualControls ? b`
                 <button class="action-btn" title="${this._localize("start")}" @click=${() => this._handleStart(t)}>
                   <ha-icon icon="mdi:play"></ha-icon>
@@ -3332,6 +3656,158 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
           </div>
         </li>
       `;
+    }
+  }
+
+  // === Custom action buttons (v2.7.0) ===
+  // Opt-in extra buttons rendered alongside the built-in start/pause/cancel
+  // controls. Configured via `buttons:` at card level and/or per entity
+  // (entity overrides card, matching the tap_action resolution model).
+  _getCustomButtons(t) {
+    if (!t) return [];
+    let raw = Array.isArray(t.buttons) ? t.buttons : null;
+    if (!raw) {
+      const rowConf = this._getEntityConfig(t.source_entity) || {};
+      if (Array.isArray(rowConf.buttons)) raw = rowConf.buttons;
+    }
+    if (!raw && Array.isArray(this._config.buttons)) raw = this._config.buttons;
+    if (!raw || !raw.length) return [];
+    return raw.map((b) => this._normalizeCustomButton(b)).filter(Boolean);
+  }
+
+  _normalizeCustomButton(b) {
+    if (!b || typeof b !== "object") return null;
+    const action = b.action;
+    const icon = b.icon || this._customButtonPresetIcon(action);
+    if (!icon) return null;
+    let states = b.show_when;
+    if (typeof states === "string") states = states.split(",").map((s) => s.trim());
+    if (!Array.isArray(states) || !states.length) states = ["running", "paused"];
+    states = states.map((s) => String(s).toLowerCase());
+    return {
+      icon,
+      name: b.name || "",
+      color: b.color || "",
+      states: new Set(states),
+      action,
+      amount: b.amount,
+    };
+  }
+
+  _customButtonPresetIcon(action) {
+    if (typeof action !== "string") return "";
+    switch (action) {
+      case "finish": return "mdi:flag-checkered";
+      case "add": return "mdi:plus";
+      case "reduce": return "mdi:minus";
+      case "restart": return "mdi:restart";
+      case "cancel": return "mdi:close";
+      case "pause": return "mdi:pause";
+      case "resume": return "mdi:play";
+      case "snooze": return "mdi:alarm-snooze";
+      case "dismiss": return "mdi:bell-off";
+      default: return "";
+    }
+  }
+
+  _customButtonState(state) {
+    if (state.isIdle) return "idle";
+    if (state.isPaused) return "paused";
+    if (state.isFinished || state.ring) return "finished";
+    return "running";
+  }
+
+  _visibleCustomButtons(t, state) {
+    const cur = this._customButtonState(state);
+    return this._getCustomButtons(t).filter((b) => b.states.has(cur));
+  }
+
+  _renderCustomActionButtons(t, state) {
+    const btns = this._visibleCustomButtons(t, state);
+    if (!btns.length) return "";
+    return btns.map((b$1) => b`
+      <button class="action-btn custom-action-btn" title="${b$1.name}"
+        style=${b$1.color ? `color:${b$1.color}` : ""}
+        @click=${(e) => this._handleCustomButton(t, b$1, e)}>
+        <ha-icon icon="${b$1.icon}"></ha-icon>
+      </button>
+    `);
+  }
+
+  _renderCircleCustomButtons(t, state) {
+    const btns = this._visibleCustomButtons(t, state);
+    if (!btns.length) return "";
+    return b`
+      <div class="vtile-actions">
+        ${btns.map((b$1) => b`
+          <button class="vtile-action" title="${b$1.name}"
+            style=${b$1.color ? `color:${b$1.color}` : ""}
+            @click=${(e) => this._handleCustomButton(t, b$1, e)}>
+            <ha-icon icon="${b$1.icon}"></ha-icon>
+          </button>
+        `)}
+      </div>
+    `;
+  }
+
+  _handleCustomButton(t, btn, e) {
+    if (e && typeof e.stopPropagation === "function") e.stopPropagation();
+    const action = btn.action;
+    if (typeof action === "string") {
+      switch (action) {
+        case "finish": return this._handleFinish(t);
+        case "add": {
+          if (btn.amount == null || btn.amount === "") { this._toast("This button needs an amount of time to add."); return; }
+          return this._handleAddTime(t, this._parseAdjustmentToSeconds(btn.amount));
+        }
+        case "reduce": {
+          if (btn.amount == null || btn.amount === "") { this._toast("This button needs an amount of time to reduce."); return; }
+          return this._handleAddTime(t, -this._parseAdjustmentToSeconds(btn.amount));
+        }
+        case "restart": return this._handleRestart(t);
+        case "cancel": return this._handleCancel(t);
+        case "pause": return this._togglePause(t, e);
+        case "resume": return this._handleResume(t);
+        case "snooze": return this._handleSnooze(t);
+        case "dismiss": return this._handleDismiss(t);
+        default: return;
+      }
+    }
+    if (action && typeof action === "object" && action.action) {
+      let resolved = action;
+      if (action.action === "perform-action" || action.action === "call-service") {
+        const hasTarget = action.target && (action.target.entity_id || action.target.area_id || action.target.device_id || action.target.label_id);
+        const hasDataEntity = action.data && action.data.entity_id;
+        if (!hasTarget && !hasDataEntity && t.source_entity) {
+          resolved = { ...action, target: { ...(action.target || {}), entity_id: t.source_entity } };
+        }
+      }
+      this._fireAction(resolved, { cardLevel: false, entityId: t.source_entity, timer: t });
+    }
+  }
+
+  _handleFinish(t) {
+    if (this._isActionThrottled("finish", t.id)) return;
+    this._ringingTimers.delete(t.id);
+    if (t.source === "voice_pe") {
+      if (!this._isLocalVoicePETimer(t)) {
+        this._toast("This timer is read only.");
+        return;
+      }
+      this._publishTimerEvent("finished", t);
+      this._sendVoicePECommand(t.control_entity, `cancel:${String(t.voice_pe_timer_id).trim()}`);
+      return;
+    }
+    this._publishTimerEvent("finished", t);
+    if (t.source === "helper") {
+      this._mutateHelper(t.source_entity, (data) => { data.timers = data.timers.filter((x) => x.id !== t.id); });
+    } else if (["local", "mqtt"].includes(t.source)) {
+      this._removeTimerFromStorage(t.id, t.source);
+      this.requestUpdate();
+    } else if (t.source === "timer") {
+      this.hass.callService("timer", "finish", { entity_id: t.source_entity });
+    } else {
+      this._toast("This timer can't be finished from here.");
     }
   }
 
@@ -3452,6 +3928,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
               <ha-icon icon="mdi:close"></ha-icon>
             </button>
           ` : ""}
+          ${this._renderCircleCustomButtons(t, state)}
           <div class="vcol">
             <div class="vcircle-wrap"
                  title="${isIdle ? "Start" : (t.paused ? "Resume" : "Pause")}"
@@ -3490,6 +3967,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
           <div class="vstatus">${timeStr}</div>
           ${style.startsWith("bar_") ? b`
             <div class="vprogressbar" @click=${(e) => e.stopPropagation()}>
+              ${this._renderCustomActionButtons(t, state)}
               ${isIdle && supportsManualControls ? b`
                 <button class="action-btn" title="${this._localize("start")}" @click=${() => this._handleStart(t)}>
                   <ha-icon icon="mdi:play"></ha-icon>
@@ -3515,6 +3993,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
           ` : b`
 
             <div class="vactions" @click=${(e) => e.stopPropagation()}>
+              ${this._renderCustomActionButtons(t, state)}
               ${isIdle && supportsManualControls ? b`
                 <button class="action-btn" title="${this._localize("start")}" @click=${() => this._handleStart(t)}>
                   <ha-icon icon="mdi:play"></ha-icon>
@@ -3572,6 +4051,7 @@ if (!audioEnabled || !audioFileUrl || !this._validateAudioUrl(audioFileUrl)) ret
 
         icon,
         color,
+        buttons: (p && typeof p === "object" && Array.isArray(p.buttons)) ? p.buttons : undefined,
         expired_subtitle: (p && typeof p === "object" && p.expired_subtitle) ? p.expired_subtitle : (this._config.expired_subtitle || ""),
         audio_enabled: (p && typeof p === "object" && p.audio_enabled === true) ? true : undefined,
         audio_file_url: (p && typeof p === "object" && p.audio_file_url) ? p.audio_file_url : undefined,
@@ -3884,6 +4364,10 @@ const layout = this._config.layout;
       .vtile .vcol { z-index: 1; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
       .vtile-close { position: absolute; top: 4px; inset-inline-end: 4px; border: 0; background: none; padding: 4px; border-radius: 50%; color: var(--secondary-text-color); cursor: pointer; z-index: 3; }
       .vtile-close:hover { background: color-mix(in srgb, var(--primary-color) 10%, transparent); }
+      .vtile-actions { position: absolute; top: 4px; inset-inline-start: 4px; display: flex; flex-direction: column; gap: 2px; z-index: 3; }
+      .vtile-action { border: 0; background: none; padding: 4px; border-radius: 50%; color: var(--secondary-text-color); cursor: pointer; transition: all 0.2s; }
+      .vtile-action:hover { background: color-mix(in srgb, var(--tcolor, var(--primary-color)) 12%, transparent); }
+      .item .action-btn:hover, .vactions .action-btn:hover, .vprogressbar .action-btn:hover { background: color-mix(in srgb, var(--tcolor, var(--primary-color)) 12%, transparent); }
       .icon-wrap.large { width: 36px; height: 36px; flex: 0 0 36px; border-radius: var(--ha-card-border-radius, 50%); background: color-mix(in srgb, var(--tcolor, var(--primary-color)) 18%, var(--ha-card-background, var(--card-background-color))); display: flex; align-items: center; justify-content: center; }
       .vtitle { font-size: 14px; font-weight: 600; line-height: 16px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; }
       .vstatus { font-size: 12px; color: var(--secondary-text-color); line-height: 14px; font-variant-numeric: tabular-nums; margin: 0; margin-bottom: 2px; }
@@ -3948,6 +4432,7 @@ class SimpleTimerCardEditor extends i$1 {
       presets: false,
       pinned: false,
       audio: false,
+      notify: false,
       storage: false,
     };
     this._showAdvanced = false;
@@ -4018,7 +4503,7 @@ class SimpleTimerCardEditor extends i$1 {
       this._expandedSections = {
         appearance: true, entities: true,
         sorting: false, timeFormat: false, defaults: false,
-        presets: false, pinned: false, audio: false, storage: false,
+        presets: false, pinned: false, audio: false, notify: false, storage: false,
       };
     }
     this.requestUpdate();
@@ -4076,6 +4561,59 @@ class SimpleTimerCardEditor extends i$1 {
     const key = target.configValue ?? target.dataset?.configValue ?? target.getAttribute?.("configValue");
     if (!key) return;
     this._updateConfig({ [key]: ev.detail.value });
+  }
+
+  _notifyValueChanged(ev) {
+    if (!this._config || !this.hass) return;
+    const target = ev.target;
+    const key = target.configValue ?? target.dataset?.configValue ?? target.getAttribute?.("configValue");
+    if (!key) return;
+    const isSelect = target.tagName && target.tagName.toLowerCase() === "ha-select";
+    let value;
+    if (isSelect) {
+      if (ev.stopPropagation) ev.stopPropagation();
+      value = ev?.detail?.value;
+      if ((value === undefined || value === null) && ev?.detail && typeof ev.detail.index === "number" && Array.isArray(target?.options)) {
+        value = target.options[ev.detail.index]?.value;
+      }
+      if (value === undefined || value === null) value = target.value;
+      if (typeof value !== "string") return;
+    } else {
+      value = target.checked !== undefined ? target.checked : target.value;
+    }
+    const notify = { ...(this._config.notify || {}) };
+    if (value === "" || value == null) delete notify[key];
+    else notify[key] = value;
+    if (!notify.service) {
+      const next = { ...this._config };
+      delete next.notify;
+      this._config = next;
+      this._emitChange();
+      this.requestUpdate();
+      return;
+    }
+    this._updateConfig({ notify });
+    this.requestUpdate();
+  }
+
+  _notifyCriticalChanged(ev) {
+    if (!this._config || !this.hass) return;
+    const isOn = !!ev.target.checked;
+    const notify = { ...(this._config.notify || {}) };
+    if (!notify.service) return;
+    const data = { ...(notify.data || {}) };
+    const push = { ...(data.push || {}) };
+    if (isOn) {
+      push.sound = { name: "default", critical: 1, volume: 1.0 };
+    } else if (push.sound && typeof push.sound === "object" && push.sound.critical === 1) {
+      delete push.sound;
+    }
+    if (Object.keys(push).length === 0) delete data.push;
+    else data.push = push;
+    if (Object.keys(data).length === 0) delete notify.data;
+    else notify.data = data;
+    this._updateConfig({ notify });
+    this.requestUpdate();
   }
 
   _selectChanged(ev) {
@@ -4183,6 +4721,195 @@ _pinnedTimerValueChanged(ev, index) {
   this._config = { ...this._config, pinned_timers: pinned };
   this._emitChange();
 }
+
+  // === Custom action buttons editor (v2.7.0) ===
+
+  // Which preset actions actually work for a given entity mode. Returns a Set of
+  // supported preset values, or null when the mode is unknown / not entity-scoped
+  // (card-level list applies to every row, so we can't narrow it). Custom actions
+  // are always allowed since they call arbitrary HA services.
+  _supportedButtonPresets(mode) {
+    if (!mode || mode === "auto") return null;
+    switch (mode) {
+      case "timer":
+      case "helper":
+      case "local":
+      case "mqtt":
+        return new Set(["finish", "add", "reduce", "restart", "pause"]);
+      case "voice_pe":
+        // Voice PE can finish/pause/resume but has no notion of changing duration.
+        return new Set(["finish", "pause"]);
+      case "alexa":
+      case "timestamp":
+      case "minutes_attr":
+      default:
+        // Read-only or externally-owned timers: presets would under-deliver, so
+        // only custom on-screen actions are offered.
+        return new Set();
+    }
+  }
+
+  _renderButtonsEditor(buttons, onChange, mode) {
+    const list = Array.isArray(buttons) ? buttons : [];
+    const allPresets = [
+      { value: "finish", label: "Finish" },
+      { value: "add", label: "Add time" },
+      { value: "reduce", label: "Reduce time" },
+      { value: "restart", label: "Restart" },
+      { value: "pause", label: "Pause / resume" },
+    ];
+    const supported = this._supportedButtonPresets(mode);
+    const presetOptions = [
+      ...allPresets.filter((o) => supported === null || supported.has(o.value)),
+      { value: "__custom", label: "Custom action…" },
+    ];
+    const presetsHidden = supported !== null && presetOptions.length < allPresets.length + 1;
+    return b`
+      <div class="buttons-editor">
+        ${presetsHidden && presetOptions.length === 1 ? b`
+          <div class="helper-text">This entity type only supports custom on-screen actions.</div>
+        ` : ""}
+        ${list.map((b$1, i) => {
+          const isPreset = typeof b$1?.action === "string";
+          const actionType = isPreset ? b$1.action : "__custom";
+          // Keep an existing (possibly now-unsupported) action visible so the user
+          // can see and change it instead of it silently vanishing.
+          const rowOptions = (actionType === "__custom" || presetOptions.some((o) => o.value === actionType))
+            ? presetOptions
+            : [...presetOptions, { value: actionType, label: `${actionType} (unsupported here)` }];
+          return b`
+            <div class="button-row">
+              <div class="row" style="align-items:flex-start;">
+                <ha-select label="Action" naturalMenuWidth fixedMenuPosition
+                  .value=${actionType} .options=${rowOptions}
+                  @selected=${(e) => { e.stopPropagation(); this._buttonActionTypeChanged(e, list, i, onChange); }}
+                  @closed=${(e) => e.stopPropagation()}>
+                  ${rowOptions.map((o) => b`<mwc-list-item value=${o.value}>${o.label}</mwc-list-item>`)}
+                </ha-select>
+                <ha-icon-picker label="Icon (optional)" .value=${b$1?.icon || ""}
+                  @value-changed=${(e) => this._buttonFieldChanged(e, list, i, "icon", onChange)}></ha-icon-picker>
+                <button class="remove-entity" @click=${() => this._removeButton(list, i, onChange)} title="Remove button">
+                  <ha-icon icon="mdi:delete"></ha-icon>
+                </button>
+              </div>
+              ${(actionType === "add" || actionType === "reduce") ? this._renderButtonAmountField(b$1, list, i, onChange) : ""}
+              ${actionType === "__custom" ? b`
+                <ha-selector .hass=${this.hass} .label=${"Custom action"}
+                  .selector=${{ ui_action: { default_action: "more-info" } }}
+                  .value=${isPreset ? undefined : b$1?.action}
+                  @value-changed=${(e) => this._buttonActionChanged(e, list, i, onChange)}></ha-selector>
+              ` : ""}
+            </div>
+          `;
+        })}
+        <button class="add-button" @click=${() => this._addButton(list, onChange, presetOptions)}>
+          <ha-icon icon="mdi:plus"></ha-icon>
+          <span>Add button</span>
+        </button>
+      </div>
+    `;
+  }
+
+  // Amount input for add/reduce. Uses the same dynamic ha-input (HA 2026.4+) /
+  // ha-textfield (older HA) tag selection as the rest of the editor.
+  _renderButtonAmountField(b, list, i, onChange) {
+    const tag = this._tfTag;
+    return u`<${tag}
+        class="button-amount"
+        label="Amount"
+        placeholder="5m"
+        required
+        helper="Required. e.g. 5m, 30s, 1h"
+        .value=${b?.amount ?? ""}
+        @input=${(e) => this._buttonFieldChanged(e, list, i, "amount", onChange)}
+        @change=${(e) => this._buttonFieldChanged(e, list, i, "amount", onChange)}
+      ></${tag}>`;
+  }
+
+  _resolveSelectValue(e) {
+    const target = e?.target;
+    let v = e?.detail?.value;
+    if ((v === undefined || v === null) && e?.detail && typeof e.detail.index === "number" && Array.isArray(target?.options)) {
+      v = target.options[e.detail.index]?.value;
+    }
+    if (v === undefined || v === null) v = target?.value;
+    return v;
+  }
+
+  _addButton(list, onChange, presetOptions) {
+    // Default to the first supported preset for this entity, falling back to a
+    // custom action when no preset applies (e.g. read-only / Alexa timers).
+    const firstPreset = Array.isArray(presetOptions)
+      ? presetOptions.find((o) => o.value !== "__custom")
+      : null;
+    const def = firstPreset ? { action: firstPreset.value } : { action: { action: "more-info" } };
+    onChange([...(Array.isArray(list) ? list : []), def]);
+  }
+
+  _removeButton(list, i, onChange) {
+    const next = [...list];
+    next.splice(i, 1);
+    onChange(next.length ? next : undefined);
+  }
+
+  _buttonFieldChanged(e, list, i, key, onChange) {
+    const v = e?.detail?.value ?? e?.target?.value;
+    const next = list.map((b, idx) => (idx === i ? { ...b } : b));
+    if (v === "" || v == null) delete next[i][key];
+    else next[i][key] = v;
+    onChange(next);
+  }
+
+  _buttonActionTypeChanged(e, list, i, onChange) {
+    const v = this._resolveSelectValue(e);
+    if (typeof v !== "string" || v === "") return;
+    const next = list.map((b, idx) => (idx === i ? { ...b } : b));
+    if (v === "__custom") {
+      if (typeof next[i].action === "string" || !next[i].action) next[i].action = { action: "more-info" };
+    } else {
+      next[i].action = v;
+    }
+    if (v !== "add" && v !== "reduce" && next[i].amount !== undefined) delete next[i].amount;
+    onChange(next);
+  }
+
+  _buttonActionChanged(e, list, i, onChange) {
+    const v = e?.detail?.value;
+    const next = list.map((b, idx) => (idx === i ? { ...b, action: v } : b));
+    onChange(next);
+  }
+
+  _setCardButtons(next) {
+    const cfg = { ...this._config };
+    if (!next || !next.length) delete cfg.buttons;
+    else cfg.buttons = next;
+    this._config = cfg;
+    this._emitChange();
+    this.requestUpdate();
+  }
+
+  _setEntityButtons(index, next) {
+    const entities = [...(this._config.entities || [])];
+    let conf = typeof entities[index] === "string" ? { entity: entities[index] } : { ...(entities[index] || {}) };
+    if (!next || !next.length) delete conf.buttons;
+    else conf.buttons = next;
+    if (Object.keys(conf).length === 1 && conf.entity) entities[index] = conf.entity;
+    else entities[index] = conf;
+    this._config = { ...this._config, entities };
+    this._emitChange();
+    this.requestUpdate();
+  }
+
+  _setPinnedButtons(index, next) {
+    const pinned = Array.isArray(this._config.pinned_timers) ? [...this._config.pinned_timers] : [];
+    const cur = (pinned[index] && typeof pinned[index] === "object") ? { ...pinned[index] } : {};
+    if (!next || !next.length) delete cur.buttons;
+    else cur.buttons = next;
+    pinned[index] = cur;
+    this._config = { ...this._config, pinned_timers: pinned };
+    this._emitChange();
+    this.requestUpdate();
+  }
 
   _addEntity() {
     if (!this._config) return;
@@ -4336,6 +5063,10 @@ _pinnedTimerValueChanged(ev, index) {
 
     if (cleaned.mqtt && typeof cleaned.mqtt === "object") {
       if (Object.keys(cleaned.mqtt).length === 0) delete cleaned.mqtt;
+    }
+
+    if (cleaned.notify && typeof cleaned.notify === "object" && !cleaned.notify.service) {
+      delete cleaned.notify;
     }
 
     return cleaned;
@@ -4507,6 +5238,7 @@ _pinnedTimerValueChanged(ev, index) {
         { value: "it", label: "Italiano" },
         { value: "nl", label: "Nederlands" },
         { value: "pl", label: "Polski" },
+        { value: "sv", label: "Svenska" },
         { value: "he", label: "עברית" },
       ],
       sort_by: [
@@ -4592,6 +5324,7 @@ _pinnedTimerValueChanged(ev, index) {
           <mwc-list-item value="fr">Français</mwc-list-item>
           <mwc-list-item value="he">עברית</mwc-list-item>
           <mwc-list-item value="pl">Polski</mwc-list-item>
+          <mwc-list-item value="sv">Svenska</mwc-list-item>
         </ha-select>
       </div>
 
@@ -4744,6 +5477,9 @@ _pinnedTimerValueChanged(ev, index) {
                     <ha-switch .checked=${t?.audio_play_until_dismissed === true} .configValue=${"audio_play_until_dismissed"} @change=${(e) => this._pinnedTimerValueChanged(e, index)}></ha-switch>
                   </ha-formfield>
                 ` : ""}
+
+                <div class="row-actions-label">Custom action buttons</div>
+                ${this._renderButtonsEditor(t?.buttons, (next) => this._setPinnedButtons(index, next))}
               </div>
 
               <button class="remove-entity" @click=${() => this._removePinnedTimer(index)} title="Remove pinned timer">
@@ -4780,6 +5516,62 @@ _pinnedTimerValueChanged(ev, index) {
             <span class="toggle-desc">Override the repeat count and keep playing until the user acts on the timer.</span>
           </div>
         </label>
+      ` : ""}
+    `;
+
+    const notifyServices = Object.keys(this.hass?.services?.notify || {})
+      .map((s) => "notify." + s)
+      .sort();
+    const notifyServiceOptions = [
+      { value: "", label: "(none)" },
+      ...notifyServices.map((s) => ({ value: s, label: s })),
+    ];
+    const notifyWhenOptions = [
+      { value: "on_audio_fail", label: "Only when audio fails (recommended)" },
+      { value: "always", label: "Always (alongside in-page audio)" },
+    ];
+    const nConf = this._config.notify || {};
+    const criticalOn = !!(nConf?.data?.push?.sound &&
+      typeof nConf.data.push.sound === "object" &&
+      nConf.data.push.sound.critical === 1);
+    const notifyContent = b`
+      <p class="hint">Optional push-notification fallback. Fires any HA <code>notify.*</code> service when a timer ends. Useful when in-page audio is blocked (locked screen, backgrounded tab, cold-loaded dashboard on iOS).</p>
+
+      <ha-select
+        label="Notify service"
+        naturalMenuWidth
+        fixedMenuPosition
+        .value=${nConf.service || ""}
+        .configValue=${"service"}
+        .options=${notifyServiceOptions}
+        @selected=${this._notifyValueChanged}
+        @closed=${(e) => e.stopPropagation()}
+      ></ha-select>
+
+      ${nConf.service ? b`
+        <ha-select
+          label="When to fire"
+          naturalMenuWidth
+          fixedMenuPosition
+          .value=${nConf.when || "on_audio_fail"}
+          .configValue=${"when"}
+          .options=${notifyWhenOptions}
+          @selected=${this._notifyValueChanged}
+          @closed=${(e) => e.stopPropagation()}
+        ></ha-select>
+
+        ${this._tf({ label: "Message", helper: "Placeholders: {name}, {entity_id}, {duration}. Defaults to 'Timer {name} finished'.", value: nConf.message, configValue: "message", placeholder: "Timer {name} finished", change: this._notifyValueChanged })}
+        ${this._tf({ label: "Title", helper: "Optional title shown above the message.", value: nConf.title, configValue: "title", change: this._notifyValueChanged })}
+
+        <label class="toggle-row">
+          <ha-switch .checked=${criticalOn} @change=${this._notifyCriticalChanged}></ha-switch>
+          <div class="toggle-text">
+            <span class="toggle-title">iOS critical alert</span>
+            <span class="toggle-desc">Plays the alert even when the device is in Focus/Silent mode. iPhone/iPad only; requires the HA Companion app to have critical-alerts permission granted.</span>
+          </div>
+        </label>
+
+        <p class="hint advanced">For custom sounds, Android channels, or other push payload fields, edit <code>notify.data:</code> directly in YAML. See <a href="https://github.com/eyalgal/simple-timer-card/blob/main/CONFIGURATION.md#-push-notification-fallback" target="_blank" rel="noopener">CONFIGURATION.md</a>.</p>
       ` : ""}
     `;
 
@@ -4898,6 +5690,13 @@ _pinnedTimerValueChanged(ev, index) {
 
                   ${this._tf({ label: "Expired message override", value: conf.expired_subtitle, configValue: "expired_subtitle", change: (e) => this._entityValueChanged(e, index) })}
 
+                  <div class="row-actions-label">Custom action buttons (override card-level)</div>
+                  ${this._renderButtonsEditor(
+                    conf.buttons,
+                    (next) => this._setEntityButtons(index, next),
+                    (conf.mode && conf.mode !== "auto") ? conf.mode : ((detectedMode && detectedMode !== "unknown") ? detectedMode : null)
+                  )}
+
                   <ha-formfield label="Enable entity-specific audio">
                     <ha-switch .checked=${conf.audio_enabled === true} .configValue=${"audio_enabled"} @change=${(e) => this._entityValueChanged(e, index)}></ha-switch>
                   </ha-formfield>
@@ -4989,6 +5788,9 @@ _pinnedTimerValueChanged(ev, index) {
         .configValue=${"double_tap_action"}
         @value-changed=${this._detailValueChanged}
       ></ha-selector>
+      <div class="row-actions-label" style="margin-top:8px;">Custom action buttons</div>
+      <p class="hint">Extra icon buttons shown next to the built-in start / pause / cancel controls. Per-entity and per-pinned buttons override these.</p>
+      ${this._renderButtonsEditor(this._config?.buttons, (next) => this._setCardButtons(next))}
     `;
 
     const panel = (key, header, icon, content, opts = {}) => {
@@ -5030,6 +5832,7 @@ _pinnedTimerValueChanged(ev, index) {
         ${panel("presets", "Quick-start presets", "mdi:flash-outline", presetsContent)}
         ${panel("pinned", "Pinned timers", "mdi:pin-outline", pinnedContent)}
         ${panel("audio", "Audio notifications", "mdi:volume-high", audioContent)}
+        ${panel("notify", "Push notification fallback", "mdi:bell-ring-outline", notifyContent)}
         ${panel("storage", "Storage & integrations", "mdi:database-outline", storageContent)}
         ${panel("actions", "Actions", "mdi:gesture-tap", actionsContent, { advanced: true })}
       </div>
@@ -5079,6 +5882,8 @@ _pinnedTimerValueChanged(ev, index) {
         font-weight: 500;
         margin-top: 4px;
       }
+      .buttons-editor { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+      .button-row { border: 1px solid var(--divider-color); border-radius: 8px; padding: 8px; padding-inline-end: 44px; display: flex; flex-direction: column; gap: 8px; position: relative; }
       .editor-toolbar .advanced-toggle {
         font-size: 13px;
         color: var(--secondary-text-color);
