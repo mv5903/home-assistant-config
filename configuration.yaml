@@ -25,7 +25,7 @@ homeassistant:
   name: Home
   latitude: !secret home_latitude
   longitude: !secret home_longitude
-  time_zone: America/Los_Angeles
+  time_zone: America/New_York
 
 light:
   - platform: unifiled
