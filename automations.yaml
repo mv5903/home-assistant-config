@@ -2160,3 +2160,44 @@
         color: '#003791'
     action: notify.mobile_app_matthews_iphone_17_pro
   mode: queued
+- id: '1787871747857'
+  alias: Running Overload Prompt
+  description: Fires at 09:00 on the specific dates Matthew is scheduled to increase
+    one running session (Sun long-run duration, Fri interval reps, Wed Z2 distance),
+    plus cutback weeks. One bump per week; each bump becomes the new baseline. Dates
+    are a hardcoded map in variables.plan — edit that map to extend or reschedule
+    the block.
+  triggers:
+  - at: 09:00:00
+    trigger: time
+  conditions:
+  - condition: template
+    value_template: '{{ today_note != '''' }}'
+  actions:
+  - action: notify.send_message
+    data:
+      message: '{{ today_note }}
+
+
+        Only bump if last week held: Tuesday under 153 bpm with no walk breaks, and
+        Sunday''s last 20 min within ~5 bpm of the first 20. If not, repeat last week
+        instead.'
+      title: Overload day
+    target:
+      entity_id: notify.matthews_iphone_17_pro
+  mode: single
+  variables:
+    plan:
+      '2026-09-06': 'Sunday long run: 65 min Z3 (up from 60). Keep the 5 min warmup/cooldown.'
+      '2026-09-11': 'Friday intervals: 5 reps (up from 4). Float the 400m recovery
+        in Z2, not Z3.'
+      '2026-09-15': Cutback week — no bump. Wed 4.5 mi, Fri 4 reps, Sun 60 min. Let
+        it settle.
+      '2026-09-23': 'Wednesday Z2: 5 mi (up from 4.5).'
+      '2026-10-04': 'Sunday long run: 70 min Z3 (up from 65).'
+      '2026-10-09': 'Friday intervals: 6 reps (up from 5). After this, lengthen reps
+        to 600m instead of adding a 7th.'
+      '2026-10-13': Cutback week — no bump. Back off about 30% and re-run a Tuesday
+        5K as your check.
+      '2026-10-21': 'Wednesday Z2: 5.5 mi (up from 5).'
+    today_note: '{{ plan.get(now().strftime(''%Y-%m-%d''), '''') }}'
