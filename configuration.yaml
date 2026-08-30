@@ -204,3 +204,31 @@ homekit:
         support_audio: false
 
         
+rest:
+  - resource: http://192.168.1.32:7878/api/v3/queue?pageSize=50
+    headers:
+      X-Api-Key: !secret radarr_api_key
+    scan_interval: 30
+    sensor:
+      - name: Radarr Queue
+        unique_id: radarr_queue
+        value_template: "{{ value_json.totalRecords }}"
+        json_attributes:
+          - records
+
+  - resource: http://192.168.1.32:8989/api/v3/queue?pageSize=50
+    headers:
+      X-Api-Key: !secret sonarr_api_key
+    scan_interval: 30
+    sensor:
+      - name: Sonarr Queue
+        unique_id: sonarr_queue
+        value_template: "{{ value_json.totalRecords }}"
+        json_attributes:
+          - records
+
+recorder:
+  exclude:
+    entities:
+      - sensor.radarr_queue
+      - sensor.sonarr_queue
