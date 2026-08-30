@@ -1010,7 +1010,7 @@
             trigger.json.media.tmdbId }}\n{% elif media_type == \"tv\" %}\n  https://your-jellyseerr-url/tv/{{
             trigger.json.media.tmdbId }}\n{% else %}\n  https://your-jellyseerr-url\n{%
             endif %}"
-    action: notify.mobile_app_matthews_iphone_17_pro
+    action: notify.matthews_iphone_17_pro
   mode: single
 - id: '1763173437229'
   alias: 'Notification: Minecraft Server'
