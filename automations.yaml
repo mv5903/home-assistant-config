@@ -1006,12 +1006,41 @@
         actions:
         - action: URI
           title: View in Jellyseerr
-          uri: "{% if media_type == \"movie\" %}\n  https://your-jellyseerr-url/movie/{{
-            trigger.json.media.tmdbId }}\n{% elif media_type == \"tv\" %}\n  https://your-jellyseerr-url/tv/{{
-            trigger.json.media.tmdbId }}\n{% else %}\n  https://your-jellyseerr-url\n{%
+          uri: "{% if media_type == \"movie\" %}\n  https://request.mattvandenberg.com/movie/{{
+            trigger.json.media.tmdbId }}\n{% elif media_type == \"tv\" %}\n  https://request.mattvandenberg.com/tv/{{
+            trigger.json.media.tmdbId }}\n{% else %}\n  https://request.mattvandenberg.com\n{%
             endif %}"
-    action: notify.matthews_iphone_17_pro
-  mode: single
+    action: notify.mobile_app_matthews_iphone
+  - alias: Start Live Activity in Searching state
+    choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ event_type in [''MEDIA_APPROVED'', ''MEDIA_AUTO_APPROVED'',
+          ''MEDIA_PENDING''] }}'
+      sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_media_title
+        data:
+          value: '{{ media_title[:255] }}'
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_download_id
+        data:
+          value: ''
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ media_title }}'
+          message: Searching for a release
+          data:
+            tag: media_download
+            live_update: true
+            critical_text: Searching
+            notification_icon: mdi:magnify
+            notification_icon_color: '#A78BFA'
+            background_color: '#0B1120'
+  mode: parallel
+  max: 10
 - id: '1763173437229'
   alias: 'Notification: Minecraft Server'
   description: Notifies when players join the Minecraft server
@@ -2160,3 +2189,131 @@
         color: '#003791'
     action: notify.mobile_app_matthews_iphone_17_pro
   mode: queued
+- id: '1788130220089'
+  alias: 'Live Activity: Download Tracker (Radarr/Sonarr)'
+  description: Receives Grab and Import webhooks from Radarr and Sonarr. Grab starts
+    the Downloading phase of the media_download Live Activity and stores the downloadId
+    (torrent hash) so the progress automation can match it in the *arr queue. Import
+    finishes the activity with a checkmark and clears it after 5 minutes.
+  triggers:
+  - allowed_methods:
+    - POST
+    local_only: true
+    trigger: webhook
+    webhook_id: arr_live_activity_9f3c2b71
+  actions:
+  - choose:
+    - alias: Grab -> Downloading
+      conditions:
+      - condition: template
+        value_template: '{{ event_type == ''Grab'' }}'
+      sequence:
+      - action: input_text.set_value
+        data:
+          value: '{{ trigger.json.downloadId | default('''') }}'
+        target:
+          entity_id: input_text.arr_download_id
+      - action: input_text.set_value
+        data:
+          value: '{{ media_title[:255] }}'
+        target:
+          entity_id: input_text.arr_media_title
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          data:
+            background_color: '#0B1120'
+            critical_text: 0%
+            live_update: true
+            notification_icon: mdi:download
+            notification_icon_color: '#3B82F6'
+            progress: 0
+            progress_bar_color: '#3B82F6'
+            progress_max: 100
+            tag: media_download
+          message: '{{ (trigger.json.release.size | default(0) | float(0) / 1073741824)
+            | round(2) }} GB · {{ trigger.json.release.releaseTitle | default(''Grabbed'')
+            }}'
+          title: '{{ media_title }}'
+    - alias: Import -> Done
+      conditions:
+      - condition: template
+        value_template: '{{ event_type in [''Download'', ''DownloadFolderImported'']
+          }}'
+      sequence:
+      - action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_download_id
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          data:
+            background_color: '#0B1120'
+            critical_text: Done
+            live_update: true
+            notification_icon: mdi:check-circle
+            notification_icon_color: '#22C55E'
+            progress: 100
+            progress_bar_color: '#22C55E'
+            progress_max: 100
+            tag: media_download
+          message: Downloaded and added to your library
+          title: '{{ media_title }}'
+      - delay: 00:05:00
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          data:
+            tag: media_download
+          message: clear_notification
+  max: 10
+  mode: parallel
+  variables:
+    event_type: '{{ trigger.json.eventType | default('''') }}'
+    media_title: '{{ trigger.json.movie.title | default(trigger.json.series.title,
+      true) | default(states(''input_text.arr_media_title''), true) }}'
+- id: '1788130249467'
+  alias: 'Live Activity: Download Progress'
+  description: 'Pushes throttled progress updates to the media_download Live Activity.
+    Matches the stored downloadId (torrent hash from the Grab webhook) against the
+    Radarr and Sonarr queue REST sensors and computes percent from sizeleft/size.
+    Uses mode: restart with a leading delay so a burst of queue refreshes collapses
+    into one push roughly every 30-50s, staying under the iOS Live Activity update
+    rate limit.'
+  triggers:
+  - entity_id:
+    - sensor.radarr_queue
+    - sensor.sonarr_queue
+    trigger: state
+  conditions:
+  - condition: template
+    value_template: '{{ states(''input_text.arr_download_id'') | length > 0 }}'
+  actions:
+  - delay: 00:00:20
+  - variables:
+      dlid: '{{ states(''input_text.arr_download_id'') }}'
+      matches: '{{ ((state_attr(''sensor.radarr_queue'',''records'') or []) + (state_attr(''sensor.sonarr_queue'',''records'')
+        or [])) | selectattr(''downloadId'',''defined'') | selectattr(''downloadId'',''eq'',
+        dlid) | list }}'
+  - condition: template
+    value_template: '{{ matches | count > 0 }}'
+  - variables:
+      q: '{{ matches[0] }}'
+  - variables:
+      gb: '{{ (q.size | float(0) / 1073741824) | round(2) }}'
+      pct: '{{ ((1 - (q.sizeleft | float(0) / (q.size | float(1)))) * 100) | round(0)
+        | int }}'
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      data:
+        background_color: '#0B1120'
+        critical_text: '{{ pct }}%'
+        live_update: true
+        notification_icon: mdi:download
+        notification_icon_color: '#3B82F6'
+        progress: '{{ pct }}'
+        progress_bar_color: '#3B82F6'
+        progress_max: 100
+        tag: media_download
+      message: '{{ gb }} GB · {{ q.title }}'
+      title: '{{ states(''input_text.arr_media_title'') }}'
+  mode: restart
