@@ -2257,6 +2257,16 @@
           value: '{{ media_title[:255] }}'
         target:
           entity_id: input_text.arr_media_title
+      - action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_last_sizeleft
+      - action: input_datetime.set_datetime
+        data:
+          datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+        target:
+          entity_id: input_datetime.arr_progress_at
       - action: notify.mobile_app_matthews_iphone
         data:
           data:
@@ -2315,12 +2325,13 @@
       }}{% endif %}
 - id: '1788130249467'
   alias: 'Live Activity: Download Progress'
-  description: 'Pushes throttled progress updates to the media_download Live Activity.
-    Matches the stored downloadId (torrent hash from the Grab webhook) against the
-    Radarr and Sonarr queue REST sensors and computes percent from sizeleft/size.
-    Uses mode: restart with a leading delay so a burst of queue refreshes collapses
-    into one push roughly every 30-50s, staying under the iOS Live Activity update
-    rate limit.'
+  description: 'Pushes progress updates to the media_download Live Activity. Matches
+    the stored downloadId against the Radarr and Sonarr queue REST sensors, derives
+    speed and ETA from the queue record''s timeleft, and detects a stall by watching
+    whether sizeleft actually moved since the last poll. Progress pushes are sent with
+    silent: true so iOS updates the activity in place without re-presenting the banner;
+    the stall push is deliberately NOT silent because it needs attention. mode: restart
+    with a leading delay collapses a burst of queue refreshes into one push.'
   triggers:
   - entity_id:
     - sensor.radarr_queue
@@ -2328,38 +2339,140 @@
     trigger: state
   conditions:
   - condition: template
-    value_template: '{{ states(''input_text.arr_download_id'') not in ['''', ''unknown'', ''unavailable''] }}'
+    value_template: '{{ states(''input_text.arr_download_id'') not in ['''', ''unknown'',
+      ''unavailable''] }}'
   actions:
-  - delay: 00:00:20
+  - delay: 00:00:10
   - variables:
       dlid: '{{ states(''input_text.arr_download_id'') }}'
-      matches: '{{ ((state_attr(''sensor.radarr_queue'',''records'') or []) + (state_attr(''sensor.sonarr_queue'',''records'')
-        or [])) | selectattr(''downloadId'',''defined'') | selectattr(''downloadId'',''eq'',
-        dlid) | list }}'
+      r_matches: '{{ (state_attr(''sensor.radarr_queue'',''records'') or []) | selectattr(''downloadId'',''defined'')
+        | selectattr(''downloadId'',''eq'', dlid) | list }}'
+      s_matches: '{{ (state_attr(''sensor.sonarr_queue'',''records'') or []) | selectattr(''downloadId'',''defined'')
+        | selectattr(''downloadId'',''eq'', dlid) | list }}'
   - condition: template
-    value_template: '{{ matches | count > 0 }}'
+    value_template: '{{ (r_matches | count) + (s_matches | count) > 0 }}'
   - variables:
-      q: '{{ matches[0] }}'
+      app: '{{ ''radarr'' if (r_matches | count) > 0 else ''sonarr'' }}'
+      q: '{{ (r_matches + s_matches)[0] }}'
   - variables:
       gb: '{{ (q.size | float(0) / 1073741824) | round(2) }}'
+      done: '{{ ((q.size | float(0) - q.sizeleft | float(0)) / 1073741824) | round(2)
+        }}'
       pct: '{{ ((1 - (q.sizeleft | float(0) / (q.size | float(1)))) * 100) | round(0)
         | int }}'
-  - action: notify.mobile_app_matthews_iphone
-    data:
-      data:
-        background_color: '#0B1120'
-        critical_text: '{{ pct }}%'
-        live_update: true
-        notification_icon: mdi:download
-        notification_icon_color: '#3B82F6'
-        progress: '{{ pct }}'
-        progress_bar_color: '#3B82F6'
-        progress_max: 100
-        push:
-          interruption-level: passive
-        tag: media_download
-      message: '{{ gb }} GB · {{ q.title }}'
-      title: '{{ states(''input_text.arr_media_title'') }}'
+      tl_secs: '{% set tl = q.timeleft | default('''', true) | string %}{%- if '':''
+        in tl -%}{%- set head = tl.split('':'')[0] -%}{%- set d = head.split(''.'')[0]
+        | int if ''.'' in head else 0 -%}{%- set h = head.split(''.'')[1] | int if
+        ''.'' in head else head | int -%}{{ d*86400 + h*3600 + (tl.split('':'')[1]|int)*60
+        + (tl.split('':'')[2].split(''.'')[0]|int) }}{%- else -%}0{%- endif -%}'
+      moved: '{{ (q.sizeleft | float(-1)) != (states(''input_text.arr_last_sizeleft'')
+        | float(-2)) }}'
+      stalled_secs: '{{ (now().timestamp() - (state_attr(''input_datetime.arr_progress_at'',''timestamp'')
+        | float(0))) | int }}'
+  - variables:
+      speed: '{% set s = tl_secs | int %}{% if s > 0 and q.sizeleft | float(0) > 0
+        %}{% set bps = q.sizeleft | float(0) / s %}{% if bps >= 1048576 %}{{ (bps /
+        1048576) | round(1) }} MB/s{% else %}{{ (bps / 1024) | round(0) | int }} KB/s{%
+        endif %}{% else %}--{% endif %}'
+      eta: '{% set s = tl_secs | int %}{% if s <= 0 %}--{% elif s >= 3600 %}{{ s//3600
+        }}h {{ (s%3600)//60 }}m{% elif s >= 60 %}{{ s//60 }}m{% else %}{{ s }}s{% endif
+        %}'
+  - choose:
+    - alias: Progress moved - record it and push a silent update
+      conditions:
+      - condition: template
+        value_template: '{{ moved }}'
+      sequence:
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_last_sizeleft
+        data:
+          value: '{{ q.sizeleft | int }}'
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.arr_progress_at
+        data:
+          datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ states(''input_text.arr_media_title'') }}'
+          message: '{{ done }} / {{ gb }} GB{% if speed != ''--'' %} · {{ speed }}{%
+            endif %}{% if eta != ''--'' %} · {{ eta }} left{% endif %}'
+          data:
+            tag: media_download
+            live_update: true
+            silent: true
+            alert_once: true
+            progress: '{{ pct }}'
+            progress_max: 100
+            progress_bar_color: '#3B82F6'
+            notification_icon: mdi:download
+            notification_icon_color: '#3B82F6'
+            background_color: '#0B1120'
+            push:
+              interruption-level: passive
+    - alias: No movement for 5 min - stall, alert, blocklist and look again
+      conditions:
+      - condition: template
+        value_template: '{{ stalled_secs > 300 }}'
+      sequence:
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ states(''input_text.arr_media_title'') }}'
+          message: Stalled at {{ pct }}% - blocklisting and looking for another release
+          data:
+            tag: media_download
+            live_update: true
+            progress: '{{ pct }}'
+            progress_max: 100
+            progress_bar_color: '#F59E0B'
+            notification_icon: mdi:alert-circle
+            notification_icon_color: '#F59E0B'
+            background_color: '#0B1120'
+      - choose:
+        - conditions:
+          - condition: template
+            value_template: '{{ app == ''radarr'' }}'
+          sequence:
+          - action: rest_command.radarr_blocklist_and_research
+            data:
+              queue_id: '{{ q.id }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ app == ''sonarr'' }}'
+          sequence:
+          - action: rest_command.sonarr_blocklist_and_research
+            data:
+              queue_id: '{{ q.id }}'
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_download_id
+        data:
+          value: ''
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_last_sizeleft
+        data:
+          value: ''
+      - action: input_datetime.set_datetime
+        target:
+          entity_id: input_datetime.arr_progress_at
+        data:
+          datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+      - delay: 00:00:03
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ states(''input_text.arr_media_title'') }}'
+          message: Searching for another release
+          data:
+            tag: media_download
+            live_update: true
+            silent: true
+            alert_once: true
+            critical_text: Searching
+            notification_icon: mdi:movie-open
+            notification_icon_color: '#A78BFA'
+            background_color: '#0B1120'
   mode: restart
 
 - id: '1788141000771'

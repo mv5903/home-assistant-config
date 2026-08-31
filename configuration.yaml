@@ -162,6 +162,16 @@ rest_command:
     method: DELETE
     headers:
       X-Api-Key: !secret jellyseerr_api_key
+  radarr_blocklist_and_research:
+    url: "http://10.0.0.14:7878/api/v3/queue/{{ queue_id }}?removeFromClient=true&blocklist=true&skipRedownload=false"
+    method: DELETE
+    headers:
+      X-Api-Key: !secret radarr_api_key
+  sonarr_blocklist_and_research:
+    url: "http://10.0.0.14:8989/api/v3/queue/{{ queue_id }}?removeFromClient=true&blocklist=true&skipRedownload=false"
+    method: DELETE
+    headers:
+      X-Api-Key: !secret sonarr_api_key
 
 input_number: !include input_number.yaml
 
@@ -222,7 +232,7 @@ rest:
   - resource: http://10.0.0.14:7878/api/v3/queue?pageSize=50
     headers:
       X-Api-Key: !secret radarr_api_key
-    scan_interval: 30
+    scan_interval: 20
     sensor:
       - name: Radarr Queue
         unique_id: radarr_queue
@@ -233,7 +243,7 @@ rest:
   - resource: http://10.0.0.14:8989/api/v3/queue?pageSize=50
     headers:
       X-Api-Key: !secret sonarr_api_key
-    scan_interval: 30
+    scan_interval: 20
     sensor:
       - name: Sonarr Queue
         unique_id: sonarr_queue
