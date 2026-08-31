@@ -1027,6 +1027,11 @@
           value: '{{ la_title[:255] }}'
       - action: input_text.set_value
         target:
+          entity_id: input_text.arr_requested_by
+        data:
+          value: '{{ username[:64] }}'
+      - action: input_text.set_value
+        target:
           entity_id: input_text.arr_request_id
         data:
           value: '{% if trigger.json.request is defined and trigger.json.request.request_id
@@ -1038,7 +1043,7 @@
           value: ''
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: '{{ la_title }}'
+          title: '{{ la_title }}{% if username not in ["", "Unknown User"] %} · {{ username }}{% endif %}'
           message: Searching for a release
           data:
             tag: media_download
@@ -2280,9 +2285,8 @@
             progress_max: 100
             tag: media_download
           message: '{{ (trigger.json.release.size | default(0) | float(0) / 1073741824)
-            | round(2) }} GB · {{ trigger.json.release.releaseTitle | default(''Grabbed'')
-            }}'
-          title: '{{ media_title }}'
+            | round(2) }} GB'
+          title: '{{ media_title }}{% set u = states(''input_text.arr_requested_by'') %}{% if u not in ['''', ''unknown'', ''unavailable'', ''Unknown User''] %} · {{ u }}{% endif %}'
     - alias: Import -> Done
       conditions:
       - condition: template
@@ -2377,6 +2381,10 @@
       eta: '{% set s = tl_secs | int %}{% if s <= 0 %}--{% elif s >= 3600 %}{{ s//3600
         }}h {{ (s%3600)//60 }}m{% elif s >= 60 %}{{ s//60 }}m{% else %}{{ s }}s{% endif
         %}'
+      qual: '{% if q.quality is defined and q.quality.quality is defined and q.quality.quality.resolution
+        is defined %}{% set r = q.quality.quality.resolution | int(0) %}{% if r >= 2160
+        %}4K{% elif r >= 1080 %}1080p{% elif r >= 720 %}720p{% elif r > 0 %}SD{% endif
+        %}{% endif %}'
   - choose:
     - alias: Progress moved - record it and push a silent update
       conditions:
@@ -2396,8 +2404,9 @@
       - action: notify.mobile_app_matthews_iphone
         data:
           title: '{{ states(''input_text.arr_media_title'') }}'
-          message: '{{ done }} / {{ gb }} GB{% if speed != ''--'' %} · {{ speed }}{%
-            endif %}{% if eta != ''--'' %} · {{ eta }} left{% endif %}'
+          message: '{{ gb }} GB{% if qual %} · {{ qual }}{% endif %}{% if speed
+            != ''--'' %} · {{ speed }}{% endif %}{% if eta != ''--'' %} · {{ eta }}
+            left{% endif %}'
           data:
             tag: media_download
             live_update: true
@@ -2504,7 +2513,9 @@
           la_title: '{{ states(''input_text.arr_media_title'') }}'
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: '{{ la_title }}'
+          title: '{{ la_title }}{% set u = states(''input_text.arr_requested_by'')
+            %}{% if u not in ['''', ''unknown'', ''unavailable'', ''Unknown User'']
+            %} · {{ u }}{% endif %}'
           message: Searching for a release
           data:
             tag: media_download
