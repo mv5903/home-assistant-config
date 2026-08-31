@@ -56,6 +56,9 @@ automation_ids:
 - climate_sleep_fan_keep_alive
 - maint_restart_home_assistant
 - apartment_watch_new_availability_push
+- ps5_pro_watch_price_drop_push
+- live_activity_download_tracker_radarr_sonarr
+- live_activity_download_progress
 - '1752541263640'
 - '1752541408687'
 - '1763575398211'
@@ -105,5 +108,8 @@ automation_ids:
 - '1781673379940'
 - '1781800384750'
 - ps5_pro_watch_price_drop
-exported_at: '2026-06-21T17:00:44.424371'
-total_count: 106
+- '1788130220089'
+- '1788130249467'
+- zz_webhook_probe
+exported_at: '2026-08-30T20:18:35.058764'
+total_count: 112

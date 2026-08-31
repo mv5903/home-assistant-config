@@ -979,7 +979,7 @@
   conditions: []
   actions:
   - variables:
-      event_type: '{{ trigger.json.event | default("Unknown Event") }}'
+      event_type: '{{ trigger.json.notification_type | default("Unknown Event") }}'
       media_title: '{{ trigger.json.subject | default("Unknown Title") }}'
       username: '{{ trigger.json.request.requestedBy_username | default("Unknown User")
         }}'
@@ -987,8 +987,8 @@
       media_status: '{{ trigger.json.media.status | default("Unknown Status") }}'
       media_image: '{{ trigger.json.image | default("") }}'
   - data:
-      title: '{% if event_type == "MEDIA_REQUESTED" %}New Request: {{ media_title
-        }} {% elif event_type == "MEDIA_APPROVED" %}Approved: {{ media_title }} {%
+      title: '{% if event_type == "MEDIA_PENDING" %}New Request: {{ media_title
+        }} {% elif event_type in ["MEDIA_APPROVED", "MEDIA_AUTO_APPROVED"] %}Approved: {{ media_title }} {%
         elif event_type == "MEDIA_AVAILABLE" %}Now Available: {{ media_title }} {%
         elif event_type == "ISSUE_CREATED" %}New Issue: {{ media_title }} {% elif
         event_type == "ISSUE_COMMENT" %}New Comment: {{ media_title }} {% elif event_type
@@ -2200,7 +2200,7 @@
     - POST
     local_only: true
     trigger: webhook
-    webhook_id: arr_live_activity_9f3c2b71
+    webhook_id: arr_live_activity_v2
   actions:
   - choose:
     - alias: Grab -> Downloading
@@ -2286,7 +2286,7 @@
     trigger: state
   conditions:
   - condition: template
-    value_template: '{{ states(''input_text.arr_download_id'') | length > 0 }}'
+    value_template: '{{ states(''input_text.arr_download_id'') not in ['''', ''unknown'', ''unavailable''] }}'
   actions:
   - delay: 00:00:20
   - variables:
