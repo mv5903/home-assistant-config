@@ -2316,6 +2316,8 @@
         progress: '{{ pct }}'
         progress_bar_color: '#3B82F6'
         progress_max: 100
+        push:
+          interruption-level: passive
         tag: media_download
       message: '{{ gb }} GB · {{ q.title }}'
       title: '{{ states(''input_text.arr_media_title'') }}'
