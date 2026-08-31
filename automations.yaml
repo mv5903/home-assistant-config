@@ -1027,6 +1027,12 @@
           value: '{{ la_title[:255] }}'
       - action: input_text.set_value
         target:
+          entity_id: input_text.arr_request_id
+        data:
+          value: '{% if trigger.json.request is defined and trigger.json.request.request_id
+            is defined %}{{ trigger.json.request.request_id }}{% endif %}'
+      - action: input_text.set_value
+        target:
           entity_id: input_text.arr_download_id
         data:
           value: ''
@@ -1041,6 +1047,37 @@
             notification_icon: mdi:movie-open
             notification_icon_color: '#A78BFA'
             background_color: '#0B1120'
+      - alias: Wait for a Grab; 20 min with no downloadId means nothing was found
+        wait_for_trigger:
+        - trigger: state
+          entity_id: input_text.arr_download_id
+        timeout: '00:20:00'
+        continue_on_timeout: true
+      - condition: template
+        value_template: '{{ wait.trigger is none }}'
+      - condition: template
+        value_template: '{{ states(''input_text.arr_download_id'') in ['''', ''unknown'',
+          ''unavailable''] }}'
+      - alias: Bail out if a newer request has taken over the Live Activity
+        condition: template
+        value_template: '{{ states(''input_text.arr_media_title'') == la_title }}'
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ la_title }}'
+          message: No release found yet - still retrying in the background
+          data:
+            tag: media_download
+            live_update: true
+            critical_text: Not found
+            notification_icon: mdi:magnify-close
+            notification_icon_color: '#F59E0B'
+            background_color: '#0B1120'
+            actions:
+            - action: ARR_SEARCH_AGAIN
+              title: Search again
+            - action: ARR_REMOVE_REQUEST
+              title: Remove request
+              destructive: true
   mode: parallel
   max: 10
 - id: '1763173437229'
@@ -2324,3 +2361,96 @@
       message: '{{ gb }} GB · {{ q.title }}'
       title: '{{ states(''input_text.arr_media_title'') }}'
   mode: restart
+
+- id: '1788141000771'
+  alias: 'Live Activity: Not-Found Actions'
+  description: Handles the "Search again" and "Remove request" buttons shown on the
+    media_download Live Activity when the Searching phase times out. Both act on the
+    Jellyseerr request id stored by the Searching phase in input_text.arr_request_id.
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+  conditions:
+  - condition: template
+    value_template: '{{ trigger.event.data.action in [''ARR_SEARCH_AGAIN'', ''ARR_REMOVE_REQUEST'']
+      }}'
+  - condition: template
+    value_template: '{{ states(''input_text.arr_request_id'') not in ['''', ''unknown'',
+      ''unavailable''] }}'
+  actions:
+  - choose:
+    - alias: Search again
+      conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.action == ''ARR_SEARCH_AGAIN'' }}'
+      sequence:
+      - action: rest_command.jellyseerr_retry_request
+        data:
+          request_id: '{{ states(''input_text.arr_request_id'') }}'
+      - variables:
+          la_title: '{{ states(''input_text.arr_media_title'') }}'
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ la_title }}'
+          message: Searching for a release
+          data:
+            tag: media_download
+            live_update: true
+            critical_text: Searching
+            notification_icon: mdi:movie-open
+            notification_icon_color: '#A78BFA'
+            background_color: '#0B1120'
+      - wait_for_trigger:
+        - trigger: state
+          entity_id: input_text.arr_download_id
+        timeout: '00:20:00'
+        continue_on_timeout: true
+      - condition: template
+        value_template: '{{ wait.trigger is none }}'
+      - condition: template
+        value_template: '{{ states(''input_text.arr_download_id'') in ['''', ''unknown'',
+          ''unavailable''] }}'
+      - condition: template
+        value_template: '{{ states(''input_text.arr_media_title'') == la_title }}'
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: '{{ la_title }}'
+          message: Still no release found
+          data:
+            tag: media_download
+            live_update: true
+            critical_text: Not found
+            notification_icon: mdi:magnify-close
+            notification_icon_color: '#F59E0B'
+            background_color: '#0B1120'
+            actions:
+            - action: ARR_SEARCH_AGAIN
+              title: Search again
+            - action: ARR_REMOVE_REQUEST
+              title: Remove request
+              destructive: true
+    - alias: Remove request
+      conditions:
+      - condition: template
+        value_template: '{{ trigger.event.data.action == ''ARR_REMOVE_REQUEST'' }}'
+      sequence:
+      - action: rest_command.jellyseerr_delete_request
+        data:
+          request_id: '{{ states(''input_text.arr_request_id'') }}'
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_request_id
+        data:
+          value: ''
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.arr_media_title
+        data:
+          value: ''
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          message: clear_notification
+          data:
+            tag: media_download
+  mode: parallel
+  max: 5

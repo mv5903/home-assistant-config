@@ -149,6 +149,20 @@ google_assistant:
 shell_command:
   git_push_config: "bash /config/git_push.sh"
 
+rest_command:
+  jellyseerr_retry_request:
+    url: "http://10.0.0.14:5055/api/v1/request/{{ request_id }}/retry"
+    method: POST
+    headers:
+      X-Api-Key: !secret jellyseerr_api_key
+    content_type: "application/json"
+    payload: "{}"
+  jellyseerr_delete_request:
+    url: "http://10.0.0.14:5055/api/v1/request/{{ request_id }}"
+    method: DELETE
+    headers:
+      X-Api-Key: !secret jellyseerr_api_key
+
 input_number: !include input_number.yaml
 
 # Lovelace Dashboards
@@ -232,3 +246,5 @@ recorder:
     entities:
       - sensor.radarr_queue
       - sensor.sonarr_queue
+
+input_text: !include input_text.yaml
