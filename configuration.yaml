@@ -205,7 +205,7 @@ homekit:
 
         
 rest:
-  - resource: http://192.168.1.32:7878/api/v3/queue?pageSize=50
+  - resource: http://10.0.0.14:7878/api/v3/queue?pageSize=50
     headers:
       X-Api-Key: !secret radarr_api_key
     scan_interval: 30
@@ -216,7 +216,7 @@ rest:
         json_attributes:
           - records
 
-  - resource: http://192.168.1.32:8989/api/v3/queue?pageSize=50
+  - resource: http://10.0.0.14:8989/api/v3/queue?pageSize=50
     headers:
       X-Api-Key: !secret sonarr_api_key
     scan_interval: 30
