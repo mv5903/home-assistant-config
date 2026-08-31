@@ -2200,7 +2200,7 @@
     - POST
     local_only: true
     trigger: webhook
-    webhook_id: arr_live_activity_v2
+    webhook_id: arr_live_activity_9f3c2b71
   actions:
   - choose:
     - alias: Grab -> Downloading
@@ -2269,8 +2269,11 @@
   mode: parallel
   variables:
     event_type: '{{ trigger.json.eventType | default('''') }}'
-    media_title: '{{ trigger.json.movie.title | default(trigger.json.series.title,
-      true) | default(states(''input_text.arr_media_title''), true) }}'
+    media_title: >-
+      {% if trigger.json.movie is defined and trigger.json.movie.title is defined %}{{
+      trigger.json.movie.title }}{% elif trigger.json.series is defined and trigger.json.series.title
+      is defined %}{{ trigger.json.series.title }}{% else %}{{ states('input_text.arr_media_title')
+      }}{% endif %}
 - id: '1788130249467'
   alias: 'Live Activity: Download Progress'
   description: 'Pushes throttled progress updates to the media_download Live Activity.
