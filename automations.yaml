@@ -1043,7 +1043,7 @@
           value: ''
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: '{{ la_title }}{% if username not in ["", "Unknown User"] %} · {{ username }}{% endif %}'
+          title: '{{ la_title }}'
           message: Searching
           data:
             tag: media_download
@@ -2288,7 +2288,7 @@
             tag: media_download
           message: '{{ (trigger.json.release.size | default(0) | float(0) / 1073741824)
             | round(2) }} GB'
-          title: '{{ media_title }}{% set u = states(''input_text.arr_requested_by'') %}{% if u not in ['''', ''unknown'', ''unavailable'', ''Unknown User''] %} · {{ u }}{% endif %}'
+          title: '{{ media_title }}'
     - alias: Import -> Done
       conditions:
       - condition: template
@@ -2517,9 +2517,7 @@
           la_title: '{{ states(''input_text.arr_media_title'') }}'
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: '{{ la_title }}{% set u = states(''input_text.arr_requested_by'')
-            %}{% if u not in ['''', ''unknown'', ''unavailable'', ''Unknown User'']
-            %} · {{ u }}{% endif %}'
+          title: '{{ la_title }}'
           message: Searching
           data:
             tag: media_download
