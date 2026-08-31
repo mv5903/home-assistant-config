@@ -1044,11 +1044,13 @@
       - action: notify.mobile_app_matthews_iphone
         data:
           title: '{{ la_title }}{% if username not in ["", "Unknown User"] %} · {{ username }}{% endif %}'
-          message: Searching for a release
+          message: Searching
           data:
             tag: media_download
             live_update: true
-            critical_text: Searching
+            chronometer: true
+            when: '{{ now().timestamp() | int }}'
+            when_relative: false
             notification_icon: mdi:movie-open
             notification_icon_color: '#A78BFA'
             background_color: '#0B1120'
@@ -2472,13 +2474,15 @@
       - action: notify.mobile_app_matthews_iphone
         data:
           title: '{{ states(''input_text.arr_media_title'') }}'
-          message: Searching for another release
+          message: Searching again
           data:
             tag: media_download
             live_update: true
             silent: true
             alert_once: true
-            critical_text: Searching
+            chronometer: true
+            when: '{{ now().timestamp() | int }}'
+            when_relative: false
             notification_icon: mdi:movie-open
             notification_icon_color: '#A78BFA'
             background_color: '#0B1120'
@@ -2516,11 +2520,13 @@
           title: '{{ la_title }}{% set u = states(''input_text.arr_requested_by'')
             %}{% if u not in ['''', ''unknown'', ''unavailable'', ''Unknown User'']
             %} · {{ u }}{% endif %}'
-          message: Searching for a release
+          message: Searching
           data:
             tag: media_download
             live_update: true
-            critical_text: Searching
+            chronometer: true
+            when: '{{ now().timestamp() | int }}'
+            when_relative: false
             notification_icon: mdi:movie-open
             notification_icon_color: '#A78BFA'
             background_color: '#0B1120'
