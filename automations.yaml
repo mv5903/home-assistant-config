@@ -1018,11 +1018,13 @@
         value_template: '{{ event_type in [''MEDIA_APPROVED'', ''MEDIA_AUTO_APPROVED'',
           ''MEDIA_PENDING''] }}'
       sequence:
+      - variables:
+          la_title: '{{ media_title | regex_replace(''\s*\((19|20)\d{2}\)\s*$'', '''') }}'
       - action: input_text.set_value
         target:
           entity_id: input_text.arr_media_title
         data:
-          value: '{{ media_title[:255] }}'
+          value: '{{ la_title[:255] }}'
       - action: input_text.set_value
         target:
           entity_id: input_text.arr_download_id
@@ -1030,13 +1032,13 @@
           value: ''
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: '{{ media_title }}'
+          title: '{{ la_title }}'
           message: Searching for a release
           data:
             tag: media_download
             live_update: true
             critical_text: Searching
-            notification_icon: mdi:magnify
+            notification_icon: mdi:movie-open
             notification_icon_color: '#A78BFA'
             background_color: '#0B1120'
   mode: parallel
