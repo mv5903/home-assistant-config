@@ -981,7 +981,7 @@
   - variables:
       event_type: '{{ trigger.json.notification_type | default("Unknown Event") }}'
       media_title: '{{ trigger.json.subject | default("Unknown Title") }}'
-      username: '{{ trigger.json.request.requestedBy_username | default("Unknown User")
+      username: '{{ trigger.json.request.requestedBy_username | default("Unknown User", true)
         }}'
       media_type: '{{ trigger.json.media.media_type | default("Unknown Type") }}'
       media_status: '{{ trigger.json.media.status | default("Unknown Status") }}'
@@ -2269,6 +2269,11 @@
           value: ''
         target:
           entity_id: input_text.arr_last_sizeleft
+      - action: input_number.set_value
+        data:
+          value: 0
+        target:
+          entity_id: input_number.arr_stall_retries
       - action: input_datetime.set_datetime
         data:
           datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
@@ -2320,6 +2325,32 @@
           data:
             tag: media_download
           message: clear_notification
+      - alias: Wipe per-download state so nothing leaks into the next one
+        action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_media_title
+      - action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_requested_by
+      - action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_request_id
+      - action: input_text.set_value
+        data:
+          value: ''
+        target:
+          entity_id: input_text.arr_last_sizeleft
+      - action: input_number.set_value
+        data:
+          value: 0
+        target:
+          entity_id: input_number.arr_stall_retries
   max: 10
   mode: parallel
   variables:
@@ -2422,70 +2453,108 @@
             background_color: '#0B1120'
             push:
               interruption-level: passive
-    - alias: No movement for 5 min - stall, alert, blocklist and look again
+    - alias: No movement for 5 min while actively downloading
       conditions:
       - condition: template
-        value_template: '{{ stalled_secs > 300 }}'
+        value_template: '{{ stalled_secs > 300 and (q.sizeleft | float(0)) > 0 and
+          (q.status | default('''')) == ''downloading'' }}'
       sequence:
-      - action: notify.mobile_app_matthews_iphone
-        data:
-          title: '{{ states(''input_text.arr_media_title'') }}'
-          message: Stalled at {{ pct }}% - blocklisting and looking for another release
-          data:
-            tag: media_download
-            live_update: true
-            progress: '{{ pct }}'
-            progress_max: 100
-            progress_bar_color: '#F59E0B'
-            notification_icon: mdi:alert-circle
-            notification_icon_color: '#F59E0B'
-            background_color: '#0B1120'
       - choose:
-        - conditions:
+        - alias: Under the retry cap - blocklist this release and try another
+          conditions:
           - condition: template
-            value_template: '{{ app == ''radarr'' }}'
+            value_template: '{{ states(''input_number.arr_stall_retries'') | int(0)
+              < 3 }}'
           sequence:
-          - action: rest_command.radarr_blocklist_and_research
+          - action: notify.mobile_app_matthews_iphone
             data:
-              queue_id: '{{ q.id }}'
-        - conditions:
-          - condition: template
-            value_template: '{{ app == ''sonarr'' }}'
-          sequence:
-          - action: rest_command.sonarr_blocklist_and_research
+              title: '{{ states(''input_text.arr_media_title'') }}'
+              message: Stalled at {{ pct }}% - trying another release
+              data:
+                tag: media_download
+                live_update: true
+                progress: '{{ pct }}'
+                progress_max: 100
+                progress_bar_color: '#F59E0B'
+                notification_icon: mdi:alert-circle
+                notification_icon_color: '#F59E0B'
+                background_color: '#0B1120'
+          - choose:
+            - conditions:
+              - condition: template
+                value_template: '{{ app == ''radarr'' }}'
+              sequence:
+              - action: rest_command.radarr_blocklist_and_research
+                data:
+                  queue_id: '{{ q.id }}'
+            - conditions:
+              - condition: template
+                value_template: '{{ app == ''sonarr'' }}'
+              sequence:
+              - action: rest_command.sonarr_blocklist_and_research
+                data:
+                  queue_id: '{{ q.id }}'
+          - action: input_number.increment
+            target:
+              entity_id: input_number.arr_stall_retries
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.arr_download_id
             data:
-              queue_id: '{{ q.id }}'
-      - action: input_text.set_value
-        target:
-          entity_id: input_text.arr_download_id
-        data:
-          value: ''
-      - action: input_text.set_value
-        target:
-          entity_id: input_text.arr_last_sizeleft
-        data:
-          value: ''
-      - action: input_datetime.set_datetime
-        target:
-          entity_id: input_datetime.arr_progress_at
-        data:
-          datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
-      - delay: 00:00:03
-      - action: notify.mobile_app_matthews_iphone
-        data:
-          title: '{{ states(''input_text.arr_media_title'') }}'
-          message: Searching again
+              value: ''
+          - action: input_text.set_value
+            target:
+              entity_id: input_text.arr_last_sizeleft
+            data:
+              value: ''
+          - action: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.arr_progress_at
+            data:
+              datetime: '{{ now().strftime(''%Y-%m-%d %H:%M:%S'') }}'
+          - delay: 00:00:03
+          - action: notify.mobile_app_matthews_iphone
+            data:
+              title: '{{ states(''input_text.arr_media_title'') }}'
+              message: Searching again
+              data:
+                tag: media_download
+                live_update: true
+                silent: true
+                alert_once: true
+                chronometer: true
+                when: '{{ now().timestamp() | int }}'
+                when_relative: false
+                notification_icon: mdi:movie-open
+                notification_icon_color: '#A78BFA'
+                background_color: '#0B1120'
+        default:
+        - alias: Retry cap hit - stop churning through releases and ask
+          action: notify.mobile_app_matthews_iphone
           data:
-            tag: media_download
-            live_update: true
-            silent: true
-            alert_once: true
-            chronometer: true
-            when: '{{ now().timestamp() | int }}'
-            when_relative: false
-            notification_icon: mdi:movie-open
-            notification_icon_color: '#A78BFA'
-            background_color: '#0B1120'
+            title: '{{ states(''input_text.arr_media_title'') }}'
+            message: Stalled after 3 tries - no working release found
+            data:
+              tag: media_download
+              live_update: true
+              progress: '{{ pct }}'
+              progress_max: 100
+              progress_bar_color: '#F59E0B'
+              notification_icon: mdi:alert-circle
+              notification_icon_color: '#F59E0B'
+              background_color: '#0B1120'
+              actions:
+              - action: ARR_SEARCH_AGAIN
+                title: Search again
+              - action: ARR_REMOVE_REQUEST
+                title: Remove request
+                destructive: true
+        - action: input_text.set_value
+          target:
+            entity_id: input_text.arr_download_id
+          data:
+            value: ''
+
   mode: restart
 
 - id: '1788141000771'
