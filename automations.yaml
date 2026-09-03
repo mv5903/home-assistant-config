@@ -981,19 +981,19 @@
   - variables:
       event_type: '{{ trigger.json.notification_type | default("Unknown Event") }}'
       media_title: '{{ trigger.json.subject | default("Unknown Title") }}'
-      username: '{{ trigger.json.request.requestedBy_username | default("Unknown User", true)
-        }}'
+      username: '{{ trigger.json.request.requestedBy_username | default("Unknown User",
+        true) }}'
       media_type: '{{ trigger.json.media.media_type | default("Unknown Type") }}'
       media_status: '{{ trigger.json.media.status | default("Unknown Status") }}'
       media_image: '{{ trigger.json.image | default("") }}'
   - data:
-      title: '{% if event_type == "MEDIA_PENDING" %}New Request: {{ media_title
-        }} {% elif event_type in ["MEDIA_APPROVED", "MEDIA_AUTO_APPROVED"] %}Approved: {{ media_title }} {%
-        elif event_type == "MEDIA_AVAILABLE" %}Now Available: {{ media_title }} {%
-        elif event_type == "ISSUE_CREATED" %}New Issue: {{ media_title }} {% elif
-        event_type == "ISSUE_COMMENT" %}New Comment: {{ media_title }} {% elif event_type
-        == "ISSUE_RESOLVED" %}Issue Resolved: {{ media_title }} {% else %}{{ event_type
-        }}: {{ media_title }} {% endif %}'
+      title: '{% if event_type == "MEDIA_PENDING" %}New Request: {{ media_title }}
+        {% elif event_type in ["MEDIA_APPROVED", "MEDIA_AUTO_APPROVED"] %}Approved:
+        {{ media_title }} {% elif event_type == "MEDIA_AVAILABLE" %}Now Available:
+        {{ media_title }} {% elif event_type == "ISSUE_CREATED" %}New Issue: {{ media_title
+        }} {% elif event_type == "ISSUE_COMMENT" %}New Comment: {{ media_title }}
+        {% elif event_type == "ISSUE_RESOLVED" %}Issue Resolved: {{ media_title }}
+        {% else %}{{ event_type }}: {{ media_title }} {% endif %}'
       message: "{% if event_type.startswith(\"MEDIA_\") %}\n  {{ username }} {{ event_type
         | replace(\"MEDIA_\", \"\") | lower }} {{ media_type | lower }} \"{{ media_title
         }}\"\n  Status: {{ media_status | title }}\n{% elif event_type.startswith(\"ISSUE_\")
@@ -1019,7 +1019,8 @@
           ''MEDIA_PENDING''] }}'
       sequence:
       - variables:
-          la_title: '{{ media_title | regex_replace(''\s*\((19|20)\d{2}\)\s*$'', '''') }}'
+          la_title: '{{ media_title | regex_replace(''\s*\((19|20)\d{2}\)\s*$'', '''')
+            }}'
       - action: input_text.set_value
         target:
           entity_id: input_text.arr_media_title
@@ -1058,7 +1059,7 @@
         wait_for_trigger:
         - trigger: state
           entity_id: input_text.arr_download_id
-        timeout: '00:20:00'
+        timeout: 00:20:00
         continue_on_timeout: true
       - condition: template
         value_template: '{{ wait.trigger is none }}'
@@ -2179,34 +2180,6 @@
     metadata: {}
     data: {}
   mode: single
-- id: '1781800384750'
-  alias: Apartment Watch — New Availability Push
-  description: Pushes a high-importance notification when changedetection.io reports
-    a new unit at a watched JC building. Triggered by webhook 'apartment_watch'.
-  triggers:
-  - trigger: webhook
-    webhook_id: apartment_watch
-    allowed_methods:
-    - POST
-    local_only: false
-  actions:
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: "{{ trigger.json.title | default('\U0001F3E0 New apartment availability',
-        true) }}"
-      message: '{{ trigger.json.message | default(''A new unit was just listed.'',
-        true) }}'
-      data:
-        push:
-          interruption-level: time-sensitive
-          sound: default
-        url: https://watch.mattvandenberg.com
-        tag: apartments
-        channel: Apartments
-        importance: high
-        notification_icon: mdi:home-search
-  mode: queued
-  max: 10
 - id: ps5_pro_watch_price_drop
   alias: PS5 Pro Watch — Price Drop Push
   description: Pushes a notification when the PS5 Pro price watcher (Playwright on
@@ -2355,20 +2328,20 @@
   mode: parallel
   variables:
     event_type: '{{ trigger.json.eventType | default('''') }}'
-    media_title: >-
-      {% if trigger.json.movie is defined and trigger.json.movie.title is defined %}{{
-      trigger.json.movie.title }}{% elif trigger.json.series is defined and trigger.json.series.title
-      is defined %}{{ trigger.json.series.title }}{% else %}{{ states('input_text.arr_media_title')
-      }}{% endif %}
+    media_title: '{% if trigger.json.movie is defined and trigger.json.movie.title
+      is defined %}{{ trigger.json.movie.title }}{% elif trigger.json.series is defined
+      and trigger.json.series.title is defined %}{{ trigger.json.series.title }}{%
+      else %}{{ states(''input_text.arr_media_title'') }}{% endif %}'
 - id: '1788130249467'
   alias: 'Live Activity: Download Progress'
   description: 'Pushes progress updates to the media_download Live Activity. Matches
     the stored downloadId against the Radarr and Sonarr queue REST sensors, derives
     speed and ETA from the queue record''s timeleft, and detects a stall by watching
-    whether sizeleft actually moved since the last poll. Progress pushes are sent with
-    silent: true so iOS updates the activity in place without re-presenting the banner;
-    the stall push is deliberately NOT silent because it needs attention. mode: restart
-    with a leading delay collapses a burst of queue refreshes into one push.'
+    whether sizeleft actually moved since the last poll. Progress pushes are sent
+    with silent: true so iOS updates the activity in place without re-presenting the
+    banner; the stall push is deliberately NOT silent because it needs attention.
+    mode: restart with a leading delay collapses a burst of queue refreshes into one
+    push.'
   triggers:
   - entity_id:
     - sensor.radarr_queue
@@ -2408,16 +2381,16 @@
         | float(0))) | int }}'
   - variables:
       speed: '{% set s = tl_secs | int %}{% if s > 0 and q.sizeleft | float(0) > 0
-        %}{% set bps = q.sizeleft | float(0) / s %}{% if bps >= 1048576 %}{{ (bps /
-        1048576) | round(1) }} MB/s{% else %}{{ (bps / 1024) | round(0) | int }} KB/s{%
-        endif %}{% else %}--{% endif %}'
+        %}{% set bps = q.sizeleft | float(0) / s %}{% if bps >= 1048576 %}{{ (bps
+        / 1048576) | round(1) }} MB/s{% else %}{{ (bps / 1024) | round(0) | int }}
+        KB/s{% endif %}{% else %}--{% endif %}'
       eta: '{% set s = tl_secs | int %}{% if s <= 0 %}--{% elif s >= 3600 %}{{ s//3600
-        }}h {{ (s%3600)//60 }}m{% elif s >= 60 %}{{ s//60 }}m{% else %}{{ s }}s{% endif
-        %}'
+        }}h {{ (s%3600)//60 }}m{% elif s >= 60 %}{{ s//60 }}m{% else %}{{ s }}s{%
+        endif %}'
       qual: '{% if q.quality is defined and q.quality.quality is defined and q.quality.quality.resolution
-        is defined %}{% set r = q.quality.quality.resolution | int(0) %}{% if r >= 2160
-        %}4K{% elif r >= 1080 %}1080p{% elif r >= 720 %}720p{% elif r > 0 %}SD{% endif
-        %}{% endif %}'
+        is defined %}{% set r = q.quality.quality.resolution | int(0) %}{% if r >=
+        2160 %}4K{% elif r >= 1080 %}1080p{% elif r >= 720 %}720p{% elif r > 0 %}SD{%
+        endif %}{% endif %}'
   - choose:
     - alias: Progress moved - record it and push a silent update
       conditions:
@@ -2437,9 +2410,9 @@
       - action: notify.mobile_app_matthews_iphone
         data:
           title: '{{ states(''input_text.arr_media_title'') }}'
-          message: '{{ gb }} GB{% if qual %} · {{ qual }}{% endif %}{% if speed
-            != ''--'' %} · {{ speed }}{% endif %}{% if eta != ''--'' %} · {{ eta }}
-            left{% endif %}'
+          message: '{{ gb }} GB{% if qual %} · {{ qual }}{% endif %}{% if speed !=
+            ''--'' %} · {{ speed }}{% endif %}{% if eta != ''--'' %} · {{ eta }} left{%
+            endif %}'
           data:
             tag: media_download
             live_update: true
@@ -2554,9 +2527,7 @@
             entity_id: input_text.arr_download_id
           data:
             value: ''
-
   mode: restart
-
 - id: '1788141000771'
   alias: 'Live Activity: Not-Found Actions'
   description: Handles the "Search again" and "Remove request" buttons shown on the
@@ -2600,7 +2571,7 @@
       - wait_for_trigger:
         - trigger: state
           entity_id: input_text.arr_download_id
-        timeout: '00:20:00'
+        timeout: 00:20:00
         continue_on_timeout: true
       - condition: template
         value_template: '{{ wait.trigger is none }}'
@@ -2651,3 +2622,66 @@
             tag: media_download
   mode: parallel
   max: 5
+- id: '1788451681012'
+  alias: PS5 Pro Stock — Restock Push
+  description: 'Time-sensitive push when changedetection.io reports a PlayStation
+    5 Pro console in stock at or under $900. Triggered by webhook ''ps5_pro_stock''.
+    Sources: PS Direct commerce API, NowInStock (Amazon/Newegg), Slickdeals RSS.'
+  triggers:
+  - trigger: webhook
+    webhook_id: ps5_pro_stock
+    allowed_methods:
+    - POST
+    local_only: false
+    note: changedetection.io posts here via its jsons:// Apprise target; local_only
+      must stay false because the container calls in from the 10.0.0.0/22 bridge.
+  actions:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: "{{ trigger.json.title | default('\U0001F3AE PS5 Pro restock', true)
+        }}"
+      message: '{{ trigger.json.message | default(''A PS5 Pro was just listed in stock.'',
+        true) }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+          sound: default
+        url: https://watch.mattvandenberg.com
+        tag: ps5pro
+        channel: Restocks
+        importance: high
+        notification_icon: mdi:sony-playstation
+    note: time-sensitive breaks through Focus — restocks sell out in minutes. Defaults
+      guard against an empty webhook body rendering a blank notification.
+  mode: queued
+  max: 10
+- id: '1788451695745'
+  alias: Apartment Watch — New Availability Push
+  description: Pushes a high-importance notification when changedetection.io reports
+    a new unit at a watched JC building. Triggered by webhook 'apartment_watch'.
+  triggers:
+  - trigger: webhook
+    webhook_id: apartment_watch
+    allowed_methods:
+    - POST
+    local_only: false
+  actions:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: "{{ trigger.json.title | default('\U0001F3E0 New apartment availability',
+        true) }}"
+      message: '{{ trigger.json.message | default(''A new unit was just listed.'',
+        true) }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+          sound: default
+        url: https://watch.mattvandenberg.com
+        tag: apartments
+        channel: Apartments
+        importance: high
+        notification_icon: mdi:home-search
+    note: 'Service corrected 2026-09-03: was notify.mobile_app_matthews_iphone_17_pro,
+      which is not in the service registry — every push failed silently.'
+  mode: queued
+  max: 10
