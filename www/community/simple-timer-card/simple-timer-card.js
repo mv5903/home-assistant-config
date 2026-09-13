@@ -3,39 +3,91 @@
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t$1=globalThis,e$2=t$1.ShadowRoot&&(void 0===t$1.ShadyCSS||t$1.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$2=Symbol(),o$5=new WeakMap;let n$3 = class n{constructor(t,e,o){if(this._$cssResult$=true,o!==s$2)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$2&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=o$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&o$5.set(s,t));}return t}toString(){return this.cssText}};const r$2=t=>new n$3("string"==typeof t?t:t+"",void 0,s$2),i$4=(t,...e)=>{const o=1===t.length?t[0]:e.reduce((e,s,o)=>e+(t=>{if(true===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[o+1],t[0]);return new n$3(o,t,s$2)},S$1=(s,o)=>{if(e$2)s.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of o){const o=document.createElement("style"),n=t$1.litNonce;void 0!==n&&o.setAttribute("nonce",n),o.textContent=e.cssText,s.appendChild(o);}},c$2=e$2?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$2(e)})(t):t;
+const t$2=globalThis,e$3=t$2.ShadowRoot&&(void 0===t$2.ShadyCSS||t$2.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,s$2=Symbol(),o$5=new WeakMap;let n$3 = class n{constructor(t,e,o){if(this._$cssResult$=true,o!==s$2)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=t,this.t=e;}get styleSheet(){let t=this.o;const s=this.t;if(e$3&&void 0===t){const e=void 0!==s&&1===s.length;e&&(t=o$5.get(s)),void 0===t&&((this.o=t=new CSSStyleSheet).replaceSync(this.cssText),e&&o$5.set(s,t));}return t}toString(){return this.cssText}};const r$3=t=>new n$3("string"==typeof t?t:t+"",void 0,s$2),i$5=(t,...e)=>{const o=1===t.length?t[0]:e.reduce((e,s,o)=>e+(t=>{if(true===t._$cssResult$)return t.cssText;if("number"==typeof t)return t;throw Error("Value passed to 'css' function must be a 'css' function result: "+t+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(s)+t[o+1],t[0]);return new n$3(o,t,s$2)},S$1=(s,o)=>{if(e$3)s.adoptedStyleSheets=o.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet);else for(const e of o){const o=document.createElement("style"),n=t$2.litNonce;void 0!==n&&o.setAttribute("nonce",n),o.textContent=e.cssText,s.appendChild(o);}},c$2=e$3?t=>t:t=>t instanceof CSSStyleSheet?(t=>{let e="";for(const s of t.cssRules)e+=s.cssText;return r$3(e)})(t):t;
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const{is:i$3,defineProperty:e$1,getOwnPropertyDescriptor:h$1,getOwnPropertyNames:r$1,getOwnPropertySymbols:o$4,getPrototypeOf:n$2}=Object,a$2=globalThis,c$1=a$2.trustedTypes,l$2=c$1?c$1.emptyScript:"",p$1=a$2.reactiveElementPolyfillSupport,d$1=(t,s)=>t,u$2={toAttribute(t,s){switch(s){case Boolean:t=t?l$2:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,s){let i=t;switch(s){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t);}catch(t){i=null;}}return i}},f$1=(t,s)=>!i$3(t,s),b$1={attribute:true,type:String,converter:u$2,reflect:false,useDefault:false,hasChanged:f$1};Symbol.metadata??=Symbol("metadata"),a$2.litPropertyMetadata??=new WeakMap;let y$1 = class y extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t);}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,s=b$1){if(s.state&&(s.attribute=false),this._$Ei(),this.prototype.hasOwnProperty(t)&&((s=Object.create(s)).wrapped=true),this.elementProperties.set(t,s),!s.noAccessor){const i=Symbol(),h=this.getPropertyDescriptor(t,i,s);void 0!==h&&e$1(this.prototype,t,h);}}static getPropertyDescriptor(t,s,i){const{get:e,set:r}=h$1(this.prototype,t)??{get(){return this[s]},set(t){this[s]=t;}};return {get:e,set(s){const h=e?.call(this);r?.call(this,s),this.requestUpdate(t,h,i);},configurable:true,enumerable:true}}static getPropertyOptions(t){return this.elementProperties.get(t)??b$1}static _$Ei(){if(this.hasOwnProperty(d$1("elementProperties")))return;const t=n$2(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties);}static finalize(){if(this.hasOwnProperty(d$1("finalized")))return;if(this.finalized=true,this._$Ei(),this.hasOwnProperty(d$1("properties"))){const t=this.properties,s=[...r$1(t),...o$4(t)];for(const i of s)this.createProperty(i,t[i]);}const t=this[Symbol.metadata];if(null!==t){const s=litPropertyMetadata.get(t);if(void 0!==s)for(const[t,i]of s)this.elementProperties.set(t,i);}this._$Eh=new Map;for(const[t,s]of this.elementProperties){const i=this._$Eu(t,s);void 0!==i&&this._$Eh.set(i,t);}this.elementStyles=this.finalizeStyles(this.styles);}static finalizeStyles(s){const i=[];if(Array.isArray(s)){const e=new Set(s.flat(1/0).reverse());for(const s of e)i.unshift(c$2(s));}else void 0!==s&&i.push(c$2(s));return i}static _$Eu(t,s){const i=s.attribute;return  false===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=false,this.hasUpdated=false,this._$Em=null,this._$Ev();}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this));}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.();}removeController(t){this._$EO?.delete(t);}_$E_(){const t=new Map,s=this.constructor.elementProperties;for(const i of s.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t);}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return S$1(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(true),this._$EO?.forEach(t=>t.hostConnected?.());}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.());}attributeChangedCallback(t,s,i){this._$AK(t,i);}_$ET(t,s){const i=this.constructor.elementProperties.get(t),e=this.constructor._$Eu(t,i);if(void 0!==e&&true===i.reflect){const h=(void 0!==i.converter?.toAttribute?i.converter:u$2).toAttribute(s,i.type);this._$Em=t,null==h?this.removeAttribute(e):this.setAttribute(e,h),this._$Em=null;}}_$AK(t,s){const i=this.constructor,e=i._$Eh.get(t);if(void 0!==e&&this._$Em!==e){const t=i.getPropertyOptions(e),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:u$2;this._$Em=e;const r=h.fromAttribute(s,t.type);this[e]=r??this._$Ej?.get(e)??r,this._$Em=null;}}requestUpdate(t,s,i,e=false,h){if(void 0!==t){const r=this.constructor;if(false===e&&(h=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??f$1)(h,s)||i.useDefault&&i.reflect&&h===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,s,i);} false===this.isUpdatePending&&(this._$ES=this._$EP());}C(t,s,{useDefault:i,reflect:e,wrapped:h},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??s??this[t]),true!==h||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(s=void 0),this._$AL.set(t,s)),true===e&&this._$Em!==t&&(this._$Eq??=new Set).add(t));}async _$EP(){this.isUpdatePending=true;try{await this._$ES;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,s]of this._$Ep)this[t]=s;this._$Ep=void 0;}const t=this.constructor.elementProperties;if(t.size>0)for(const[s,i]of t){const{wrapped:t}=i,e=this[s];true!==t||this._$AL.has(s)||void 0===e||this.C(s,void 0,i,e);}}let t=false;const s=this._$AL;try{t=this.shouldUpdate(s),t?(this.willUpdate(s),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(s)):this._$EM();}catch(s){throw t=false,this._$EM(),s}t&&this._$AE(s);}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=true,this.firstUpdated(t)),this.updated(t);}_$EM(){this._$AL=new Map,this.isUpdatePending=false;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return  true}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM();}updated(t){}firstUpdated(t){}};y$1.elementStyles=[],y$1.shadowRootOptions={mode:"open"},y$1[d$1("elementProperties")]=new Map,y$1[d$1("finalized")]=new Map,p$1?.({ReactiveElement:y$1}),(a$2.reactiveElementVersions??=[]).push("2.1.2");
+ */const{is:i$4,defineProperty:e$2,getOwnPropertyDescriptor:h$1,getOwnPropertyNames:r$2,getOwnPropertySymbols:o$4,getPrototypeOf:n$2}=Object,a$2=globalThis,c$1=a$2.trustedTypes,l$3=c$1?c$1.emptyScript:"",p$2=a$2.reactiveElementPolyfillSupport,d$1=(t,s)=>t,u$2={toAttribute(t,s){switch(s){case Boolean:t=t?l$3:null;break;case Object:case Array:t=null==t?t:JSON.stringify(t);}return t},fromAttribute(t,s){let i=t;switch(s){case Boolean:i=null!==t;break;case Number:i=null===t?null:Number(t);break;case Object:case Array:try{i=JSON.parse(t);}catch(t){i=null;}}return i}},f$1=(t,s)=>!i$4(t,s),b$1={attribute:true,type:String,converter:u$2,reflect:false,useDefault:false,hasChanged:f$1};Symbol.metadata??=Symbol("metadata"),a$2.litPropertyMetadata??=new WeakMap;let y$1 = class y extends HTMLElement{static addInitializer(t){this._$Ei(),(this.l??=[]).push(t);}static get observedAttributes(){return this.finalize(),this._$Eh&&[...this._$Eh.keys()]}static createProperty(t,s=b$1){if(s.state&&(s.attribute=false),this._$Ei(),this.prototype.hasOwnProperty(t)&&((s=Object.create(s)).wrapped=true),this.elementProperties.set(t,s),!s.noAccessor){const i=Symbol(),h=this.getPropertyDescriptor(t,i,s);void 0!==h&&e$2(this.prototype,t,h);}}static getPropertyDescriptor(t,s,i){const{get:e,set:r}=h$1(this.prototype,t)??{get(){return this[s]},set(t){this[s]=t;}};return {get:e,set(s){const h=e?.call(this);r?.call(this,s),this.requestUpdate(t,h,i);},configurable:true,enumerable:true}}static getPropertyOptions(t){return this.elementProperties.get(t)??b$1}static _$Ei(){if(this.hasOwnProperty(d$1("elementProperties")))return;const t=n$2(this);t.finalize(),void 0!==t.l&&(this.l=[...t.l]),this.elementProperties=new Map(t.elementProperties);}static finalize(){if(this.hasOwnProperty(d$1("finalized")))return;if(this.finalized=true,this._$Ei(),this.hasOwnProperty(d$1("properties"))){const t=this.properties,s=[...r$2(t),...o$4(t)];for(const i of s)this.createProperty(i,t[i]);}const t=this[Symbol.metadata];if(null!==t){const s=litPropertyMetadata.get(t);if(void 0!==s)for(const[t,i]of s)this.elementProperties.set(t,i);}this._$Eh=new Map;for(const[t,s]of this.elementProperties){const i=this._$Eu(t,s);void 0!==i&&this._$Eh.set(i,t);}this.elementStyles=this.finalizeStyles(this.styles);}static finalizeStyles(s){const i=[];if(Array.isArray(s)){const e=new Set(s.flat(1/0).reverse());for(const s of e)i.unshift(c$2(s));}else void 0!==s&&i.push(c$2(s));return i}static _$Eu(t,s){const i=s.attribute;return  false===i?void 0:"string"==typeof i?i:"string"==typeof t?t.toLowerCase():void 0}constructor(){super(),this._$Ep=void 0,this.isUpdatePending=false,this.hasUpdated=false,this._$Em=null,this._$Ev();}_$Ev(){this._$ES=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$E_(),this.requestUpdate(),this.constructor.l?.forEach(t=>t(this));}addController(t){(this._$EO??=new Set).add(t),void 0!==this.renderRoot&&this.isConnected&&t.hostConnected?.();}removeController(t){this._$EO?.delete(t);}_$E_(){const t=new Map,s=this.constructor.elementProperties;for(const i of s.keys())this.hasOwnProperty(i)&&(t.set(i,this[i]),delete this[i]);t.size>0&&(this._$Ep=t);}createRenderRoot(){const t=this.shadowRoot??this.attachShadow(this.constructor.shadowRootOptions);return S$1(t,this.constructor.elementStyles),t}connectedCallback(){this.renderRoot??=this.createRenderRoot(),this.enableUpdating(true),this._$EO?.forEach(t=>t.hostConnected?.());}enableUpdating(t){}disconnectedCallback(){this._$EO?.forEach(t=>t.hostDisconnected?.());}attributeChangedCallback(t,s,i){this._$AK(t,i);}_$ET(t,s){const i=this.constructor.elementProperties.get(t),e=this.constructor._$Eu(t,i);if(void 0!==e&&true===i.reflect){const h=(void 0!==i.converter?.toAttribute?i.converter:u$2).toAttribute(s,i.type);this._$Em=t,null==h?this.removeAttribute(e):this.setAttribute(e,h),this._$Em=null;}}_$AK(t,s){const i=this.constructor,e=i._$Eh.get(t);if(void 0!==e&&this._$Em!==e){const t=i.getPropertyOptions(e),h="function"==typeof t.converter?{fromAttribute:t.converter}:void 0!==t.converter?.fromAttribute?t.converter:u$2;this._$Em=e;const r=h.fromAttribute(s,t.type);this[e]=r??this._$Ej?.get(e)??r,this._$Em=null;}}requestUpdate(t,s,i,e=false,h){if(void 0!==t){const r=this.constructor;if(false===e&&(h=this[t]),i??=r.getPropertyOptions(t),!((i.hasChanged??f$1)(h,s)||i.useDefault&&i.reflect&&h===this._$Ej?.get(t)&&!this.hasAttribute(r._$Eu(t,i))))return;this.C(t,s,i);} false===this.isUpdatePending&&(this._$ES=this._$EP());}C(t,s,{useDefault:i,reflect:e,wrapped:h},r){i&&!(this._$Ej??=new Map).has(t)&&(this._$Ej.set(t,r??s??this[t]),true!==h||void 0!==r)||(this._$AL.has(t)||(this.hasUpdated||i||(s=void 0),this._$AL.set(t,s)),true===e&&this._$Em!==t&&(this._$Eq??=new Set).add(t));}async _$EP(){this.isUpdatePending=true;try{await this._$ES;}catch(t){Promise.reject(t);}const t=this.scheduleUpdate();return null!=t&&await t,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){if(!this.isUpdatePending)return;if(!this.hasUpdated){if(this.renderRoot??=this.createRenderRoot(),this._$Ep){for(const[t,s]of this._$Ep)this[t]=s;this._$Ep=void 0;}const t=this.constructor.elementProperties;if(t.size>0)for(const[s,i]of t){const{wrapped:t}=i,e=this[s];true!==t||this._$AL.has(s)||void 0===e||this.C(s,void 0,i,e);}}let t=false;const s=this._$AL;try{t=this.shouldUpdate(s),t?(this.willUpdate(s),this._$EO?.forEach(t=>t.hostUpdate?.()),this.update(s)):this._$EM();}catch(s){throw t=false,this._$EM(),s}t&&this._$AE(s);}willUpdate(t){}_$AE(t){this._$EO?.forEach(t=>t.hostUpdated?.()),this.hasUpdated||(this.hasUpdated=true,this.firstUpdated(t)),this.updated(t);}_$EM(){this._$AL=new Map,this.isUpdatePending=false;}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$ES}shouldUpdate(t){return  true}update(t){this._$Eq&&=this._$Eq.forEach(t=>this._$ET(t,this[t])),this._$EM();}updated(t){}firstUpdated(t){}};y$1.elementStyles=[],y$1.shadowRootOptions={mode:"open"},y$1[d$1("elementProperties")]=new Map,y$1[d$1("finalized")]=new Map,p$2?.({ReactiveElement:y$1}),(a$2.reactiveElementVersions??=[]).push("2.1.2");
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const t=globalThis,i$2=t=>t,s$1=t.trustedTypes,e=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$3=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$3,r=`<${n$1}>`,l$1=document,c=()=>l$1.createComment(""),a$1=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,d=t=>u$1(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m=/>/g,p=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l$1.createTreeWalker(l$1,129);function V(t,i){if(!u$1(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e?e.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p):void 0!==u[3]&&(c=p):c===p?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p:'"'===u[3]?$:g):c===$||c===g?c=p:c===_||c===m?c=v:(c=p,n=void 0);const x=c===p&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$3+x):s+o$3+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$3),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$3)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$3),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$3,t+1));)d.push({type:7,index:l}),t+=o$3.length-1;}l++;}}static createElement(t,i){const s=l$1.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a$1(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l$1).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l$1,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a$1(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a$1(this._$AH)?this._$AA.nextSibling.data=t:this.T(l$1.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$2(t).nextSibling;i$2(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a$1(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a$1(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t.litHtmlPolyfillSupport;B?.(S,k),(t.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
+const t$1=globalThis,i$3=t=>t,s$1=t$1.trustedTypes,e$1=s$1?s$1.createPolicy("lit-html",{createHTML:t=>t}):void 0,h="$lit$",o$3=`lit$${Math.random().toFixed(9).slice(2)}$`,n$1="?"+o$3,r$1=`<${n$1}>`,l$2=document,c=()=>l$2.createComment(""),a$1=t=>null===t||"object"!=typeof t&&"function"!=typeof t,u$1=Array.isArray,d=t=>u$1(t)||"function"==typeof t?.[Symbol.iterator],f="[ \t\n\f\r]",v=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,_=/-->/g,m$1=/>/g,p$1=RegExp(`>|${f}(?:([^\\s"'>=/]+)(${f}*=${f}*(?:[^ \t\n\f\r"'\`<>=]|("|')|))|$)`,"g"),g=/'/g,$=/"/g,y=/^(?:script|style|textarea|title)$/i,x=t=>(i,...s)=>({_$litType$:t,strings:i,values:s}),b=x(1),E=Symbol.for("lit-noChange"),A=Symbol.for("lit-nothing"),C=new WeakMap,P=l$2.createTreeWalker(l$2,129);function V(t,i){if(!u$1(t)||!t.hasOwnProperty("raw"))throw Error("invalid template strings array");return void 0!==e$1?e$1.createHTML(i):i}const N=(t,i)=>{const s=t.length-1,e=[];let n,l=2===i?"<svg>":3===i?"<math>":"",c=v;for(let i=0;i<s;i++){const s=t[i];let a,u,d=-1,f=0;for(;f<s.length&&(c.lastIndex=f,u=c.exec(s),null!==u);)f=c.lastIndex,c===v?"!--"===u[1]?c=_:void 0!==u[1]?c=m$1:void 0!==u[2]?(y.test(u[2])&&(n=RegExp("</"+u[2],"g")),c=p$1):void 0!==u[3]&&(c=p$1):c===p$1?">"===u[0]?(c=n??v,d=-1):void 0===u[1]?d=-2:(d=c.lastIndex-u[2].length,a=u[1],c=void 0===u[3]?p$1:'"'===u[3]?$:g):c===$||c===g?c=p$1:c===_||c===m$1?c=v:(c=p$1,n=void 0);const x=c===p$1&&t[i+1].startsWith("/>")?" ":"";l+=c===v?s+r$1:d>=0?(e.push(a),s.slice(0,d)+h+s.slice(d)+o$3+x):s+o$3+(-2===d?i:x);}return [V(t,l+(t[s]||"<?>")+(2===i?"</svg>":3===i?"</math>":"")),e]};class S{constructor({strings:t,_$litType$:i},e){let r;this.parts=[];let l=0,a=0;const u=t.length-1,d=this.parts,[f,v]=N(t,i);if(this.el=S.createElement(f,e),P.currentNode=this.el.content,2===i||3===i){const t=this.el.content.firstChild;t.replaceWith(...t.childNodes);}for(;null!==(r=P.nextNode())&&d.length<u;){if(1===r.nodeType){if(r.hasAttributes())for(const t of r.getAttributeNames())if(t.endsWith(h)){const i=v[a++],s=r.getAttribute(t).split(o$3),e=/([.?@])?(.*)/.exec(i);d.push({type:1,index:l,name:e[2],strings:s,ctor:"."===e[1]?I:"?"===e[1]?L:"@"===e[1]?z:H}),r.removeAttribute(t);}else t.startsWith(o$3)&&(d.push({type:6,index:l}),r.removeAttribute(t));if(y.test(r.tagName)){const t=r.textContent.split(o$3),i=t.length-1;if(i>0){r.textContent=s$1?s$1.emptyScript:"";for(let s=0;s<i;s++)r.append(t[s],c()),P.nextNode(),d.push({type:2,index:++l});r.append(t[i],c());}}}else if(8===r.nodeType)if(r.data===n$1)d.push({type:2,index:l});else {let t=-1;for(;-1!==(t=r.data.indexOf(o$3,t+1));)d.push({type:7,index:l}),t+=o$3.length-1;}l++;}}static createElement(t,i){const s=l$2.createElement("template");return s.innerHTML=t,s}}function M(t,i,s=t,e){if(i===E)return i;let h=void 0!==e?s._$Co?.[e]:s._$Cl;const o=a$1(i)?void 0:i._$litDirective$;return h?.constructor!==o&&(h?._$AO?.(false),void 0===o?h=void 0:(h=new o(t),h._$AT(t,s,e)),void 0!==e?(s._$Co??=[])[e]=h:s._$Cl=h),void 0!==h&&(i=M(t,h._$AS(t,i.values),h,e)),i}class R{constructor(t,i){this._$AV=[],this._$AN=void 0,this._$AD=t,this._$AM=i;}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}u(t){const{el:{content:i},parts:s}=this._$AD,e=(t?.creationScope??l$2).importNode(i,true);P.currentNode=e;let h=P.nextNode(),o=0,n=0,r=s[0];for(;void 0!==r;){if(o===r.index){let i;2===r.type?i=new k(h,h.nextSibling,this,t):1===r.type?i=new r.ctor(h,r.name,r.strings,this,t):6===r.type&&(i=new Z(h,this,t)),this._$AV.push(i),r=s[++n];}o!==r?.index&&(h=P.nextNode(),o++);}return P.currentNode=l$2,e}p(t){let i=0;for(const s of this._$AV) void 0!==s&&(void 0!==s.strings?(s._$AI(t,s,i),i+=s.strings.length-2):s._$AI(t[i])),i++;}}class k{get _$AU(){return this._$AM?._$AU??this._$Cv}constructor(t,i,s,e){this.type=2,this._$AH=A,this._$AN=void 0,this._$AA=t,this._$AB=i,this._$AM=s,this.options=e,this._$Cv=e?.isConnected??true;}get parentNode(){let t=this._$AA.parentNode;const i=this._$AM;return void 0!==i&&11===t?.nodeType&&(t=i.parentNode),t}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(t,i=this){t=M(this,t,i),a$1(t)?t===A||null==t||""===t?(this._$AH!==A&&this._$AR(),this._$AH=A):t!==this._$AH&&t!==E&&this._(t):void 0!==t._$litType$?this.$(t):void 0!==t.nodeType?this.T(t):d(t)?this.k(t):this._(t);}O(t){return this._$AA.parentNode.insertBefore(t,this._$AB)}T(t){this._$AH!==t&&(this._$AR(),this._$AH=this.O(t));}_(t){this._$AH!==A&&a$1(this._$AH)?this._$AA.nextSibling.data=t:this.T(l$2.createTextNode(t)),this._$AH=t;}$(t){const{values:i,_$litType$:s}=t,e="number"==typeof s?this._$AC(t):(void 0===s.el&&(s.el=S.createElement(V(s.h,s.h[0]),this.options)),s);if(this._$AH?._$AD===e)this._$AH.p(i);else {const t=new R(e,this),s=t.u(this.options);t.p(i),this.T(s),this._$AH=t;}}_$AC(t){let i=C.get(t.strings);return void 0===i&&C.set(t.strings,i=new S(t)),i}k(t){u$1(this._$AH)||(this._$AH=[],this._$AR());const i=this._$AH;let s,e=0;for(const h of t)e===i.length?i.push(s=new k(this.O(c()),this.O(c()),this,this.options)):s=i[e],s._$AI(h),e++;e<i.length&&(this._$AR(s&&s._$AB.nextSibling,e),i.length=e);}_$AR(t=this._$AA.nextSibling,s){for(this._$AP?.(false,true,s);t!==this._$AB;){const s=i$3(t).nextSibling;i$3(t).remove(),t=s;}}setConnected(t){ void 0===this._$AM&&(this._$Cv=t,this._$AP?.(t));}}class H{get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}constructor(t,i,s,e,h){this.type=1,this._$AH=A,this._$AN=void 0,this.element=t,this.name=i,this._$AM=e,this.options=h,s.length>2||""!==s[0]||""!==s[1]?(this._$AH=Array(s.length-1).fill(new String),this.strings=s):this._$AH=A;}_$AI(t,i=this,s,e){const h=this.strings;let o=false;if(void 0===h)t=M(this,t,i,0),o=!a$1(t)||t!==this._$AH&&t!==E,o&&(this._$AH=t);else {const e=t;let n,r;for(t=h[0],n=0;n<h.length-1;n++)r=M(this,e[s+n],i,n),r===E&&(r=this._$AH[n]),o||=!a$1(r)||r!==this._$AH[n],r===A?t=A:t!==A&&(t+=(r??"")+h[n+1]),this._$AH[n]=r;}o&&!e&&this.j(t);}j(t){t===A?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,t??"");}}class I extends H{constructor(){super(...arguments),this.type=3;}j(t){this.element[this.name]=t===A?void 0:t;}}class L extends H{constructor(){super(...arguments),this.type=4;}j(t){this.element.toggleAttribute(this.name,!!t&&t!==A);}}class z extends H{constructor(t,i,s,e,h){super(t,i,s,e,h),this.type=5;}_$AI(t,i=this){if((t=M(this,t,i,0)??A)===E)return;const s=this._$AH,e=t===A&&s!==A||t.capture!==s.capture||t.once!==s.once||t.passive!==s.passive,h=t!==A&&(s===A||e);e&&this.element.removeEventListener(this.name,this,s),h&&this.element.addEventListener(this.name,this,t),this._$AH=t;}handleEvent(t){"function"==typeof this._$AH?this._$AH.call(this.options?.host??this.element,t):this._$AH.handleEvent(t);}}class Z{constructor(t,i,s){this.element=t,this.type=6,this._$AN=void 0,this._$AM=i,this.options=s;}get _$AU(){return this._$AM._$AU}_$AI(t){M(this,t);}}const B=t$1.litHtmlPolyfillSupport;B?.(S,k),(t$1.litHtmlVersions??=[]).push("3.3.3");const D=(t,i,s)=>{const e=s?.renderBefore??i;let h=e._$litPart$;if(void 0===h){const t=s?.renderBefore??null;e._$litPart$=h=new k(i.insertBefore(c(),t),t,void 0,s??{});}return h._$AI(t),h};
 
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const s=globalThis;let i$1 = class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}};i$1._$litElement$=true,i$1["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i$1});const o$2=s.litElementPolyfillSupport;o$2?.({LitElement:i$1});(s.litElementVersions??=[]).push("4.2.2");
+ */const s=globalThis;let i$2 = class i extends y$1{constructor(){super(...arguments),this.renderOptions={host:this},this._$Do=void 0;}createRenderRoot(){const t=super.createRenderRoot();return this.renderOptions.renderBefore??=t.firstChild,t}update(t){const r=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(t),this._$Do=D(r,this.renderRoot,this.renderOptions);}connectedCallback(){super.connectedCallback(),this._$Do?.setConnected(true);}disconnectedCallback(){super.disconnectedCallback(),this._$Do?.setConnected(false);}render(){return E}};i$2._$litElement$=true,i$2["finalized"]=true,s.litElementHydrateSupport?.({LitElement:i$2});const o$2=s.litElementPolyfillSupport;o$2?.({LitElement:i$2});(s.litElementVersions??=[]).push("4.2.2");
 
 /**
  * @license
  * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-const a=Symbol.for(""),o$1=t=>{if(t?.r===a)return t?._$litStatic$},i=(t,...r)=>({_$litStatic$:r.reduce((r,e,a)=>r+(t=>{if(void 0!==t._$litStatic$)return t._$litStatic$;throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t}. Use 'unsafeStatic' to pass non-literal values, but\n            take care to ensure page security.`)})(e)+t[a+1],t[0]),r:a}),l=new Map,n=t=>(r,...e)=>{const a=e.length;let s,i;const n=[],u=[];let c,$=0,f=false;for(;$<a;){for(c=r[$];$<a&&void 0!==(i=e[$],s=o$1(i));)c+=s+r[++$],f=true;$!==a&&u.push(i),n.push(c),$++;}if($===a&&n.push(r[a]),f){const t=n.join("$$lit$$");void 0===(r=l.get(t))&&(n.raw=n,l.set(t,r=n)),e=u;}return t(r,...e)},u=n(b);
+const a=Symbol.for(""),o$1=t=>{if(t?.r===a)return t?._$litStatic$},i$1=(t,...r)=>({_$litStatic$:r.reduce((r,e,a)=>r+(t=>{if(void 0!==t._$litStatic$)return t._$litStatic$;throw Error(`Value passed to 'literal' function must be a 'literal' result: ${t}. Use 'unsafeStatic' to pass non-literal values, but\n            take care to ensure page security.`)})(e)+t[a+1],t[0]),r:a}),l$1=new Map,n=t=>(r,...e)=>{const a=e.length;let s,i;const n=[],u=[];let c,$=0,f=false;for(;$<a;){for(c=r[$];$<a&&void 0!==(i=e[$],s=o$1(i));)c+=s+r[++$],f=true;$!==a&&u.push(i),n.push(c),$++;}if($===a&&n.push(r[a]),f){const t=n.join("$$lit$$");void 0===(r=l$1.get(t))&&(n.raw=n,l$1.set(t,r=n)),e=u;}return t(r,...e)},u=n(b);
 
 /**
  * @license
  * Copyright 2018 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */const o=o=>o??A;
+
+/**
+ * @license
+ * Copyright 2017 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+const t={ATTRIBUTE:1,PROPERTY:3,BOOLEAN_ATTRIBUTE:4},e=t=>(...e)=>({_$litDirective$:t,values:e});class i{constructor(t){}get _$AU(){return this._$AM._$AU}_$AT(t,e,i){this._$Ct=t,this._$AM=e,this._$Ci=i;}_$AS(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
+
+/**
+ * @license
+ * Copyright 2020 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const r=o=>void 0===o.strings,m={},p=(o,t=m)=>o._$AH=t;
+
+/**
+ * @license
+ * Copyright 2020 Google LLC
+ * SPDX-License-Identifier: BSD-3-Clause
+ */const l=e(class extends i{constructor(r$1){if(super(r$1),r$1.type!==t.PROPERTY&&r$1.type!==t.ATTRIBUTE&&r$1.type!==t.BOOLEAN_ATTRIBUTE)throw Error("The `live` directive is not allowed on child or event bindings");if(!r(r$1))throw Error("`live` bindings can only contain a single expression")}render(r){return r}update(i,[t$1]){if(t$1===E||t$1===A)return t$1;const o=i.element,l=i.name;if(i.type===t.PROPERTY){if(t$1===o[l])return E}else if(i.type===t.BOOLEAN_ATTRIBUTE){if(!!t$1===o.hasAttribute(l))return E}else if(i.type===t.ATTRIBUTE&&o.getAttribute(l)===t$1+"")return E;return p(i),t$1}});
+
+const MAX_TIMER_SECONDS = 365 * 24 * 60 * 60;
+
+function normalizeTimerInput(value) {
+  return typeof value === "string" && value.trim().toLowerCase() === "keypad" ? "keypad" : "stepper";
+}
+
+function durationDigitFields(digits) {
+  const padded = String(digits).padStart(6, "0");
+  return [padded.slice(0, -4), padded.slice(-4, -2), padded.slice(-2)];
+}
+
+function durationDigitsToSeconds(digits) {
+  if (typeof digits !== "string" || !/^\d{0,8}$/.test(digits)) return 0;
+  const [hours, minutes, seconds] = durationDigitFields(digits).map(Number);
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+function secondsToDurationDigits(seconds) {
+  const total = Number.isFinite(seconds) ? Math.min(MAX_TIMER_SECONDS, Math.max(0, Math.floor(seconds))) : 0;
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor(total / 60) % 60;
+  return `${hours}${String(minutes).padStart(2, "0")}${String(total % 60).padStart(2, "0")}`.replace(/^0+/, "");
+}
+
+function editDurationDigits(digits, key) {
+  if (key === "clear") return "";
+  if (key === "backspace") return digits.slice(0, -1);
+  if (!/^(\d|00)$/.test(key)) return null;
+  const next = (digits + key).replace(/^0+/, "");
+  if (next.length > 8 || durationDigitsToSeconds(next) > MAX_TIMER_SECONDS) return null;
+  return next;
+}
 
 /*
  * Simple Timer Card
@@ -44,17 +96,18 @@ const a=Symbol.for(""),o$1=t=>{if(t?.r===a)return t?._$litStatic$},i=(t,...r)=>(
  *
  * Author: eyalgal
  * License: MIT
- * Version: 2.2.4
+ * Version: 2.9.0
  * For more information, visit: https://github.com/eyalgal/simple-timer-card
  */
 
 
-const cardVersion="2.8.0";
+const cardVersion="2.9.0";
 
 const DAY_IN_MS = 86400000;
 const YEAR_IN_MS = 365 * DAY_IN_MS;
 const HOUR_IN_SECONDS = 3600;
 const MINUTE_IN_SECONDS = 60;
+const EDITOR_MODE_STORAGE_KEY = "simple-timer-card-editor-mode";
 
 // A tick gap this large means the page was frozen (device asleep or app
 // backgrounded), so any hass state still in memory predates the freeze.
@@ -62,8 +115,7 @@ const MQTT_WAKE_GAP_MS = 5000;
 // How long to wait after a wake for the websocket to resync entity states
 // before trusting the MQTT sensor snapshot again.
 const MQTT_RESYNC_GRACE_MS = 5000;
-// Deletions are remembered this long so a client that slept through one cannot
-// resurrect the timer when it comes back.
+// Retain deletion markers to reduce stale resurrection after a client wakes.
 const MQTT_TOMBSTONE_TTL_MS = 24 * 60 * 60 * 1000;
 
 function _cleanUndefined(obj) {
@@ -72,6 +124,19 @@ function _cleanUndefined(obj) {
     if (obj[k] === undefined) delete obj[k];
   }
   return obj;
+}
+
+const CARD_STYLES = ["fill_vertical", "fill_horizontal", "bar_vertical", "bar_horizontal", "circle_vertical", "circle_horizontal"];
+
+// `circle` was the only circle style before 2.9.0 and was laid out vertically.
+function _normalizeCardStyle(value) {
+  const v = String(value || "").toLowerCase();
+  if (v === "circle") return "circle_vertical";
+  return CARD_STYLES.includes(v) ? v : "bar_horizontal";
+}
+
+function _isCircleStyle(style) {
+  return style === "circle_vertical" || style === "circle_horizontal";
 }
 
 function _timerRev(t) {
@@ -136,11 +201,8 @@ function _pruneLegacyInstanceNamespaces() {
   } catch (e) {}
 }
 
-// Union by id rather than replacing wholesale. Tombstones carry causality and
-// always outrank a timer at or below their revision, so a client that slept
-// through a deletion cannot bring the timer back. Omissions are only honoured
-// when the snapshot is provably newer than what this client's cache was built
-// from, which keeps deletions working for clients that write no tombstones.
+// Tombstones suppress timers at or below their revision. Timestamp-based
+// omissions support older writers, but this is not transactional reconciliation.
 function _mergeMqttState(local, incoming, { acceptOmissions = true, now = Date.now() } = {}) {
   const tombs = new Map();
   for (const d of [...(local?.tombstones || []), ...(incoming?.tombstones || [])]) {
@@ -210,6 +272,11 @@ const TRANSLATIONS = {
     active_timers: "Active Timers",
     add: "Add",
     custom: "Custom",
+    input_stepper: "Buttons",
+    input_keypad: "Keypad",
+    duration_input: "Duration input",
+    clear: "Clear",
+    backspace: "Delete last digit",
     cancel: "Cancel",
     save: "Save",
     start: "Start",
@@ -240,6 +307,11 @@ const TRANSLATIONS = {
     active_timers: "Aktive Timer",
     add: "Hinzufügen",
     custom: "Benutzerdefiniert",
+    input_stepper: "Tasten",
+    input_keypad: "Ziffernblock",
+    duration_input: "Dauer eingeben",
+    clear: "Löschen",
+    backspace: "Letzte Ziffer löschen",
     cancel: "Abbrechen",
     save: "Speichern",
     start: "Starten",
@@ -270,6 +342,11 @@ const TRANSLATIONS = {
     active_timers: "Temporizadores Activos",
     add: "Añadir",
     custom: "Personalizado",
+    input_stepper: "Botones",
+    input_keypad: "Teclado",
+    duration_input: "Introducir duración",
+    clear: "Borrar",
+    backspace: "Borrar último dígito",
     cancel: "Cancelar",
     save: "Guardar",
     start: "Iniciar",
@@ -300,6 +377,11 @@ const TRANSLATIONS = {
     active_timers: "Aktive Timere",
     add: "Tilføj",
     custom: "Tilpasset",
+    input_stepper: "Knapper",
+    input_keypad: "Taltastatur",
+    duration_input: "Indtast varighed",
+    clear: "Ryd",
+    backspace: "Slet sidste ciffer",
     cancel: "Annuller",
     save: "Gem",
     start: "Start",
@@ -330,6 +412,11 @@ const TRANSLATIONS = {
     active_timers: "Timer attivi",
     add: "Aggiungi",
     custom: "Personalizzato",
+    input_stepper: "Pulsanti",
+    input_keypad: "Tastierino",
+    duration_input: "Inserisci durata",
+    clear: "Svuota",
+    backspace: "Elimina ultima cifra",
     cancel: "Annulla",
     save: "Salva",
     start: "Avvia",
@@ -360,6 +447,11 @@ const TRANSLATIONS = {
     active_timers: "Minuteurs actifs",
     add: "Ajouter",
     custom: "Personnalisé",
+    input_stepper: "Boutons",
+    input_keypad: "Clavier",
+    duration_input: "Saisir la durée",
+    clear: "Effacer",
+    backspace: "Effacer le dernier chiffre",
     cancel: "Annuler",
     save: "Sauvegarder",
     start: "Démarrer",
@@ -390,6 +482,11 @@ const TRANSLATIONS = {
     active_timers: "טיימרים פעילים",
     add: "הוסף",
     custom: "מותאם אישית",
+    input_stepper: "כפתורים",
+    input_keypad: "לוח מקשים",
+    duration_input: "הזנת משך זמן",
+    clear: "ניקוי",
+    backspace: "מחיקת הספרה האחרונה",
     cancel: "ביטול",
     save: "שמור",
     start: "התחל",
@@ -405,8 +502,8 @@ const TRANSLATIONS = {
     minutes_ago: "לפני {n} דקות",
     second_ago: "לפני {n} שנייה",
     seconds_ago: "לפני {n} שניות",
-    h: "ש'", m: "ד'", s: "שנ'", d: "י'",
-    w_short: "שב'", mo_short: "חו'", y_short: "שנה",
+    h: "ש׳", m: "דק׳", s: "שנ׳", d: "י׳",
+    w_short: "שב׳", mo_short: "חו׳", y_short: "שנה",
     day: "יום", days: "ימים", week: "שבוע", weeks: "שבועות",
     month: "חודש", months: "חודשים", year: "שנה", years: "שנים",
     hour: "שעה", hours: "שעות", minute: "דקה", minutes: "דקות",
@@ -420,6 +517,11 @@ const TRANSLATIONS = {
     active_timers: "Aktywne minutniki",
     add: "Dodaj",
     custom: "Niestandardowy",
+    input_stepper: "Przyciski",
+    input_keypad: "Klawiatura",
+    duration_input: "Wprowadź czas",
+    clear: "Wyczyść",
+    backspace: "Usuń ostatnią cyfrę",
     cancel: "Anuluj",
     save: "Zapisz",
     start: "Uruchom",
@@ -450,6 +552,11 @@ const TRANSLATIONS = {
     active_timers: "Actieve timers",
     add: "Toevoegen",
     custom: "Aangepast",
+    input_stepper: "Knoppen",
+    input_keypad: "Toetsenblok",
+    duration_input: "Tijdsduur invoeren",
+    clear: "Wissen",
+    backspace: "Laatste cijfer verwijderen",
     cancel: "Annuleren",
     save: "Opslaan",
     start: "Starten",
@@ -480,6 +587,11 @@ const TRANSLATIONS = {
     active_timers: "Pågående timers",
     add: "Lägg till",
     custom: "Anpassa",
+    input_stepper: "Knappar",
+    input_keypad: "Knappsats",
+    duration_input: "Ange varaktighet",
+    clear: "Rensa",
+    backspace: "Ta bort sista siffran",
     cancel: "Avbryt",
     save: "Spara",
     start: "Start",
@@ -510,7 +622,7 @@ console.info(
   "color: #4285f4; background: white; font-weight: 700;"
 );
 
-class SimpleTimerCard extends i$1 {
+class SimpleTimerCard extends i$2 {
   static get properties() {
     return {
       hass: {},
@@ -519,6 +631,8 @@ class SimpleTimerCard extends i$1 {
       _ui: { state: true },
       _customSecs: { state: true },
       _activeSecs: { state: true },
+      _timerInputMode: { state: true },
+      _keypadDigits: { state: true },
       _editingTimerId: { state: true },
       _editDuration: { state: true },
     };
@@ -607,6 +721,9 @@ class SimpleTimerCard extends i$1 {
     };
     this._customSecs = { horizontal: 15 * 60, vertical: 15 * 60 };
     this._activeSecs = { fill: 10 * 60, bar: 10 * 60 };
+    this._timerInputMode = "stepper";
+    this._keypadDigits = {};
+    this._initializedDurationInputs = new Set();
     this._showingCustomName = {};
     this._lastSelectedName = {};
     this._storageNamespace = "default";
@@ -704,8 +821,7 @@ class SimpleTimerCard extends i$1 {
       ...config.mqtt,
     };
     const layout = (config.layout || "horizontal").toLowerCase() === "vertical" ? "vertical" : "horizontal";
-    const validStyles = ["fill_vertical", "fill_horizontal", "bar_vertical", "bar_horizontal", "circle"];
-    const style = validStyles.includes((config.style || "").toLowerCase()) ? (config.style || "").toLowerCase() : "bar_horizontal";
+    const style = _normalizeCardStyle(config.style);
     const progressModeOptions = ["drain", "fill", "milestones"];
     const progressMode = progressModeOptions.includes(config.progress_mode) ? config.progress_mode : "drain";
     const firstEntityFromList = Array.isArray(config.entities) && config.entities.length
@@ -746,6 +862,9 @@ class SimpleTimerCard extends i$1 {
       default_timer_color: "var(--primary-color)",
       default_timer_entity: null,
       auto_voice_pe: false,
+      auto_discover_alexa: false,
+      auto_discover_google: false,
+      source_styles: {},
       expire_action: "keep",
       expire_keep_for: 120,
       auto_dismiss_writable: false,
@@ -769,10 +888,16 @@ class SimpleTimerCard extends i$1 {
       style,
       mqtt: mqttConfig,
       time_format_units: timeUnits,
+      custom_timer_input: normalizeTimerInput(config.custom_timer_input),
+      show_timer_input_selector: config.show_timer_input_selector === true,
     };
-    const defaultDurationSecs = (parseInt(this._config.default_new_timer_duration_mins, 10) || 15) * 60;
+    this._timerInputMode = this._config.custom_timer_input;
+    this._keypadDigits = {};
+    this._initializedDurationInputs.clear();
+    const defaultDurationSecs = this._defaultCustomTimerSeconds();
     this._customSecs = { horizontal: defaultDurationSecs, vertical: defaultDurationSecs };
     this._activeSecs = { fill: defaultDurationSecs, bar: defaultDurationSecs };
+    this._config.source_styles = this._normalizeSourceStyles(this._config.source_styles);
     if (typeof this._config.timer_name_presets === "string") {
       this._config.timer_name_presets = this._config.timer_name_presets.split(",").map((name) => name.trim()).filter((name) => name);
     }
@@ -1170,11 +1295,138 @@ class SimpleTimerCard extends i$1 {
     this._saveTimersToStorage(timers, storage);
   }
 
+  // ha-google-home publishes a `timers` array on sensor.<device>_timers. Unlike
+  // the Alexa payloads, fire_time is epoch seconds and duration is seconds, and
+  // status is lower case, so it needs its own parser rather than the Alexa one.
+  _parseGoogle(entityId, entityState, entityConf) {
+    const attrs = entityState?.attributes || {};
+    const list = Array.isArray(attrs.timers) ? attrs.timers : [];
+    if (!list.length) return [];
+
+    const epochToMs = (v) => {
+      const n = Number(v);
+      if (!Number.isFinite(n) || n <= 0) return 0;
+      return n > 1e11 ? n : n * 1000;
+    };
+    const deviceName = this._sanitizeText(
+      attrs.friendly_name ||
+      entityId.replace(/^sensor\./, "").replace(/_timers$/, "").replace(/_/g, " ")
+    );
+    const hasCustomIcon = !!entityConf?.icon;
+    const hasCustomColor = !!entityConf?.color;
+    const now = Date.now();
+    const out = [];
+
+    list.forEach((item, idx) => {
+      if (!item || typeof item !== "object") return;
+      const status = String(item.status || "").toLowerCase().trim();
+      if (status && !["set", "ringing", "paused"].includes(status)) return;
+
+      const paused = status === "paused";
+      const ringing = status === "ringing";
+      // ha-google-home sends duration as "H:MM:SS", though older builds sent seconds.
+      const durationMs = (typeof item.duration === "string" && item.duration.includes(":"))
+        ? this._parseHMSToMs(item.duration)
+        : Math.max(0, Number(item.duration) || 0) * 1000;
+      const endMs = epochToMs(item.fire_time);
+      if (!paused && !ringing && !endMs) return;
+
+      const label = this._sanitizeText(item.label || "") || deviceName;
+      out.push({
+        id: `google-${entityId}-${item.timer_id ?? idx}`,
+        source: "google",
+        source_entity: entityId,
+        label,
+        icon: hasCustomIcon ? entityConf.icon : (paused ? "mdi:timer-pause" : "mdi:timer"),
+        color: hasCustomColor ? entityConf.color : (paused ? "var(--warning-color)" : "var(--primary-color)"),
+        // For paused rows the shared normalizer reads `end` as the remaining ms.
+        end: paused
+          ? Math.max(0, endMs ? endMs - now : durationMs)
+          : (ringing ? now : endMs),
+        duration: durationMs,
+        paused,
+      });
+    });
+
+    return out;
+  }
+
+  // Finds Alexa and Google Home timer entities the user has not listed. Matching
+  // is on attributes rather than entity id, so a renamed entity is still found.
+  _discoverTimerEntities() {
+    const wantAlexa = this._config?.auto_discover_alexa === true;
+    const wantGoogle = this._config?.auto_discover_google === true;
+    if (!wantAlexa && !wantGoogle) return [];
+    const states = this.hass?.states;
+    if (!states) return [];
+
+    const now = Date.now();
+    const cache = this._discoveryCache;
+    if (cache && now - cache.at < 2000 && cache.alexa === wantAlexa && cache.google === wantGoogle) {
+      return cache.entities;
+    }
+
+    const configured = new Set(
+      (this._config.entities || [])
+        .map((e) => (typeof e === "string" ? e : e?.entity))
+        .filter(Boolean)
+    );
+    if (this._config.default_timer_entity) configured.add(this._config.default_timer_entity);
+
+    const found = [];
+    for (const entityId in states) {
+      if (configured.has(entityId) || !entityId.startsWith("sensor.")) continue;
+      const attrs = states[entityId]?.attributes;
+      if (!attrs) continue;
+      // Cheap attribute probe first, since this runs against every state.
+      const maybeGoogle = wantGoogle && Array.isArray(attrs.timers);
+      const maybeAlexa = wantAlexa && (
+        attrs.sorted_active != null || attrs.sorted_all != null ||
+        attrs.sorted_paused != null || attrs.next_timer != null ||
+        attrs.alarms_brief != null
+      );
+      if (!maybeGoogle && !maybeAlexa) continue;
+
+      const mode = this._detectMode(entityId, states[entityId], {});
+      if (mode === "google" && wantGoogle) found.push({ entity: entityId, mode: "google" });
+      else if (mode === "alexa" && wantAlexa) found.push({ entity: entityId, mode: "alexa" });
+    }
+
+    this._discoveryCache = { at: now, alexa: wantAlexa, google: wantGoogle, entities: found };
+    return found;
+  }
+
+  _normalizeSourceStyles(value) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+    const out = {};
+    for (const [source, style] of Object.entries(value)) {
+      if (!style || typeof style !== "object" || Array.isArray(style)) continue;
+      const entry = {};
+      if (typeof style.icon === "string" && style.icon.trim()) entry.icon = style.icon.trim();
+      if (typeof style.color === "string" && style.color.trim()) entry.color = style.color.trim();
+      if (Object.keys(entry).length) out[String(source).trim().toLowerCase()] = entry;
+    }
+    return out;
+  }
+
+  // Resolved before parsing so the parsers' existing entityConf handling applies
+  // it, which keeps per-entity config ahead of the per-source default.
+  _applySourceStyle(mode, conf) {
+    const style = this._config?.source_styles?.[mode];
+    if (!style) return conf;
+    const merged = { ...conf };
+    if (!merged.icon && style.icon) merged.icon = style.icon;
+    if (!merged.color && style.color) merged.color = style.color;
+    return merged;
+  }
+
   _detectMode(entityId, entityState, entityConf) {
     if (!entityState) return null;
     if (entityId.startsWith("timer.")) return "timer";
     if (entityId.startsWith("input_text.") || entityId.startsWith("text.")) return "helper";
     const attrs = entityState.attributes || {};
+    // ha-google-home entries carry a timer_id; Alexa payloads never do.
+    if (Array.isArray(attrs.timers) && attrs.timers.some((x) => x && typeof x === "object" && x.timer_id !== undefined)) return "google";
     if (
       attrs.alarms_brief != null ||
       attrs.sorted_active != null ||
@@ -1688,7 +1940,7 @@ class SimpleTimerCard extends i$1 {
     if (!this.hass) return;
     this._ensureAutoVoicePEEntities();
     const collected = [];
-    for (const entityConfig of this._config.entities) {
+    for (const entityConfig of [...this._config.entities, ...this._discoverTimerEntities()]) {
       const entityId = typeof entityConfig === "string" ? entityConfig : entityConfig.entity;
       const conf = typeof entityConfig === "string" ? {} : entityConfig;
       const st = this.hass.states[entityId];
@@ -1698,13 +1950,15 @@ class SimpleTimerCard extends i$1 {
         mode = this._detectMode(entityId, st, conf);
         if (!mode) continue;
       }
+      const styled = this._applySourceStyle(mode, conf);
       try {
-        if (mode === "alexa") collected.push(...this._parseAlexa(entityId, st, conf));
-        else if (mode === "helper") collected.push(...this._parseHelper(entityId, st, conf));
-        else if (mode === "timer") collected.push(...this._parseTimer(entityId, st, conf));
-        else if (mode === "voice_pe") collected.push(...this._parseVoicePE(entityId, st, conf));
-        else if (mode === "minutes_attr") collected.push(...this._parseMinutesAttr(entityId, st, conf));
-        else if (mode === "timestamp") collected.push(...this._parseTimestamp(entityId, st, conf));
+        if (mode === "alexa") collected.push(...this._parseAlexa(entityId, st, styled));
+        else if (mode === "helper") collected.push(...this._parseHelper(entityId, st, styled));
+        else if (mode === "google") collected.push(...this._parseGoogle(entityId, st, styled));
+        else if (mode === "timer") collected.push(...this._parseTimer(entityId, st, styled));
+        else if (mode === "voice_pe") collected.push(...this._parseVoicePE(entityId, st, styled));
+        else if (mode === "minutes_attr") collected.push(...this._parseMinutesAttr(entityId, st, styled));
+        else if (mode === "timestamp") collected.push(...this._parseTimestamp(entityId, st, styled));
       } catch (e) {}
     }
 
@@ -1921,7 +2175,7 @@ class SimpleTimerCard extends i$1 {
       const p = audio.play();
       if (p && typeof p.then === "function") {
         // Track the unlock's play promise so _playAudioNotification can wait for it
-        // to settle before changing src and starting the real alarm — otherwise the
+        // to settle before changing src and starting the real alarm; otherwise the
         // unlock's restore() (which calls audio.pause()) races with the alarm play
         // and produces spurious 'audio failed' signals on the first timer of a session.
         this._audioUnlockPlay = p.then(() => { restore(); }, () => { restore(); });
@@ -2411,6 +2665,17 @@ class SimpleTimerCard extends i$1 {
     return `${m[1]}${this._localize(m[2] || "m")}`;
   }
 
+  _renderDurationValue(value, unit) {
+    const direction = this._isRTL() ? "rtl" : "ltr";
+    return b`<span class="duration-part" dir=${direction}><bdi class="duration-number" dir="ltr">${value}</bdi><bdi class="duration-unit" dir=${direction}>${unit}</bdi></span>`;
+  }
+
+  _renderPresetLabel(preset, sign = "") {
+    const parts = String(preset).trim().toLowerCase().match(/^(\d+)\s*([smhd])?$/);
+    if (!parts) return b`<bdi dir="auto">${sign}${this._formatPresetLabel(preset)}</bdi>`;
+    return this._renderDurationValue(`${sign}${parts[1]}`, this._localize(parts[2] || "m"));
+  }
+
   _createPresetTimer(preset, entity = null, overrides = {}) {
     const durationMs = this._parseDurationInputToMs(preset);
     if (!durationMs) return;
@@ -2419,7 +2684,7 @@ class SimpleTimerCard extends i$1 {
       const raw = typeof preset === "string" ? preset.trim().toLowerCase() : preset;
       if (typeof raw === "string" && raw.endsWith("s")) {
         const seconds = parseInt(raw.slice(0, -1), 10);
-        return `${seconds}s ${this._localize("timer")}`;
+        return `${seconds}${this._localize("s")} ${this._localize("timer")}`;
       }
       if (typeof raw === "string" && raw.endsWith("h")) {
         const hours = parseInt(raw.slice(0, -1), 10);
@@ -2803,9 +3068,9 @@ class SimpleTimerCard extends i$1 {
   //
   // Standard HA-style tap / hold / double-tap support on the card root and
   // per row. Resolution for a row action: row config -> card config ->
-  // built-in default. Built-in default for tap is "open inline editor" when
-  // canEdit, else "toggle pause/resume". Hold and double-tap have no
-  // built-in default (action: "none" suppresses inheritance and default).
+  // built-in default. Tap opens the inline editor for idle native timers.
+  // Other states, hold and double-tap have no built-in default.
+  // action: "none" suppresses inheritance and the default.
   _hasAnyRowAction(t) {
     const rowConf = this._getEntityConfig(t.source_entity) || {};
     const c = this._config || {};
@@ -3311,8 +3576,80 @@ class SimpleTimerCard extends i$1 {
 
   _toggleCustom(which) {
     const openKey = `noTimer${which.charAt(0).toUpperCase() + which.slice(1)}Open`;
+    if (!this._ui[openKey]) this._prepareDurationInput(which);
     this._ui[openKey] = !this._ui[openKey];
     this.requestUpdate();
+  }
+
+  _defaultCustomTimerSeconds() {
+    if (this._timerInputMode === "keypad") return 0;
+    const minutes = parseInt(this._config?.default_new_timer_duration_mins, 10);
+    return Math.min(MAX_TIMER_SECONDS, (Number.isFinite(minutes) && minutes >= 0 ? minutes : 15) * 60);
+  }
+
+  _durationSeconds(which) {
+    return ["horizontal", "vertical"].includes(which) ? this._customSecs[which] : this._activeSecs[which];
+  }
+
+  _setDurationSeconds(which, value) {
+    if (!Number.isFinite(value)) return;
+    const field = ["horizontal", "vertical"].includes(which) ? "_customSecs" : "_activeSecs";
+    this[field] = { ...this[field], [which]: Math.min(MAX_TIMER_SECONDS, Math.max(0, Math.floor(value))) };
+  }
+
+  _resetDurationInput(which) {
+    const seconds = this._defaultCustomTimerSeconds();
+    this._setDurationSeconds(which, seconds);
+    this._keypadDigits = { ...this._keypadDigits, [which]: secondsToDurationDigits(seconds) };
+    this._initializedDurationInputs.delete(which);
+  }
+
+  _prepareDurationInput(which) {
+    if (this._initializedDurationInputs.has(which)) return;
+    this._resetDurationInput(which);
+    this._initializedDurationInputs.add(which);
+  }
+
+  _setTimerInputMode(which, value) {
+    const mode = normalizeTimerInput(value);
+    if (mode === this._timerInputMode) return;
+    this._initializedDurationInputs.add(which);
+    if (mode === "keypad") {
+      this._keypadDigits = Object.fromEntries(
+        ["horizontal", "vertical", "fill", "bar"].map(input => [input, secondsToDurationDigits(this._durationSeconds(input))])
+      );
+    }
+    this._timerInputMode = mode;
+  }
+
+  _durationKey(which, key) {
+    if (this._timerInputMode !== "keypad") return;
+    const digits = this._keypadDigits[which] ?? secondsToDurationDigits(this._durationSeconds(which));
+    const next = editDurationDigits(digits, key);
+    if (next === null) return;
+    this._initializedDurationInputs.add(which);
+    this._keypadDigits = { ...this._keypadDigits, [which]: next };
+    this._setDurationSeconds(which, durationDigitsToSeconds(next));
+  }
+
+  _durationKeyDown(which, event) {
+    if (event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return;
+    const key = /^\d$/.test(event.key) ? event.key : ({ Backspace: "backspace", Delete: "clear" })[event.key];
+    if (key) {
+      event.preventDefault();
+      event.stopPropagation();
+      this._durationKey(which, key);
+    } else if (event.key === "Enter" && event.target === event.currentTarget) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (["horizontal", "vertical"].includes(which)) this._startFromCustom(which);
+      else this._startActive(which);
+    }
+  }
+
+  _canStartCustomTimer(which) {
+    const seconds = this._durationSeconds(which);
+    return Number.isFinite(seconds) && seconds > 0 && seconds <= MAX_TIMER_SECONDS;
   }
 
   _parseAdjustmentToSeconds(value) {
@@ -3337,19 +3674,18 @@ class SimpleTimerCard extends i$1 {
     const delta = this._parseAdjustmentToSeconds(value);
     if (!Number.isFinite(delta)) return;
     const base = Number(this._customSecs?.[which] ?? 0);
-    const next = base + sign * delta;
-    this._customSecs = { ...this._customSecs, [which]: Math.max(0, Number.isFinite(next) ? next : 0) };
+    this._setDurationSeconds(which, base + sign * delta);
   }
 
 
   _createAndSaveTimer(secs, label) {
-    if (this._isActionThrottled("create_timer", "global", 500)) return;
     const secsNum = Number(secs);
     if (!Number.isFinite(secsNum) || secsNum <= 0) return;
 
     const durationMs = secsNum * 1000;
     const validation = this._validateTimerInput(durationMs, label);
     if (!validation.valid) return;
+    if (this._isActionThrottled("create_timer", "global", 500)) return;
 
     const finalLabel = label && String(label).trim()
       ? this._sanitizeText(String(label).trim())
@@ -3376,7 +3712,7 @@ class SimpleTimerCard extends i$1 {
         const nameForCommand = userProvidedName ? String(label).trim() : "";
         this._sendVoicePEStart(durationMs, nameForCommand, targetEntity);
         this.requestUpdate();
-        return;
+        return true;
       }
     }
 
@@ -3390,7 +3726,7 @@ class SimpleTimerCard extends i$1 {
       this.hass.callService("timer", "start", { entity_id: nativeTimerTarget, duration: serviceDuration });
       this._publishTimerEvent("started", { source: "timer", source_entity: nativeTimerTarget, label: finalLabel, duration: durationMs });
       this.requestUpdate();
-      return;
+      return true;
     }
 
     if (targetEntity && (targetEntity.startsWith("input_text.") || targetEntity.startsWith("text."))) {
@@ -3413,7 +3749,7 @@ class SimpleTimerCard extends i$1 {
       this._mutateHelper(targetEntity, (data) => { data.timers.push(newTimer); });
       this._publishTimerEvent("started", newTimer);
       this.requestUpdate();
-      return;
+      return true;
     }
 
 
@@ -3439,17 +3775,18 @@ class SimpleTimerCard extends i$1 {
     this._addTimerToStorage(t);
     this._publishTimerEvent("started", t);
     this.requestUpdate();
+    return true;
   }
 
   _startFromCustom(which, label) {
+    if (!this._canStartCustomTimer(which)) return;
     const secs = this._customSecs[which];
     const inputId = which === "horizontal" ? "nt-h-name" : "nt-v-name";
     let finalLabel = label || this._lastSelectedName[inputId] || "";
     const input = this.shadowRoot?.getElementById(inputId);
     if (input && input.value) finalLabel = input.value.trim();
-    this._createAndSaveTimer(secs, finalLabel);
-    const defaultDurationSecs = (parseInt(this._config.default_new_timer_duration_mins, 10) || 15) * 60;
-    this._customSecs = { ...this._customSecs, [which]: defaultDurationSecs };
+    if (!this._createAndSaveTimer(secs, finalLabel)) return;
+    this._resetDurationInput(which);
     const openKey = `noTimer${which.charAt(0).toUpperCase() + which.slice(1)}Open`;
     this._ui[openKey] = false;
     this._showingCustomName[inputId] = false;
@@ -3459,14 +3796,14 @@ class SimpleTimerCard extends i$1 {
   }
 
   _startActive(which, label) {
+    if (!this._canStartCustomTimer(which)) return;
     const secs = this._activeSecs[which];
     const inputId = which === "bar" ? "add-bar-name" : "add-fill-name";
     let finalLabel = label || this._lastSelectedName[inputId] || "";
     const input = this.shadowRoot?.getElementById(inputId);
     if (input && input.value) finalLabel = input.value.trim();
-    this._createAndSaveTimer(secs, finalLabel);
-    const defaultDurationSecs = (parseInt(this._config.default_new_timer_duration_mins, 10) || 15) * 60;
-    this._activeSecs = { ...this._activeSecs, [which]: defaultDurationSecs };
+    if (!this._createAndSaveTimer(secs, finalLabel)) return;
+    this._resetDurationInput(which);
     const openKey = `active${which.charAt(0).toUpperCase() + which.slice(1)}Open`;
     this._ui[openKey] = false;
     this._showingCustomName[inputId] = false;
@@ -3477,13 +3814,14 @@ class SimpleTimerCard extends i$1 {
 
   _toggleActivePicker(which) {
     const openKey = `active${which.charAt(0).toUpperCase() + which.slice(1)}Open`;
+    if (!this._ui[openKey]) this._prepareDurationInput(which);
     this._ui[openKey] = !this._ui[openKey];
     this.requestUpdate();
   }
 
   _adjustActive(which, value, sign = 1) {
     const delta = this._parseAdjustmentToSeconds(value);
-    this._activeSecs = { ...this._activeSecs, [which]: Math.max(0, this._activeSecs[which] + sign * delta) };
+    this._setDurationSeconds(which, this._activeSecs[which] + sign * delta);
   }
 
   _pickAutoMilestoneUnit(duration) {
@@ -3642,7 +3980,7 @@ class SimpleTimerCard extends i$1 {
   }
 
   _renderInlineEditor(t, style) {
-    const isCircle = style === "circle";
+    const isCircle = style === "circle_vertical";
     const baseClasses = style.startsWith("fill_")
       ? "card item editor-row"
       : (isCircle ? "item vtile editor-row" : "item bar editor-row");
@@ -3659,12 +3997,12 @@ class SimpleTimerCard extends i$1 {
       const delta = this._parseAdjustmentToSeconds(val);
       const isNegative = sign < 0;
       const isClickable = !isNegative || totalSeconds >= delta;
-      const displayLabel = this._formatPresetLabel(val);
+      const displayLabel = this._renderPresetLabel(val, isNegative ? "-" : "+");
 
       return b`
         <button class="btn btn-ghost ${isClickable ? "" : "disabled"}"
                 @click=${() => isClickable && this._adjustEditTotal(sign * delta)}>
-          ${isNegative ? "-" : "+"}${displayLabel}
+          ${displayLabel}
         </button>
       `;
     });
@@ -3676,7 +4014,7 @@ class SimpleTimerCard extends i$1 {
             ${renderAdjustButtons(1)}
           </div>
 
-          <div class="display">${this._formatClock(totalSeconds, true)}</div>
+          <div class="display" dir="ltr">${this._formatClock(totalSeconds, true)}</div>
 
           <div class="buttons-grid">
             ${renderAdjustButtons(-1)}
@@ -3700,15 +4038,16 @@ class SimpleTimerCard extends i$1 {
         return this._renderInlineEditor(t, style);
     }
     const state = this._getTimerRenderState(t, style);
-    const { isPaused, isIdle, isFinished, color, icon, ring, pct, pctLeft, isCircleStyle, isFillStyle, supportsPause, supportsManualControls, timeStr, circleValues, supportsReadOnlyDismiss } = state;
-    const baseClasses = isFillStyle ? "card item" : (isCircleStyle ? "item vtile" : "item bar");
-    const finishedClasses = isFillStyle ? "card item finished" : (isCircleStyle ? "item vtile" : "card item bar");
+    const { isPaused, isIdle, isFinished, color, icon, ring, pct, pctLeft, isCircleStyle, isCircleHorizontal, isFillStyle, supportsPause, supportsManualControls, timeStr, circleValues, supportsReadOnlyDismiss } = state;
+    const isCircleTile = isCircleStyle && !isCircleHorizontal;
+    const baseClasses = isFillStyle ? "card item" : (isCircleTile ? "item vtile" : "item bar");
+    const finishedClasses = isFillStyle ? "card item finished" : (isCircleTile ? "item vtile" : "card item bar");
 
     const isRunning = !t.idle && !t.paused && !t.finished;
     const canEdit = t.source === "timer" && !isRunning;
 
     if (ring) {
-      if (isCircleStyle) {
+      if (isCircleTile) {
         return b`
           <li class="${finishedClasses}" style="--tcolor:${color}">
             <div class="vcol">
@@ -3794,7 +4133,42 @@ class SimpleTimerCard extends i$1 {
           </div>
         </li>
       `;
-    } else if (isCircleStyle) {
+    } else if (isCircleHorizontal) {
+      return b`
+        <li class="${baseClasses}" style="--tcolor:${color}; ${rowStyle}" @pointerdown=${acts.down} @pointerup=${acts.up} @pointercancel=${acts.cancel}>
+          <div class="row">
+            <div class="icon-wrap"><ha-icon .icon=${icon}></ha-icon></div>
+            <div class="info">
+              <div class="title">${t.label}</div>
+              <div class="status">${timeStr}</div>
+            </div>
+            <div class="actions" @click=${(e) => e.stopPropagation()}>
+              ${this._renderCustomActionButtons(t, state)}
+              ${isIdle && supportsManualControls ? b`
+                <button class="action-btn" title="${this._localize("start")}" @click=${() => this._handleStart(t)}>
+                  <ha-icon icon="mdi:play"></ha-icon>
+                </button>
+              ` : supportsPause && !ring && supportsManualControls ? b`
+                <button class="action-btn" title="${t.paused ? "Resume" : "Pause"}" @click=${() => t.paused ? this._handleResume(t) : this._handlePause(t)}>
+                  <ha-icon icon=${t.paused ? "mdi:play" : "mdi:pause"}></ha-icon>
+                </button>
+              ` : ""}
+              ${supportsManualControls && !isIdle ? b`<button class="action-btn" title="${this._localize("cancel")}" @click=${() => this._handleCancel(t)}><ha-icon icon="mdi:close"></ha-icon></button>` : ""}
+            </div>
+            <div class="hcircle-wrap">
+              <svg class="hcircle" width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+                <circle class="vc-track ${this._config.progress_mode === "drain" ? "vc-track-drain" : ""}"
+                        cx="20" cy="20" r="${circleValues.radius}"></circle>
+                <circle class="vc-prog ${this._config.progress_mode === "drain" ? "vc-prog-drain" : ""}"
+                        cx="20" cy="20" r="${circleValues.radius}"
+                  stroke-dasharray="${circleValues.circumference} ${circleValues.circumference}"
+                  style="stroke-dashoffset: ${circleValues.strokeDashoffset}; transition: stroke-dashoffset 0.25s;"></circle>
+              </svg>
+            </div>
+          </div>
+        </li>
+      `;
+    } else if (isCircleTile) {
       return b`
         <li class="${baseClasses}" style="--tcolor:${color}; ${rowStyle}" @pointerdown=${acts.down} @pointerup=${acts.up} @pointercancel=${acts.cancel}>
           ${supportsManualControls && !isIdle ? b`
@@ -4027,14 +4401,15 @@ class SimpleTimerCard extends i$1 {
     const ring = t.remaining <= 0 && !isIdle && !isFinished;
     const pct = typeof t.percent === "number" ? Math.max(0, Math.min(100, t.percent)) : 0;
     const pctLeft = 100 - pct;
-    const isCircleStyle = style === "circle";
+    const isCircleStyle = _isCircleStyle(style);
+    const isCircleHorizontal = style === "circle_horizontal";
     const isFillStyle = style.startsWith("fill_");
     const supportsPause = ["helper", "local", "mqtt", "timer"].includes(t.source) || (t.source === "voice_pe" && !!(t.control_entity && String(t.control_entity).trim() && t.voice_pe_timer_id && String(t.voice_pe_timer_id).trim()));
     const entityConf = this._getEntityConfig(t.source_entity);
     const hideTimerActions = entityConf?.hide_timer_actions === true;
     const isTimerSource = t.source === "timer";
     const supportsManualControls = (((["local", "mqtt", "timer", "helper"].includes(t.source)) || t.kind === "template" || t.source === "template") && !(isTimerSource && hideTimerActions)) || (t.source === "voice_pe" && !!(t.control_entity && String(t.control_entity).trim()));
-    const supportsReadOnlyDismiss = ring && ["timestamp", "minutes_attr", "alexa"].includes(t.source);
+    const supportsReadOnlyDismiss = ring && ["timestamp", "minutes_attr", "alexa", "google"].includes(t.source);
     let timeStr;
     if (isIdle) timeStr = t.duration ? this._formatDuration(t.duration, "ms") : this._localize("ready");
     else if (isPaused) timeStr = `${this._formatDuration(t.remaining, "ms")} (${this._localize("paused")})`;
@@ -4052,14 +4427,81 @@ class SimpleTimerCard extends i$1 {
     let circleValues;
     if (isCircleStyle) {
       const progressMode = this._config.progress_mode === "drain" ? "drain" : "fill";
-      circleValues = this._calculateCircleValues(28, pct, progressMode);
+      circleValues = this._calculateCircleValues(isCircleHorizontal ? 17 : 28, pct, progressMode);
     }
     return {
       isPaused, isIdle, isFinished, color, icon, ring, pct, pctLeft,
-      isCircleStyle, isFillStyle,
+      isCircleStyle, isCircleHorizontal, isFillStyle,
       supportsPause, supportsManualControls, timeStr,
       circleValues, supportsReadOnlyDismiss
     };
+  }
+
+  _renderDurationInput(which) {
+    const keypad = this._timerInputMode === "keypad";
+    const digits = this._keypadDigits[which] ?? secondsToDurationDigits(this._durationSeconds(which));
+    const fields = durationDigitFields(digits);
+    const units = ["h", "m", "s"];
+    const adjust = ["horizontal", "vertical"].includes(which) ? this._adjust.bind(this) : this._adjustActive.bind(this);
+    return b`
+      <div class="duration-entry" data-input-mode=${this._timerInputMode}>
+        ${this._config.show_timer_input_selector ? b`
+          <div class="duration-mode" role="group" aria-label=${this._localize("duration_input")}>
+            ${["stepper", "keypad"].map(mode => b`
+              <button type="button" class="duration-mode-btn" aria-pressed=${String(this._timerInputMode === mode)}
+                @click=${() => this._setTimerInputMode(which, mode)}>${this._localize(`input_${mode}`)}</button>
+            `)}
+          </div>
+        ` : ""}
+        ${keypad ? b`
+          <div class="duration-keypad" role="group" tabindex="0" aria-label=${this._localize("input_keypad")}
+            @keydown=${(e) => this._durationKeyDown(which, e)}>
+            <div class="duration-display-row">
+              <output class="duration-readout" dir="ltr" aria-live="polite" aria-atomic="true">
+                ${fields.map((field, index) => this._renderDurationValue(field, this._localize(units[index])))}
+              </output>
+              <button type="button" class="duration-clear" ?disabled=${!digits}
+                @click=${() => this._durationKey(which, "clear")}>${this._localize("clear")}</button>
+            </div>
+            <div class="duration-key-grid" dir="ltr">
+              ${["1", "2", "3", "4", "5", "6", "7", "8", "9", "00", "0", "backspace"].map(key => b`
+                <button type="button" class="duration-key" data-key=${key}
+                  aria-label=${key === "backspace" ? this._localize("backspace") : key}
+                  ?disabled=${key === "backspace" ? !digits : editDurationDigits(digits, key) === null}
+                  @click=${() => this._durationKey(which, key)}>
+                  ${key === "backspace" ? b`<ha-icon icon="mdi:backspace-outline" aria-hidden="true"></ha-icon>` : key}
+                </button>
+              `)}
+            </div>
+          </div>
+        ` : b`
+          <div class="buttons-grid">${this._renderMinuteButtons(which, adjust, 1)}</div>
+          <div class="display" dir="ltr">${this._formatClock(this._durationSeconds(which), true)}</div>
+          <div class="buttons-grid">${this._renderMinuteButtons(which, adjust, -1)}</div>
+        `}
+      </div>
+    `;
+  }
+
+  _renderCustomTimerPicker(which) {
+    const custom = ["horizontal", "vertical"].includes(which);
+    const capitalized = which.charAt(0).toUpperCase() + which.slice(1);
+    const openKey = custom ? `noTimer${capitalized}Open` : `active${capitalized}Open`;
+    const nameId = custom ? (which === "horizontal" ? "nt-h-name" : "nt-v-name") : `add-${which}-name`;
+    return b`
+      <div class=${custom ? "picker" : "active-picker"} data-duration-picker=${which} data-no-action
+        ?inert=${!this._ui[openKey]} aria-hidden=${String(!this._ui[openKey])}
+        @click=${(e) => e.stopPropagation()}>
+        ${this._renderDurationInput(which)}
+        ${this._renderTimerNameSelector(nameId, this._localize("timer_name_optional"))}
+        <div class="picker-actions">
+          <button type="button" class="btn btn-ghost"
+            @click=${() => { this._ui[openKey] = false; this.requestUpdate(); }}>${this._localize("cancel")}</button>
+          <button type="button" class="btn btn-primary" ?disabled=${!this._canStartCustomTimer(which)}
+            @click=${() => custom ? this._startFromCustom(which) : this._startActive(which)}>${this._localize("start")}</button>
+        </div>
+      </div>
+    `;
   }
 
   _renderMinuteButtons(which, adjustFunction, sign) {
@@ -4071,11 +4513,12 @@ class SimpleTimerCard extends i$1 {
       const delta = this._parseAdjustmentToSeconds(val);
       const isNegative = sign < 0;
       const isClickable = !isNegative || (currentSecs >= delta);
-      const displayLabel = this._formatPresetLabel(val);
+      const displayLabel = this._renderPresetLabel(val, isNegative ? "-" : "+");
       return b`
         <button class="btn btn-ghost ${isClickable ? "" : "disabled"}"
+          type="button" ?disabled=${!isClickable}
                 @click=${() => isClickable && adjustFunction(whichKey, val, sign)}>
-          ${isNegative ? "-" : "+"}${displayLabel}
+                  ${displayLabel}
         </button>
       `;
     });
@@ -4118,7 +4561,7 @@ class SimpleTimerCard extends i$1 {
       `;
     }
 
-    if (style === "circle") {
+    if (style === "circle_vertical") {
       return b`
         <li class="${baseClasses}" style="--tcolor:${color}; ${rowStyle}" @pointerdown=${acts.down} @pointerup=${acts.up} @pointercancel=${acts.cancel}>
           ${supportsManualControls && !isIdle ? b`
@@ -4335,7 +4778,7 @@ class SimpleTimerCard extends i$1 {
     }
 const layout = this._config.layout;
     const style = this._config.style;
-    const activeTimersLayout = ["fill_vertical", "bar_vertical", "circle"].includes((this._config.style || "").toLowerCase()) ? "vertical" : "horizontal";
+    const activeTimersLayout = ["fill_vertical", "bar_vertical", "circle_vertical"].includes((this._config.style || "").toLowerCase()) ? "vertical" : "horizontal";
     const showPresetsInActive = this._config.show_timer_presets !== false && this._config.show_active_header !== false;
 
     const noTimerCard = layout === "horizontal" ? b`
@@ -4350,7 +4793,7 @@ const layout = this._config.layout;
           </div>
           <div style="display:flex; gap:8px;">
             ${presets.map((preset) => {
-              const label = this._formatPresetLabel(preset);
+              const label = this._renderPresetLabel(preset);
               return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
             })}
             ${this._config.show_timer_presets === false ? b`
@@ -4360,21 +4803,7 @@ const layout = this._config.layout;
             `}
           </div>
         </div>
-        <div class="picker">
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("horizontal", (which, m, sign) => this._adjust(which, m, sign), 1)}
-          </div>
-          <div class="display">${this._formatClock(this._customSecs.horizontal, true)}</div>
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("horizontal", (which, m, sign) => this._adjust(which, m, sign), -1)}
-          </div>
-          ${this._renderTimerNameSelector("nt-h-name", this._localize("timer_name_optional"))}
-
-          <div class="picker-actions">
-            <button class="btn btn-ghost" @click=${() => (this._ui.noTimerHorizontalOpen = false)}>${this._localize("cancel")}</button>
-            <button class="btn btn-primary" @click=${() => this._startFromCustom("horizontal")}>${this._localize("start")}</button>
-          </div>
-        </div>
+        ${this._renderCustomTimerPicker("horizontal")}
       </div>
     ` : b`
       <div class="card nt-v ${this._ui.noTimerVerticalOpen ? "expanded" : ""}">
@@ -4385,7 +4814,7 @@ const layout = this._config.layout;
           </div>
           <div style="display:flex; gap:8px; margin-bottom:8px;">
             ${presets.map((preset) => {
-              const label = this._formatPresetLabel(preset);
+              const label = this._renderPresetLabel(preset);
               return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
             })}
             ${this._config.show_timer_presets === false ? b`
@@ -4395,26 +4824,13 @@ const layout = this._config.layout;
             `}
           </div>
         </div>
-        <div class="picker">
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("vertical", (which, m, sign) => this._adjust(which, m, sign), 1)}
-          </div>
-          <div class="display">${this._formatClock(this._customSecs.vertical, true)}</div>
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("vertical", (which, m, sign) => this._adjust(which, m, sign), -1)}
-          </div>
-          ${this._renderTimerNameSelector("nt-v-name", this._localize("timer_name_optional"))}
-          <div class="picker-actions">
-            <button class="btn btn-ghost" @click=${() => (this._ui.noTimerVerticalOpen = false)}>${this._localize("cancel")}</button>
-            <button class="btn btn-primary" @click=${() => this._startFromCustom("vertical")}>${this._localize("start")}</button>
-          </div>
-        </div>
+        ${this._renderCustomTimerPicker("vertical")}
       </div>
     `;
     const renderFn = activeTimersLayout === "vertical"
       ? this._renderItemVertical.bind(this)
       : this._renderItem.bind(this);
-    const useGrid = (activeTimersLayout === "vertical") || (style === "circle");
+    const useGrid = (activeTimersLayout === "vertical") || (style === "circle_vertical");
     const cols = (useGrid && timers.length > 1) ? 2 : 1;
     const listClass = useGrid ? `list vgrid cols-${cols}` : "list";
     const activeCard = style.startsWith("fill_") ? b`
@@ -4425,7 +4841,7 @@ const layout = this._config.layout;
             ${showPresetsInActive ? b`
               <div class="header-actions">
                 ${presets.map((preset) => {
-                  const label = this._formatPresetLabel(preset);
+                  const label = this._renderPresetLabel(preset);
                   return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
                 })}
                 <button class="btn btn-ghost" @click=${() => this._toggleActivePicker("fill")}>${this._localize("custom")}</button>
@@ -4435,20 +4851,7 @@ const layout = this._config.layout;
             `}
           </div>
         ` : ""}
-        <div class="active-picker">
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("fill", (which, m, sign) => this._adjustActive(which, m, sign), 1)}
-          </div>
-          <div class="display">${this._formatClock(this._activeSecs.fill, true)}</div>
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("fill", (which, m, sign) => this._adjustActive(which, m, sign), -1)}
-          </div>
-          ${this._renderTimerNameSelector("add-fill-name", this._localize("timer_name_optional"))}
-          <div class="picker-actions">
-            <button class="btn btn-ghost" @click=${() => (this._ui.activeFillOpen = false)}>${this._localize("cancel")}</button>
-            <button class="btn btn-primary" @click=${() => this._startActive("fill")}>${this._localize("start")}</button>
-          </div>
-        </div>
+        ${this._renderCustomTimerPicker("fill")}
         <ul class="${listClass}">
           ${timers.map((t) => renderFn(t, style))}
         </ul>
@@ -4461,7 +4864,7 @@ const layout = this._config.layout;
             ${showPresetsInActive ? b`
               <div class="header-actions">
                 ${presets.map((preset) => {
-                  const label = this._formatPresetLabel(preset);
+                  const label = this._renderPresetLabel(preset);
                   return b`<button class="btn btn-preset" @click=${() => this._createPresetTimer(preset)}>${label}</button>`;
                 })}
                 <button class="btn btn-ghost" @click=${() => this._toggleActivePicker("bar")}>${this._localize("custom")}</button>
@@ -4471,20 +4874,7 @@ const layout = this._config.layout;
             `}
           </div>
         ` : ""}
-        <div class="active-picker">
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("bar", (which, m, sign) => this._adjustActive(which, m, sign), 1)}
-          </div>
-          <div class="display">${this._formatClock(this._activeSecs.bar, true)}</div>
-          <div class="buttons-grid">
-            ${this._renderMinuteButtons("bar", (which, m, sign) => this._adjustActive(which, m, sign), -1)}
-          </div>
-          ${this._renderTimerNameSelector("add-bar-name", this._localize("timer_name_optional"))}
-          <div class="picker-actions">
-            <button class="btn btn-ghost" @click=${() => (this._ui.activeBarOpen = false)}>${this._localize("cancel")}</button>
-            <button class="btn btn-primary" @click=${() => this._startActive("bar")}>${this._localize("start")}</button>
-          </div>
-        </div>
+        ${this._renderCustomTimerPicker("bar")}
         <ul class="${listClass}">
           ${timers.map((t) => renderFn(t, style))}
         </ul>
@@ -4500,7 +4890,7 @@ const layout = this._config.layout;
   }
 
   static get styles() {
-    return i$4`
+    return i$5`
       :host { --stc-chip-radius: 9999px; }
       ha-card { border-radius: var(--ha-card-border-radius, 12px); overflow: hidden; padding: 0; background: var(--ha-card-background, var(--card-background-color)); }
       .grid { display: grid; grid-template-columns: 1fr; gap: 12px; padding: 0; margin: -1px 0; }
@@ -4514,14 +4904,15 @@ const layout = this._config.layout;
       .nt-v { padding: 0 8px; min-height: 120px; transition: height .3s ease; }
       .nt-v.expanded { height: auto; }
       .nt-v .col { display: flex; flex-direction: column; align-items: center; justify-content: space-between; width: 100%; min-height: 120px; }
-      .picker, .active-picker { max-height: 0; opacity: 0; overflow: hidden; transition: max-height .5s ease, opacity .3s ease, padding-top .5s ease, margin-bottom .3s ease; padding-top: 0; margin-bottom: 0; }
-      .card.expanded .picker { max-height: 450px; opacity: 1; padding: 12px 8px 8px; }
-      .card-show .active-picker { max-height: 450px; opacity: 1; margin-bottom: 8px; padding: 8px 0; }
+      .picker, .active-picker { display: none; padding-top: 0; margin-bottom: 0; }
+      .card.expanded .picker { display: block; padding: 12px 8px 8px; }
+      .card-show .active-picker { display: block; margin-bottom: 8px; padding: 8px 0; }
       .icon-wrap { width: 36px; height: 36px; border-radius: var(--ha-card-border-radius, 50%); background: color-mix(in srgb, var(--tcolor, var(--primary-color)) 18%, var(--ha-card-background, var(--card-background-color))); display: flex; align-items: center; justify-content: center; flex: 0 0 36px; }
       .icon-wrap ha-icon { --mdc-icon-size: 22px; color: var(--tcolor, var(--primary-color)); }
       .nt-title { margin: 0; font-size: 14px; font-weight: 500; line-height: 20px; }
       .nt-sub { margin: 0; font-size: 12px; color: var(--secondary-text-color); line-height: 16px; }
       .btn { font-weight: 600; border-radius: var(--stc-chip-radius); padding: 6px 10px; font-size: 12px; border: none; cursor: pointer; }
+      .btn:disabled { opacity: 0.5; cursor: not-allowed; }
       .btn.disabled { opacity: 0.5; pointer-events: none; }
       .btn-preset { background: var(--secondary-background-color, rgba(0,0,0,.08)); color: var(--primary-text-color); }
       .btn-ghost { background: var(--card-background-color); border: 1px solid var(--divider-color); color: var(--primary-text-color); }
@@ -4531,6 +4922,23 @@ const layout = this._config.layout;
       .buttons-grid { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; box-sizing: border-box; }
       .buttons-grid .btn { flex: 0 0 auto; min-width: 68px; }
       .display { text-align: center; font-size: 36px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; margin: 8px 0; }
+      .duration-entry { width: 100%; min-width: 0; }
+      .duration-mode { display: flex; width: fit-content; max-width: 100%; padding: 3px; margin: 0 auto 12px; border: 1px solid var(--divider-color); border-radius: var(--stc-chip-radius); gap: 4px; background: var(--secondary-background-color, rgba(0,0,0,.04)); }
+      .duration-mode-btn { border: 0; border-radius: inherit; padding: 8px 14px; font: inherit; font-size: 12px; font-weight: 600; color: var(--secondary-text-color); background: transparent; cursor: pointer; }
+      .duration-mode-btn[aria-pressed="true"] { color: var(--primary-color); background: color-mix(in srgb, var(--primary-color) 14%, transparent); }
+      .duration-keypad { max-width: 288px; margin-inline: auto; border-radius: 12px; }
+      .duration-display-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; margin-block: 4px 12px; }
+      .duration-readout { display: inline-flex; justify-content: center; gap: 8px; font-size: 28px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--primary-text-color); }
+      .duration-part { display: inline-flex; align-items: baseline; gap: 2px; white-space: nowrap; unicode-bidi: isolate; }
+      .duration-readout .duration-unit { font-size: 12px; font-weight: 400; color: var(--secondary-text-color); }
+      .duration-clear { border: 0; background: transparent; color: var(--primary-color); padding: 8px; font: inherit; font-size: 12px; cursor: pointer; }
+      .duration-key-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+      .duration-key { min-height: 44px; padding: 8px; border: 0; border-radius: 12px; background: var(--secondary-background-color, rgba(0,0,0,.06)); color: var(--primary-text-color); font: inherit; font-size: 20px; font-variant-numeric: tabular-nums; cursor: pointer; touch-action: manipulation; }
+      .duration-key ha-icon { --mdc-icon-size: 22px; }
+      .duration-key:hover:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 14%, var(--secondary-background-color, transparent)); }
+      .duration-key:active:not(:disabled) { background: color-mix(in srgb, var(--primary-color) 24%, transparent); }
+      .duration-key:disabled, .duration-clear:disabled { opacity: 0.4; cursor: not-allowed; }
+      .duration-entry :focus-visible, .picker-actions .btn:focus-visible { outline: 2px solid var(--primary-color); outline-offset: 2px; }
       .picker-actions { display: flex; gap: 12px; width: 100%; margin: 16px auto 0; box-sizing: border-box; }
       .picker-actions .btn { flex: 1; }
       .text-input { width: 90%; text-align: center; padding: 8px 12px; font-size: 14px; border-radius: var(--stc-chip-radius); color: var(--primary-text-color); background: var(--card-background-color); border: 1px solid var(--divider-color); outline: none; margin: 0 auto; display: block; }
@@ -4578,6 +4986,8 @@ const layout = this._config.layout;
       .vprogressbar .milestone-track { flex: 0 0 60%; }
       .vactions { display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: -4px; margin-bottom: -4px; }
       .vcircle-wrap { position: relative; width: 64px; height: 64px; display: grid; place-items: center; }
+      .hcircle-wrap { position: relative; width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; }
+      .hcircle { position: absolute; inset: 0; transform: rotate(-90deg); }
       .vcircle { position: absolute; inset: 0; transform: rotate(-90deg); z-index: 0; }
       .vc-track, .vc-prog { fill: none; stroke-width: 4.5px; vector-effect: non-scaling-stroke; }
       .vc-track { stroke: var(--tcolor, var(--primary-color)); stroke-opacity: 0.22; }
@@ -4615,7 +5025,7 @@ const layout = this._config.layout;
   }
 }
 
-class SimpleTimerCardEditor extends i$1 {
+class SimpleTimerCardEditor extends i$2 {
   static get properties() { return { hass: {}, _config: {}, _expandedSections: { state: true }, _showAdvanced: { state: true }, _searchQuery: { state: true } }; }
 
   constructor() {
@@ -4623,19 +5033,27 @@ class SimpleTimerCardEditor extends i$1 {
     this._debounceTimeout = null;
     this._emitTimeout = null;
     this._expandedSections = {
-      appearance: true,
       entities: true,
-      sorting: false,
-      timeFormat: false,
-      defaults: false,
-      presets: false,
-      pinned: false,
-      audio: false,
-      notify: false,
-      storage: false,
+      appearance: false,
+      input: false,
     };
-    this._showAdvanced = false;
+    this._showAdvanced = this._readEditorMode();
     this._searchQuery = "";
+  }
+
+  _readEditorMode() {
+    try {
+      return localStorage.getItem(EDITOR_MODE_STORAGE_KEY) === "advanced";
+    } catch {
+      return false;
+    }
+  }
+
+  _setEditorMode(advanced) {
+    this._showAdvanced = advanced === true;
+    try {
+      localStorage.setItem(EDITOR_MODE_STORAGE_KEY, this._showAdvanced ? "advanced" : "simple");
+    } catch {}
   }
 
   disconnectedCallback() {
@@ -4655,44 +5073,57 @@ class SimpleTimerCardEditor extends i$1 {
     const root = this.shadowRoot;
     if (!root) return;
     const q = (this._searchQuery || "").trim().toLowerCase();
+    const advancedVisible = this._showAdvanced || !!q;
+    let visiblePanels = 0;
     const panels = root.querySelectorAll("ha-expansion-panel");
     panels.forEach((panel) => {
-      let matchCount = 0;
       const body = panel.querySelector(".panel-body");
       if (!body) return;
-      // Direct children of .panel-body are the field rows we filter.
-      // We also descend into .entity-options (per-entity sub-blocks)
-      // so a search like "audio" still highlights matching per-entity
-      // fields nested inside the entity editor.
-      const candidates = [
-        ...body.children,
-        ...body.querySelectorAll(".entity-options > *"),
-      ];
-      candidates.forEach((el) => {
-        const text = this._extractSearchableText(el);
-        const matches = !q || text.includes(q);
-        el.toggleAttribute("data-search-hidden", !!q && !matches);
-        if (matches) matchCount++;
-      });
-      panel.toggleAttribute("data-search-hidden", !!q && matchCount === 0);
+      const sectionMatches = !q || this._extractSearchableText(panel.querySelector(".panel-header-label")).includes(q);
+      const filter = (container, parentMatches = sectionMatches) => {
+        let matches = 0;
+        for (const el of container.children) {
+          const allowed = advancedVisible || !el.classList.contains("advanced");
+          const grouped = el.matches(".settings-group, .entity-editor, .entity-options");
+          const groupMatches = parentMatches || (!!q && (el.getAttribute("data-search-terms") || "").toLowerCase().includes(q));
+          const match = grouped ? filter(el, groupMatches) > 0 : groupMatches || this._extractSearchableText(el).includes(q);
+          const visible = allowed && match;
+          el.toggleAttribute("data-search-hidden", !!q && !visible);
+          if (visible) matches++;
+        }
+        if (q && matches && container.classList.contains("entity-editor")) {
+          const identity = [...container.children].find(el => el.configValue === "entity");
+          identity?.removeAttribute("data-search-hidden");
+        }
+        return matches;
+      };
+      const matches = filter(body);
+      const visible = (advancedVisible || !panel.classList.contains("advanced")) && matches > 0;
+      panel.toggleAttribute("data-search-hidden", !!q && !visible);
+      if (visible) visiblePanels++;
     });
+    const empty = root.querySelector(".search-empty");
+    if (empty) empty.hidden = !q || visiblePanels > 0;
   }
 
   _extractSearchableText(el) {
     if (!el || el.nodeType !== 1) return "";
-    // Gather text from common label sources so the search matches
-    // both visible labels and labels provided as attributes.
     const parts = [];
-    const own = el.getAttribute && el.getAttribute("label");
-    if (own) parts.push(own);
-    const labelled = el.querySelectorAll ? el.querySelectorAll("[label]") : [];
-    labelled.forEach((n) => { const v = n.getAttribute("label"); if (v) parts.push(v); });
+    for (const node of [el, ...el.querySelectorAll("*")]) {
+      for (const name of ["label", "helper", "help-text", "title", "data-search-terms"]) {
+        const value = node.getAttribute(name);
+        if (value) parts.push(value);
+      }
+      if (typeof node.label === "string") parts.push(node.label);
+      if (typeof node.configValue === "string") parts.push(node.configValue);
+    }
     if (el.textContent) parts.push(el.textContent);
     return parts.join(" ").toLowerCase();
   }
 
   setConfig(config) {
     const c = { ...(config || {}) };
+    if (typeof c.entities === "string") c.entities = [c.entities];
     if (typeof c.timer_name_presets === "string") c.timer_name_presets = c.timer_name_presets.split(",").map(s => s.trim()).filter(Boolean);
     if (typeof c.timer_presets === "string") c.timer_presets = c.timer_presets.split(",").map(s => s.trim()).filter(Boolean);
     if (typeof c.minute_buttons === "string") c.minute_buttons = c.minute_buttons.split(",").map(s => s.trim()).filter(Boolean);
@@ -4700,9 +5131,7 @@ class SimpleTimerCardEditor extends i$1 {
     this._config = { ...c };
     if (!this._expandedSections) {
       this._expandedSections = {
-        appearance: true, entities: true,
-        sorting: false, timeFormat: false, defaults: false,
-        presets: false, pinned: false, audio: false, notify: false, storage: false,
+        entities: true, appearance: false, input: false,
       };
     }
     this.requestUpdate();
@@ -4833,10 +5262,9 @@ class SimpleTimerCardEditor extends i$1 {
     if (typeof value !== "string" || value === "") return;
     if (value === this._config[key]) return;
     if (key === "style") {
-      const styleValue = value.toLowerCase();
-      const validStyles = ["fill_vertical", "fill_horizontal", "bar_vertical", "bar_horizontal", "circle"];
-      const normalizedStyle = validStyles.includes(styleValue) ? styleValue : "bar_horizontal";
-      this._updateConfig({ style: normalizedStyle }, true);
+      this._updateConfig({ style: _normalizeCardStyle(value) }, true);
+    } else if (key === "custom_timer_input") {
+      this._updateConfig({ custom_timer_input: normalizeTimerInput(value) }, true);
     } else if (key === "progress_mode") {
       const modes = ["drain", "fill", "milestones"];
       this._updateConfig({ progress_mode: modes.includes(value) ? value : "drain" }, true);
@@ -5165,6 +5593,8 @@ _pinnedTimerValueChanged(ev, index) {
       sort_by: "time_left",
       sort_order: "asc",
       default_new_timer_duration_mins: 15,
+      custom_timer_input: "stepper",
+      show_timer_input_selector: false,
       time_format: "hms",
       time_format_units: ["days","hours","minutes","seconds"],
       expire_action: "keep",
@@ -5236,18 +5666,6 @@ _pinnedTimerValueChanged(ev, index) {
     stripIfEmpty("title");
     stripIfEmpty("default_timer_entity");
 
-    if (!cleaned.audio_enabled) {
-      delete cleaned.audio_file_url;
-      delete cleaned.audio_repeat_count;
-      delete cleaned.audio_play_until_dismissed;
-      delete cleaned.audio_completion_delay;
-    }
-
-    if (cleaned.show_timer_presets === false) {
-      delete cleaned.timer_presets;
-      delete cleaned.timer_name_presets;
-    }
-
     const isEqualArray = (a, b) => Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((v, i) => v === b[i]);
 
     for (const [key, def] of Object.entries(defaults)) {
@@ -5287,8 +5705,8 @@ _pinnedTimerValueChanged(ev, index) {
   // loaded by the same selectors on older HA. We pick whichever is currently
   // upgraded so the visible element always matches a defined custom element.
   get _tfTag() {
-    if (customElements.get("ha-input")) return i`ha-input`;
-    return i`ha-textfield`;
+    if (customElements.get("ha-input")) return i$1`ha-input`;
+    return i$1`ha-textfield`;
   }
 
   // Render a text/number input using the chosen tag. Returns a static-html
@@ -5368,33 +5786,52 @@ _pinnedTimerValueChanged(ev, index) {
   _ensureEntityPickerLoaded() { this._ensureHACommonsLoaded(); }
 
   _getDisplayStyleValue() {
-    return this._config.style || "bar_horizontal";
+    return _normalizeCardStyle(this._config.style);
+  }
+
+  _sourceStyleChanged(source, field, ev) {
+    ev?.stopPropagation?.();
+    const raw = ev?.detail?.value ?? ev?.target?.value ?? "";
+    const value = typeof raw === "string" ? raw.trim() : "";
+    const styles = { ...(this._config?.source_styles || {}) };
+    const entry = { ...(styles[source] || {}) };
+    if (value) entry[field] = value;
+    else delete entry[field];
+    if (Object.keys(entry).length) styles[source] = entry;
+    else delete styles[source];
+    this._updateConfig({ source_styles: styles });
+  }
+
+  _renderSourceStyleRows() {
+    const sources = [
+      { key: "alexa", label: "Alexa" },
+      { key: "google", label: "Google Home" },
+      { key: "voice_pe", label: "Voice PE" },
+      { key: "timer", label: "Native timer" },
+      { key: "helper", label: "Helper" },
+      { key: "timestamp", label: "Timestamp sensor" },
+      { key: "minutes_attr", label: "Minutes attribute" },
+    ];
+    const styles = this._config?.source_styles || {};
+    return sources.map((s) => b`
+      <div class="row" data-search-terms=${`source_styles ${s.key}`}>
+        <ha-icon-picker
+          label="${s.label} icon"
+          .value=${styles[s.key]?.icon || ""}
+          @value-changed=${(e) => this._sourceStyleChanged(s.key, "icon", e)}
+        ></ha-icon-picker>
+        ${this._tf({
+          label: `${s.label} color`,
+          placeholder: "var(--primary-color)",
+          value: styles[s.key]?.color || "",
+          change: (e) => this._sourceStyleChanged(s.key, "color", e),
+        })}
+      </div>
+    `);
   }
 
   _detectMode(entityId, entityState, entityConf) {
-    if (!entityState) return null;
-    if (entityId.startsWith("timer.")) return "timer";
-    if (entityId.startsWith("input_text.") || entityId.startsWith("text.")) return "helper";
-    const attrs = entityState.attributes || {};
-    if (
-      attrs.alarms_brief != null ||
-      attrs.sorted_active != null ||
-      attrs.sorted_paused != null ||
-      attrs.sorted_all != null ||
-      attrs.next_timer != null ||
-      attrs.timers != null ||
-      ((entityId.includes("next_timer") || entityId.endsWith("_next_timer")) &&
-        (attrs.total_active != null || attrs.total_all != null || attrs.status != null || attrs.timer != null || attrs.dismissed != null))
-    ) return "alexa";
-    if (attrs.device_class === "timestamp") return "timestamp";
-    const guessAttr = entityConf?.minutes_attr;
-    if (guessAttr && (attrs[guessAttr] ?? null) !== null) return "minutes_attr";
-    if (attrs.start_time) return "timestamp";
-    const stateVal = entityState.state;
-    if (stateVal && stateVal !== "unknown" && stateVal !== "unavailable") {
-      if (isNaN(stateVal) && !isNaN(Date.parse(stateVal))) return "timestamp";
-    }
-    return null;
+    return SimpleTimerCard.prototype._detectMode.call(this, entityId, entityState, entityConf);
   }
 
   _toggleSection(key) {
@@ -5404,14 +5841,25 @@ _pinnedTimerValueChanged(ev, index) {
   render() {
     if (!this.hass || !this._config) return b``;
     const entityPickerReady = !!customElements.get("ha-entity-picker");
-    const storageType = this._config.default_timer_entity?.startsWith("sensor.") ? "mqtt" : "local";
+    const target = this._config.default_timer_entity || "";
+    const storage = String(this._config.storage || "").toLowerCase();
+    const hasMqtt = !!(this._config.mqtt && ["topic", "sensor_entity", "state_topic", "events_topic"].some(key => this._config.mqtt[key]));
+    const storageType = target.startsWith("timer.") ? "timer"
+      : target.startsWith("input_text.") || target.startsWith("text.") ? "helper"
+      : storage === "local" ? "local"
+      : storage === "mqtt" || hasMqtt || target.startsWith("sensor.") ? "mqtt" : "local";
     const showMilestonesSection = this._config.progress_mode === "milestones";
+    const stepperAvailable = normalizeTimerInput(this._config.custom_timer_input) === "stepper" || this._config.show_timer_input_selector === true;
 
     // HA 2026.x rewrote ha-select to use ha-dropdown internally; that variant
     // renders ONLY from the .options property and ignores slotted <mwc-list-item>
     // children. We set both .options and keep the slotted items as a fallback
     // for older HA. Keep these in sync with the slotted items below.
     const SELECT_OPTIONS = {
+      custom_timer_input: [
+        { value: "stepper", label: "Buttons (+ / -)" },
+        { value: "keypad", label: "Keypad" },
+      ],
       layout: [
         { value: "horizontal", label: "Horizontal" },
         { value: "vertical", label: "Vertical" },
@@ -5421,7 +5869,8 @@ _pinnedTimerValueChanged(ev, index) {
         { value: "fill_horizontal", label: "Background fill (horizontal)" },
         { value: "bar_vertical", label: "Progress bar (vertical)" },
         { value: "bar_horizontal", label: "Progress bar (horizontal)" },
-        { value: "circle", label: "Circle" },
+        { value: "circle_vertical", label: "Circle (vertical)" },
+        { value: "circle_horizontal", label: "Circle (horizontal)" },
       ],
       progress_mode: [
         { value: "drain", label: "Drain" },
@@ -5481,6 +5930,7 @@ _pinnedTimerValueChanged(ev, index) {
       entity_mode: [
         { value: "auto", label: "Auto (Default)" },
         { value: "alexa", label: "Alexa" },
+        { value: "google", label: "Google Home" },
         { value: "timer", label: "Timer" },
         { value: "voice_pe", label: "Voice PE" },
         { value: "helper", label: "Helper (input_text/text)" },
@@ -5492,21 +5942,23 @@ _pinnedTimerValueChanged(ev, index) {
     const appearanceContent = b`
       ${this._tf({ label: "Title", placeholder: "Optional", helper: "Shown above the timer list at the top of the card.", value: this._config.title, configValue: "title", change: this._valueChanged })}
 
-      <div class="row">
-        <ha-select label="Layout" helper="How timers are arranged in the list." naturalMenuWidth fixedMenuPosition .value=${this._config.layout || "horizontal"} .configValue=${"layout"} .options=${SELECT_OPTIONS.layout} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
-          <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
-          <mwc-list-item value="vertical">Vertical</mwc-list-item>
-        </ha-select>
+      <ha-select label="Style" helper="Appearance and arrangement of active timers." naturalMenuWidth fixedMenuPosition .value=${this._getDisplayStyleValue()} .configValue=${"style"} .options=${SELECT_OPTIONS.style} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <mwc-list-item value="fill_vertical">Background fill (vertical)</mwc-list-item>
+        <mwc-list-item value="fill_horizontal">Background fill (horizontal)</mwc-list-item>
+        <mwc-list-item value="bar_vertical">Progress bar (vertical)</mwc-list-item>
+        <mwc-list-item value="bar_horizontal">Progress bar (horizontal)</mwc-list-item>
+        <mwc-list-item value="circle_vertical">Circle (vertical)</mwc-list-item>
+        <mwc-list-item value="circle_horizontal">Circle (horizontal)</mwc-list-item>
+      </ha-select>
+    `;
 
-        <ha-select label="Style" helper="Card visual style." naturalMenuWidth fixedMenuPosition .value=${this._getDisplayStyleValue()} .configValue=${"style"} .options=${SELECT_OPTIONS.style} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
-          <mwc-list-item value="fill_vertical">Background fill (vertical)</mwc-list-item>
-          <mwc-list-item value="fill_horizontal">Background fill (horizontal)</mwc-list-item>
-          <mwc-list-item value="bar_vertical">Progress bar (vertical)</mwc-list-item>
-          <mwc-list-item value="bar_horizontal">Progress bar (horizontal)</mwc-list-item>
-          <mwc-list-item value="circle">Circle</mwc-list-item>
-        </ha-select>
-      </div>
-
+    const displayContent = b`
+      <ha-select label="Empty-card layout" helper="Layout of the card when no timers are running. Active timers use the selected Style."
+        naturalMenuWidth fixedMenuPosition .value=${this._config.layout || "horizontal"} .configValue=${"layout"} .options=${SELECT_OPTIONS.layout}
+        @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
+        <mwc-list-item value="vertical">Vertical</mwc-list-item>
+      </ha-select>
       <div class="row">
         <ha-select label="Progress mode" helper="How the progress bar fills as time runs out." naturalMenuWidth fixedMenuPosition .value=${this._config.progress_mode || "drain"} .configValue=${"progress_mode"} .options=${SELECT_OPTIONS.progress_mode} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
           <mwc-list-item value="drain">Drain</mwc-list-item>
@@ -5523,6 +5975,7 @@ _pinnedTimerValueChanged(ev, index) {
           <mwc-list-item value="fr">Français</mwc-list-item>
           <mwc-list-item value="he">עברית</mwc-list-item>
           <mwc-list-item value="pl">Polski</mwc-list-item>
+          <mwc-list-item value="nl">Nederlands</mwc-list-item>
           <mwc-list-item value="sv">Svenska</mwc-list-item>
         </ha-select>
       </div>
@@ -5531,7 +5984,7 @@ _pinnedTimerValueChanged(ev, index) {
         <ha-switch .checked=${this._config.show_active_header !== false} .configValue=${"show_active_header"} @change=${this._valueChanged}></ha-switch>
         <div class="toggle-text">
           <span class="toggle-title">Show "Active Timers" heading</span>
-          <span class="toggle-desc">Display a heading above timers that are currently running.</span>
+          <span class="toggle-desc">Show the heading and Add/Custom controls above running timers.</span>
         </div>
       </label>
     `;
@@ -5567,10 +6020,10 @@ _pinnedTimerValueChanged(ev, index) {
         <mwc-list-item value="human_natural">Unit style, natural language</mwc-list-item>
       </ha-select>
 
-      ${this._tf({ label: "Unit order (comma-separated)", helper: "years,months,weeks,days,hours,minutes,seconds", value: (this._config.time_format_units || ["days","hours","minutes","seconds"]).join(","), configValue: "time_format_units", change: this._valueChanged, cls: "advanced" })}
+      ${this._tf({ label: "Unit order (comma-separated)", helper: "years,months,weeks,days,hours,minutes,seconds", value: (this._config.time_format_units || ["days","hours","minutes","seconds"]).join(","), configValue: "time_format_units", change: this._valueChanged })}
 
       ${showMilestonesSection ? b`
-        <div class="advanced">
+        <div class="settings-group" data-search-terms="progress milestones">
         <div class="subsection-title">Progress milestones</div>
         <div class="row" style="align-items:flex-start;">
           <ha-select label="Milestone unit" helper="Unit highlighted as the active milestone." naturalMenuWidth fixedMenuPosition .value=${this._config.milestone_unit || "auto"} .configValue=${"milestone_unit"} .options=${SELECT_OPTIONS.milestone_unit} @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
@@ -5592,17 +6045,52 @@ _pinnedTimerValueChanged(ev, index) {
       ` : ""}
     `;
 
-    const defaultsContent = b`
-      <div class="row">
-        ${this._tf({ label: "Default duration (minutes)", type: "number", min: "0", helper: "Starting value when the user opens the custom timer input.", value: this._config.default_new_timer_duration_mins ?? 15, configValue: "default_new_timer_duration_mins", change: this._valueChanged })}
-        ${this._tf({ label: "Snooze duration (minutes)", type: "number", min: "0", helper: "Minutes added when the user taps Snooze on an expired timer.", value: this._config.snooze_duration ?? 5, configValue: "snooze_duration", change: this._valueChanged })}
+    const inputContent = b`
+      <ha-select label="Custom timer input" helper="Choose buttons or a numeric keypad for entering a new timer."
+        naturalMenuWidth fixedMenuPosition .value=${normalizeTimerInput(this._config.custom_timer_input)}
+        .configValue=${"custom_timer_input"} .options=${SELECT_OPTIONS.custom_timer_input}
+        @selected=${this._selectChanged} @closed=${(e) => e.stopPropagation()}>
+        <mwc-list-item value="stepper">Buttons (+ / -)</mwc-list-item>
+        <mwc-list-item value="keypad">Keypad</mwc-list-item>
+      </ha-select>
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.show_timer_input_selector === true} .configValue=${"show_timer_input_selector"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Show input switch on card</span>
+          <span class="toggle-desc">Let users switch between Buttons and Keypad while entering a timer.</span>
+        </div>
+      </label>
+      <div class="settings-group ${stepperAvailable ? "" : "advanced"}" data-search-terms="stepper increments">
+        ${this._tf({ label: "Default duration (minutes)", type: "number", min: "0", helper: "Starting value for the +/- buttons. Keypad entry starts at zero.", value: this._config.default_new_timer_duration_mins ?? 15, configValue: "default_new_timer_duration_mins", change: this._valueChanged })}
+        ${this._tf({ label: "Adjustment buttons", helper: "Increments for the +/- input and native timer editing. Examples: 1, 5, 30s, 2h. Numbers are minutes.", value: (this._config.minute_buttons || [1, 5, 10]).join(", "), configValue: "minute_buttons", change: this._valueChanged })}
       </div>
+      ${this._tf({ label: "Timer name presets", helper: "Optional comma-separated name suggestions. Independent of quick-start buttons.", value: (this._config.timer_name_presets || []).join(", "), configValue: "timer_name_presets", change: this._valueChanged, cls: "advanced" })}
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.show_timer_presets !== false} .configValue=${"show_timer_presets"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Show quick-start buttons</span>
+          <span class="toggle-desc">Start a preset duration with one tap, without opening Custom.</span>
+        </div>
+      </label>
+      ${this._config.show_timer_presets !== false ? b`
+        ${this._tf({ label: "Timer presets", helper: "Seconds, minutes, hours, or days. Examples: 5, 15, 90s, 2h.", value: (this._config.timer_presets || [5, 15, 30]).join(", "), configValue: "timer_presets", change: this._valueChanged })}
+      ` : ""}
+    `;
 
+    const stylingContent = b`
       <div class="row">
         <ha-icon-picker label="Default timer icon" helper="Used when a timer does not specify its own icon." .value=${this._config.default_timer_icon || "mdi:timer-outline"} .configValue=${"default_timer_icon"} @value-changed=${this._detailValueChanged}></ha-icon-picker>
         ${this._tf({ label: "Default timer color", helper: "CSS color or var() used as the progress accent.", value: this._config.default_timer_color || "var(--primary-color)", configValue: "default_timer_color", change: this._valueChanged })}
       </div>
 
+      <div class="divider"></div>
+
+      <p class="hint">Per-source icon and color. Useful for auto-discovered timers, which have no per-entity settings. An entity listed under Entities with its own icon still wins. Paused and finished timers keep their state icon and color.</p>
+      ${this._renderSourceStyleRows()}
+    `;
+
+    const defaultsContent = b`
+      ${this._tf({ label: "Snooze duration (minutes)", type: "number", min: "0", helper: "Minutes added when the user taps Snooze on an expired timer.", value: this._config.snooze_duration ?? 5, configValue: "snooze_duration", change: this._valueChanged })}
       ${this._tf({ label: "Timer expired message", helper: "Shown under each timer once it reaches zero.", value: this._config.expired_subtitle, configValue: "expired_subtitle", placeholder: "Time's up!", change: this._valueChanged })}
 
       <div class="divider"></div>
@@ -5613,7 +6101,7 @@ _pinnedTimerValueChanged(ev, index) {
           <mwc-list-item value="dismiss">Dismiss</mwc-list-item>
           <mwc-list-item value="remove">Remove</mwc-list-item>
         </ha-select>
-        ${this._tf({ label: "Keep-visible duration (seconds)", type: "number", min: "0", helper: "How long an expired timer stays on screen before disappearing.", value: this._config.expire_keep_for ?? 120, configValue: "expire_keep_for", change: this._valueChanged, cls: "advanced" })}
+        ${(this._config.expire_action || "keep") === "keep" ? this._tf({ label: "Keep-visible duration (seconds)", type: "number", min: "0", helper: "How long an expired timer stays on screen before disappearing.", value: this._config.expire_keep_for ?? 120, configValue: "expire_keep_for", change: this._valueChanged }) : ""}
       </div>
 
       <label class="toggle-row advanced">
@@ -5623,23 +6111,6 @@ _pinnedTimerValueChanged(ev, index) {
           <span class="toggle-desc">For helper-backed timers (input_text/text), clear the entity when the timer hits zero instead of keeping the expired value.</span>
         </div>
       </label>
-    `;
-
-    const presetsContent = b`
-      <label class="toggle-row">
-        <ha-switch .checked=${this._config.show_timer_presets !== false} .configValue=${"show_timer_presets"} @change=${this._valueChanged}></ha-switch>
-        <div class="toggle-text">
-          <span class="toggle-title">Show timer preset buttons</span>
-          <span class="toggle-desc">Display one-tap quick-start buttons above the empty state.</span>
-        </div>
-      </label>
-
-      ${this._config.show_timer_presets !== false ? b`
-        ${this._tf({ label: "Timer presets", helper: "Seconds, minutes, hours, or days. e.g. 5, 15, 90s, 2h", value: (this._config.timer_presets || [5, 15, 30]).join(", "), configValue: "timer_presets", change: this._valueChanged })}
-        ${this._tf({ label: "Timer name presets", helper: "Comma-separated labels shown in the custom-name picker", value: (this._config.timer_name_presets || []).join(", "), configValue: "timer_name_presets", change: this._valueChanged })}
-      ` : ""}
-
-      ${this._tf({ label: "Adjustment buttons", helper: "Seconds, minutes, hours, or days. e.g. 1, 5, 30s, 2h. Default unit is minutes.", value: (this._config.minute_buttons || [1, 5, 10]).join(", "), configValue: "minute_buttons", change: this._valueChanged })}
     `;
 
     const pinnedContent = b`
@@ -5780,10 +6251,10 @@ _pinnedTimerValueChanged(ev, index) {
         .value=${this._config.default_timer_entity || ""}
         .configValue=${"default_timer_entity"}
         @value-changed=${this._detailValueChanged}
-        label="Default timer storage (optional)"
-        help-text="Select a helper (input_text/text) or an MQTT sensor to store timers."
+        label="New timer target (optional)"
+        help-text="Use a native timer, text helper, or MQTT sensor. Leave empty for browser storage or automatic native timer selection."
         allow-custom-entity
-        .includeDomains=${["input_text", "text", "sensor"]}
+        .includeDomains=${["timer", "input_text", "text", "sensor"]}
       ></ha-entity-picker>
 
       <div class="storage-info">
@@ -5791,16 +6262,7 @@ _pinnedTimerValueChanged(ev, index) {
         <small class="storage-description">${this._getStorageDescription(storageType)}</small>
       </div>
 
-      <div class="divider"></div>
-
-      <label class="toggle-row">
-        <ha-switch .checked=${this._config.auto_voice_pe === true} .configValue=${"auto_voice_pe"} @change=${this._valueChanged}></ha-switch>
-        <div class="toggle-text">
-          <span class="toggle-title">Auto-detect Voice PE timers</span>
-          <span class="toggle-desc">Mirror Voice PE timers automatically when present on the system.</span>
-        </div>
-      </label>
-
+      <p class="hint advanced">Custom MQTT topics, storage namespaces and compatibility options can be set in YAML. See the configuration guide for storage setup.</p>
       ${this._config.auto_voice_pe === true ? b`
         <ha-entity-picker
           class="advanced"
@@ -5810,17 +6272,43 @@ _pinnedTimerValueChanged(ev, index) {
           .includeDomains=${["text", "input_text"]}
           allow-custom-entity
           label="Voice PE control entity"
-          help-text="input_text/text entity Voice PE writes timer commands to."
-          @value-changed=${this._valueChanged}
+          help-text="Text/input_text entity that receives commands for local Voice PE timers."
+          @value-changed=${this._detailValueChanged}
         ></ha-entity-picker>
       ` : ""}
     `;
 
+    const discoveryContent = b`
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.auto_discover_alexa === true} .configValue=${"auto_discover_alexa"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Auto-discover Alexa timers</span>
+          <span class="toggle-desc">Requires the Alexa Media Player integration.</span>
+        </div>
+      </label>
+
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.auto_discover_google === true} .configValue=${"auto_discover_google"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Auto-discover Google Home timers</span>
+          <span class="toggle-desc">Requires the Google Home integration.</span>
+        </div>
+      </label>
+
+      <label class="toggle-row">
+        <ha-switch .checked=${this._config.auto_voice_pe === true} .configValue=${"auto_voice_pe"} @change=${this._valueChanged}></ha-switch>
+        <div class="toggle-text">
+          <span class="toggle-title">Auto-detect Voice PE timers</span>
+          <span class="toggle-desc">Requires the Voice PE sensor setup. Used when the entity list is empty.</span>
+        </div>
+      </label>
+    `;
+
     const entitiesContent = b`
-      <p class="hint">Bind to <code>timer.*</code>, Alexa, Voice PE, helper or sensor entities. Mode is auto-detected by default.</p>
+      <p class="hint">Leave empty for timers created in this browser, or select existing Home Assistant timer entities. Use the toggles below to discover speaker timers.</p>
 
       ${(this._config.entities || []).length === 0
-        ? b`<div class="no-entities">No entities configured. Use the button below to add timer entities.</div>`
+        ? ""
         : (this._config.entities || []).map((entityConf, index) => {
             const entityId = typeof entityConf === "string" ? entityConf : (entityConf?.entity || "");
             const conf = typeof entityConf === "string" ? {} : (entityConf || {});
@@ -5829,25 +6317,27 @@ _pinnedTimerValueChanged(ev, index) {
             const isAuto = !conf.mode || conf.mode === "auto";
             const isTimestampMode = conf.mode === "timestamp" || (isAuto && detectedMode === "timestamp");
             return b`
-              <div class="entity-editor">
+              <div class="entity-editor" data-search-terms=${entityId}>
                 ${entityPickerReady ? b`
                   <ha-entity-picker
                     .hass=${this.hass}
                     .value=${entityId}
                     .configValue=${"entity"}
+                    label="Timer entity"
                     allow-custom-entity
                     @value-changed=${(e) => this._entityValueChanged(e, index)}
                   ></ha-entity-picker>
                 ` : b`
                   ${this._tf({ label: "Entity (type while picker loads)", value: entityId, configValue: "entity", change: (e) => this._entityValueChanged(e, index) })}
                 `}
-                <div class="entity-options">
+                <div class="entity-options advanced">
                   <div class="row" style="align-items:flex-start;">
                     <div style="flex:1;">
                       <ha-select label="Mode" naturalMenuWidth fixedMenuPosition .value=${conf.mode || "auto"} .configValue=${"mode"} .options=${SELECT_OPTIONS.entity_mode}
                         @selected=${(e) => { e.stopPropagation(); this._entityValueChanged(e, index); }} @closed=${(e) => e.stopPropagation()}>
                         <mwc-list-item value="auto">Auto (Default)</mwc-list-item>
                         <mwc-list-item value="alexa">Alexa</mwc-list-item>
+                        <mwc-list-item value="google">Google Home</mwc-list-item>
                         <mwc-list-item value="timer">Timer</mwc-list-item>
                         <mwc-list-item value="voice_pe">Voice PE</mwc-list-item>
                         <mwc-list-item value="helper">Helper (input_text/text)</mwc-list-item>
@@ -5957,11 +6447,12 @@ _pinnedTimerValueChanged(ev, index) {
         <ha-icon icon="mdi:plus"></ha-icon>
         <span>Add timer entity</span>
       </button>
+      ${discoveryContent}
     `;
 
     const actionsContent = b`
       <p class="hint">
-        Standard Home Assistant action options. Row-level actions override card-level. Leave blank to inherit, or pick "No action" to suppress the built-in default (tap toggles pause/resume).
+        Supported Home Assistant-style actions. Entity-row actions override card-level. Leave blank to inherit, or pick "No action" to suppress the default. An idle native timer opens its duration editor on tap; set Toggle explicitly for pause/resume on supported timers.
       </p>
       <ha-selector
         .hass=${this.hass}
@@ -5992,20 +6483,26 @@ _pinnedTimerValueChanged(ev, index) {
       ${this._renderButtonsEditor(this._config?.buttons, (next) => this._setCardButtons(next))}
     `;
 
+    const isSearching = !!this._searchQuery?.trim();
     const panel = (key, header, icon, content, opts = {}) => {
-      const isSearching = !!(this._searchQuery && this._searchQuery.trim());
-      const expanded = isSearching ? true : (opts.expanded ?? !!this._expandedSections?.[key]);
+      const expanded = isSearching || !!this._expandedSections?.[key];
       const panelCls = opts.advanced ? "advanced" : "";
       return b`
         <ha-expansion-panel
           class=${panelCls}
+          data-section=${key}
           outlined
-          ?expanded=${expanded}
-          @expanded-changed=${(e) => { this._expandedSections = { ...(this._expandedSections || {}), [key]: !!e.detail?.expanded }; }}
+          ?expanded=${l(expanded)}
+          @expanded-changed=${(e) => {
+            if (isSearching || e.target !== e.currentTarget) return;
+            const value = !!e.detail?.expanded;
+            if (!!this._expandedSections?.[key] !== value) this._expandedSections = { ...this._expandedSections, [key]: value };
+          }}
         >
           <div slot="header" class="panel-header">
             <ha-icon class="panel-header-icon" icon=${icon}></ha-icon>
             <span class="panel-header-label">${header}</span>
+            ${opts.advanced ? b`<span class="advanced-badge">Advanced</span>` : ""}
           </div>
           <div class="panel-body">${content}</div>
         </ha-expansion-panel>
@@ -6015,24 +6512,27 @@ _pinnedTimerValueChanged(ev, index) {
     return b`
       <div class="editor-toolbar">
         ${this._renderSearchInput()}
-        <ha-formfield label="Show advanced options" class="advanced-toggle">
+        <ha-formfield label="Advanced" class="advanced-toggle" title="Remembered in this browser">
           <ha-switch
+            data-editor-advanced
+            aria-label="Advanced editor options"
             .checked=${this._showAdvanced}
-            @change=${(e) => { this._showAdvanced = !!e.target.checked; }}
+            @change=${(e) => this._setEditorMode(!!e.target.checked)}
           ></ha-switch>
         </ha-formfield>
       </div>
-      <div class="card-config ${this._showAdvanced ? "show-advanced" : ""}">
-        ${panel("appearance", "Appearance", "mdi:palette", appearanceContent, { expanded: this._expandedSections?.appearance ?? true })}
-        ${panel("entities", "Timer entities", "mdi:format-list-bulleted", entitiesContent, { expanded: this._expandedSections?.entities ?? true })}
-        ${panel("sorting", "Sorting", "mdi:sort", sortingContent)}
-        ${panel("timeFormat", "Time format", "mdi:clock-outline", timeFormatContent)}
-        ${panel("defaults", "Timer defaults & behavior", "mdi:cog-outline", defaultsContent)}
-        ${panel("presets", "Quick-start presets", "mdi:flash-outline", presetsContent)}
-        ${panel("pinned", "Pinned timers", "mdi:pin-outline", pinnedContent)}
-        ${panel("audio", "Audio notifications", "mdi:volume-high", audioContent)}
-        ${panel("notify", "Push notification fallback", "mdi:bell-ring-outline", notifyContent)}
-        ${panel("storage", "Storage & integrations", "mdi:database-outline", storageContent)}
+      <p class="editor-mode-hint">${isSearching ? "Searching all settings, including advanced options." : this._showAdvanced ? "All settings shown. Switch off Advanced for the essentials." : "Essentials only. Advanced settings stay active when hidden."}</p>
+      <p class="hint search-empty" role="status" hidden>No matching settings. Try a section name or enable the related feature first.</p>
+      <div class="card-config ${this._showAdvanced ? "show-advanced" : ""} ${isSearching ? "is-searching" : ""}">
+        ${panel("entities", "Timer sources", "mdi:format-list-bulleted", entitiesContent)}
+        ${panel("storage", "Timer storage", "mdi:database-outline", storageContent)}
+        ${panel("appearance", "Appearance", "mdi:palette", b`${appearanceContent}${displayContent}${timeFormatContent}${sortingContent}`)}
+        ${panel("input", "Timer input", "mdi:dialpad", inputContent)}
+        ${panel("styling", "Icons & colors", "mdi:palette-outline", stylingContent, { advanced: true })}
+        ${panel("defaults", "When timers finish", "mdi:timer-check-outline", defaultsContent, { advanced: true })}
+        ${panel("pinned", "Pinned timers", "mdi:pin-outline", pinnedContent, { advanced: true })}
+        ${panel("audio", "Audio notifications", "mdi:volume-high", audioContent, { advanced: true })}
+        ${panel("notify", "Push notifications", "mdi:bell-ring-outline", notifyContent, { advanced: true })}
         ${panel("actions", "Actions", "mdi:gesture-tap", actionsContent, { advanced: true })}
       </div>
     `;
@@ -6040,6 +6540,7 @@ _pinnedTimerValueChanged(ev, index) {
 
   _getStorageDisplayName(storage) {
     switch (storage) {
+      case "timer": return "Native Home Assistant Timer";
       case "local": return "Local Browser Storage";
       case "helper": return "Helper Entities";
       case "mqtt": return "MQTT";
@@ -6049,21 +6550,23 @@ _pinnedTimerValueChanged(ev, index) {
 
   _getStorageDescription(storage) {
     switch (storage) {
+      case "timer": return "New timers use timer.start on the selected Home Assistant timer entity.";
       case "local": return "Timers are stored locally in your browser and persist across sessions.";
       case "helper": return "Timers are stored in Home Assistant helper entities (input_text/text).";
-      case "mqtt": return "Timers are stored via MQTT for cross-device sync. Select your MQTT sensor in 'Default Timer Storage'.";
+      case "mqtt": return "Timers are stored via MQTT for cross-device sync. The selected MQTT sensor or YAML topic configuration is used.";
       default: return "";
     }
   }
 
   static get styles() {
-    return i$4`
+    return i$5`
       :host { display: block; }
 
       .card-config { display: flex; flex-direction: column; gap: 12px; }
 
       .editor-toolbar {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
         gap: 12px;
@@ -6089,10 +6592,12 @@ _pinnedTimerValueChanged(ev, index) {
         flex-shrink: 0;
       }
 
-      /* Hide fields marked .advanced unless the "Show advanced" toggle is on. */
-      .card-config:not(.show-advanced) .advanced { display: none !important; }
-      /* Hide fields and sections filtered out by the search query. */
-      [data-search-hidden] { display: none !important; }
+      .card-config:not(.show-advanced):not(.is-searching) .advanced { display: none !important; }
+      [data-search-hidden], [hidden] { display: none !important; }
+      .editor-mode-hint { margin: 0 4px 12px; font-size: 12px; color: var(--secondary-text-color); }
+      .search-empty { margin: 16px 4px; }
+      .advanced-badge { font-size: 10px; font-weight: 500; color: var(--secondary-text-color); border: 1px solid var(--divider-color); border-radius: 10px; padding: 1px 6px; }
+      .settings-group { display: flex; flex-direction: column; gap: 16px; }
 
       ha-expansion-panel {
         --expansion-panel-summary-padding: 0 16px;
@@ -6133,10 +6638,11 @@ _pinnedTimerValueChanged(ev, index) {
       .row,
       .side-by-side {
         display: flex;
+        flex-wrap: wrap;
         gap: 12px;
       }
       .row > *,
-      .side-by-side > * { flex: 1; min-width: 0; }
+      .side-by-side > * { flex: 1 1 150px; min-width: 0; }
 
       /* DO NOT force display:block on these. HA's ha-textfield uses
          :host { display: inline-flex } internally; overriding it breaks its
@@ -6230,6 +6736,7 @@ _pinnedTimerValueChanged(ev, index) {
         border: 1px solid var(--divider-color);
         border-radius: 8px;
         padding: 12px;
+        padding-inline-end: 48px;
         position: relative;
       }
       .entity-options {
