@@ -2722,3 +2722,45 @@
         message: No rain forecast overnight - no need to bring anything in from the
           porch tonight.
   mode: single
+- id: '1789390391943'
+  alias: Pre-cool on afternoon commute arrival
+  description: When Matthew's iPhone enters the Grove St PATH or Paulus Hook Ferry
+    zone after 2pm, set the Ecobee to cool at 72F with the fan running continuously
+    (indefinite hold). The 2pm time condition keeps it from firing on the outbound
+    morning commute. A gps_accuracy guard rejects low-quality fixes that could false-trigger
+    the zone.
+  triggers:
+  - entity_id: device_tracker.matthews_iphone_17_pro
+    event: enter
+    id: grove_st
+    trigger: zone
+    zone: zone.grove_st_path
+  - entity_id: device_tracker.matthews_iphone_17_pro
+    event: enter
+    id: paulus_hook
+    trigger: zone
+    zone: zone.paulus_hook_ferry
+  conditions:
+  - after: '14:00:00'
+    condition: time
+  - attribute: gps_accuracy
+    below: 100
+    condition: numeric_state
+    entity_id: device_tracker.matthews_iphone_17_pro
+  actions:
+  - action: climate.set_hvac_mode
+    data:
+      hvac_mode: cool
+    target:
+      entity_id: climate.home_apartment_thermostat
+  - action: climate.set_temperature
+    data:
+      temperature: 72
+    target:
+      entity_id: climate.home_apartment_thermostat
+  - action: climate.set_fan_mode
+    data:
+      fan_mode: 'on'
+    target:
+      entity_id: climate.home_apartment_thermostat
+  mode: single
