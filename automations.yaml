@@ -2685,3 +2685,32 @@
       which is not in the service registry — every push failed silently.'
   mode: queued
   max: 10
+- id: '1789352627503'
+  alias: Overnight rain - bring porch items inside
+  description: At 9 PM, checks the WeatherKit hourly forecast for overnight rain through
+    8 AM. If rain is expected, notifies Matthew's iPhone to bring sensitive items
+    in from the porch.
+  triggers:
+  - trigger: time
+    at: '21:00:00'
+  actions:
+  - action: weather.get_forecasts
+    target:
+      entity_id: weather.aviva_weather
+    data:
+      type: hourly
+    response_variable: forecast_data
+  - variables:
+      rain_hours: '{{ forecast_data[''weather.aviva_weather''].forecast | selectattr(''datetime'',
+        ''lt'', (now().replace(hour=8, minute=0, second=0, microsecond=0) + timedelta(days=1)).isoformat())
+        | selectattr(''condition'', ''in'', [''rainy'', ''pouring'', ''lightning-rainy'',
+        ''hail'', ''snowy-rainy'']) | list }}'
+  - condition: template
+    value_template: '{{ rain_hours | count > 0 }}'
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Rain expected overnight
+      message: Rain is forecast starting around {{ as_timestamp(rain_hours[0].datetime)
+        | timestamp_custom('%-I %p') }}. Bring anything sensitive in from the porch
+        so it doesn't get wet.
+  mode: single
