@@ -2679,15 +2679,12 @@
     - action: notify.mobile_app_matthews_iphone
       data:
         title: Rain expected overnight
-        message: Rain is forecast starting around {{ as_timestamp(rain_hours[0].datetime)
+        message: "\U0001F327️ Rain is forecast starting around {{ as_timestamp(rain_hours[0].datetime)
           | timestamp_custom('%-I %p') }}. Bring anything sensitive in from the porch
-          so it doesn't get wet.
-    else:
-    - action: notify.mobile_app_matthews_iphone
-      data:
-        title: Porch all clear
-        message: No rain forecast overnight - no need to bring anything in from the
-          porch tonight.
+          so it doesn't get wet."
+        data:
+          push:
+            interruption-level: critical
   mode: single
 - id: '1789390391943'
   alias: Pre-cool on afternoon commute arrival
