@@ -1746,31 +1746,6 @@
       title: Eating Mode Off
       message: Got it, eating mode cancelled.
   mode: single
-- id: '1774978513749'
-  alias: 'Climate: Apartment Fan On with Cooling'
-  description: Turns on the Apartment Fan helper when the thermostat enters cool mode.
-  triggers:
-  - platform: state
-    entity_id: climate.living_room
-    to: cool
-  actions:
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.apartment_fan
-  mode: single
-- id: '1774978519324'
-  alias: 'Climate: Apartment Fan Off When Not Cooling'
-  description: Turns off the Apartment Fan helper when the thermostat turns off (e.g.
-    when leaving home).
-  triggers:
-  - platform: state
-    entity_id: climate.living_room
-    to: 'off'
-  actions:
-  - action: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.apartment_fan
-  mode: single
 - id: '1775968647956'
   alias: Spooky Lights on Song Change
   description: When a song changes on the Apple TV, set all non-living-room WLED strip
@@ -2727,4 +2702,36 @@
       fan_mode: 'on'
     target:
       entity_id: climate.home_apartment_thermostat
+  mode: single
+- id: '1790040629602'
+  alias: 'Climate: Apartment Fan Toggle On'
+  description: When the Apartment Fan helper is turned on (e.g. from HomeKit), set
+    the Ecobee thermostat fan mode to 'on'. Workaround for the HomeKit bridge fan
+    control not passing commands through.
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.apartment_fan
+    to: 'on'
+  actions:
+  - action: climate.set_fan_mode
+    target:
+      entity_id: climate.home_apartment_thermostat
+    data:
+      fan_mode: 'on'
+  mode: single
+- id: '1790040631469'
+  alias: 'Climate: Apartment Fan Toggle Off'
+  description: When the Apartment Fan helper is turned off (e.g. from HomeKit), set
+    the Ecobee thermostat fan mode back to 'auto'. Workaround for the HomeKit bridge
+    fan control not passing commands through.
+  triggers:
+  - trigger: state
+    entity_id: input_boolean.apartment_fan
+    to: 'off'
+  actions:
+  - action: climate.set_fan_mode
+    target:
+      entity_id: climate.home_apartment_thermostat
+    data:
+      fan_mode: auto
   mode: single
