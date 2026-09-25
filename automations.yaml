@@ -492,60 +492,6 @@
     data:
       entry_id: 01K6795C0QFJXVTKS517FHT203
   mode: single
-- id: '1753323920085'
-  alias: 'Climate: Pre-arrival Conditioning'
-  description: Restores thermostat mode, temperature, and fan_mode to whatever was
-    saved when leaving home.
-  triggers:
-  - platform: zone
-    entity_id: device_tracker.matthews_iphone_17_pro
-    zone: zone.home
-    event: enter
-  conditions: []
-  actions:
-  - action: weather.get_forecasts
-    data:
-      type: daily
-    target:
-      entity_id: weather.37_41101472054772_121_8889136975829
-    response_variable: forecast_data
-  - variables:
-      forecast_high: '{{ forecast_data[''weather.37_41101472054772_121_8889136975829''][''forecast''][0][''temperature'']
-        | float(0) }}'
-      saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
-      saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
-      saved_fan: '{{ states(''input_select.ac_previous_fan_mode'') }}'
-  - choose:
-    - conditions:
-      - condition: state
-        entity_id: input_boolean.ac_was_on_when_left
-        state: 'on'
-      sequence:
-      - action: climate.set_temperature
-        data:
-          temperature: '{{ saved_temp }}'
-          hvac_mode: '{{ saved_mode }}'
-        target:
-          entity_id: climate.living_room
-      - action: climate.set_fan_mode
-        data:
-          fan_mode: '{{ saved_fan }}'
-        target:
-          entity_id: climate.living_room
-      - action: notify.mobile_app_matthews_iphone_17_pro
-        data:
-          title: Welcome Home
-          message: 'Restored {{ saved_mode }} at {{ saved_temp }}F, fan: {{ saved_fan
-            }}. Currently {{ state_attr(''climate.living_room'', ''current_temperature'')
-            }}F inside. (Forecast high: {{ forecast_high | round(0) }}F)'
-    default:
-    - action: notify.mobile_app_matthews_iphone_17_pro
-      data:
-        title: Welcome Home
-        message: 'AC was off when you left. Currently {{ state_attr(''climate.living_room'',
-          ''current_temperature'') }}F inside. (Forecast high: {{ forecast_high |
-          round(0) }}F)'
-  mode: single
 - id: '1766321188342'
   alias: 'Presence: Away Mode'
   description: Disables automations when away mode is enabled. When re-enabling, re-applies
@@ -702,83 +648,6 @@
       entity_id:
       - switch.tapo_power_strip_49c7_smart_plug_1
       - switch.tapo_power_strip_49c7_smart_plug_4
-  mode: single
-- id: '1764891750525'
-  alias: 'Safety: Soldering Iron Alert'
-  description: Sends critical notification when soldering iron is left on, auto-turns
-    off after 60s if no response
-  triggers:
-  - trigger: state
-    entity_id:
-    - switch.tapo_smart_plug_2
-    to:
-    - 'on'
-    for:
-      hours: 0
-      minutes: 0
-      seconds: 0
-  conditions: []
-  actions:
-  - delay:
-      hours: 0
-      minutes: 5
-      seconds: 0
-      milliseconds: 0
-  - if:
-    - condition: state
-      entity_id: switch.tapo_smart_plug_2
-      state:
-      - 'on'
-    then:
-    - action: notify.mobile_app_matthews_iphone_17_pro
-      data:
-        title: Soldering Iron Left On
-        message: Respond OK to this notification to keep it on; otherwise, it will
-          be shut off in 60 seconds.
-        data:
-          push:
-            interruption-level: critical
-          actions:
-          - action: KEEP_IRON_ON
-            title: Keep On
-          - action: TURN_OFF_NOW
-            title: Turn Off Now
-    - delay:
-        seconds: 60
-    - if:
-      - condition: state
-        entity_id: switch.tapo_smart_plug_2
-        state:
-        - 'on'
-      then:
-      - action: switch.turn_off
-        data: {}
-        target:
-          entity_id: switch.tapo_smart_plug_2
-      - action: notify.mobile_app_matthews_iphone_17_pro
-        data:
-          title: Soldering Iron Auto-Off
-          message: Soldering iron has been automatically turned off for safety.
-  mode: single
-- id: '1764892218525'
-  alias: 'Safety: Soldering Iron Keep On'
-  description: Handles Keep On notification action for soldering iron
-  triggers:
-  - trigger: event
-    event_type: mobile_app_notification_action
-    event_data:
-      action: KEEP_IRON_ON
-  conditions: []
-  actions:
-  - action: automation.trigger
-    target:
-      entity_id: automation.soldering_iron_safety_notification
-    data:
-      skip_condition: true
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: Soldering Iron Timer Reset
-      message: Timer reset. You have another 5 minutes.
   mode: single
 - id: '1765080604283'
   alias: 'Safety: Soldering Pegboard Light'
@@ -1088,42 +957,6 @@
               destructive: true
   mode: parallel
   max: 10
-- id: '1763173437229'
-  alias: 'Notification: Minecraft Server'
-  description: Notifies when players join the Minecraft server
-  triggers:
-  - trigger: numeric_state
-    entity_id:
-    - sensor.minecraft_server_player_count
-    above: 0
-  conditions: []
-  actions:
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: Minecraft Server
-      message: A player joined! {{ states('sensor.minecraft_server_player_count')
-        }} player(s) online.
-  mode: single
-- id: '1758577368189'
-  alias: 'Notification: Kitchen Cleanup Cancel'
-  description: Handles cancel action for kitchen vacuum cleanup notification
-  triggers:
-  - trigger: event
-    event_type: mobile_app_notification_action
-    event_data:
-      action: CANCEL_VACUUM
-  conditions: []
-  actions:
-  - action: input_boolean.turn_off
-    data: {}
-    target:
-      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: Auto Kitchen Vacuum Cleanup Cancelled
-      message: The vacuum won't clean up the kitchen this time around, as per your
-        request.
-  mode: single
 - id: '1762487108563'
   alias: 'Lighting: Effect Handler'
   description: Changes light effects based on Apple TV media type (music vs video).
@@ -1483,50 +1316,6 @@
     target:
       entity_id: input_boolean.adaptive_lighting_paused
   mode: single
-- id: '1773594551937'
-  alias: 'Lighting: Auto Eating Mode On'
-  description: 'Automatically activates eating mode when: Apple TV starts playing
-    AND kitchen motion sensor shows recent activity (cooking likely happened) AND
-    eating mode is not already on AND user hasn''t manually cancelled this session.
-    Only runs after sunset (when adaptive lighting has shifted warm).'
-  triggers:
-  - trigger: state
-    entity_id: media_player.matthews_bedroom_2
-    to: playing
-  conditions:
-  - condition: state
-    entity_id: input_boolean.eating_mode
-    state: 'off'
-  - condition: state
-    entity_id: input_boolean.eating_mode_user_cancelled
-    state: 'off'
-  - condition: template
-    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
-      != ''music'' }}'
-  - condition: numeric_state
-    entity_id: sensor.kitchen_motion_sensor_trigger_last_15m
-    above: 3
-  - condition: or
-    conditions:
-    - condition: sun
-      after: sunset
-    - condition: sun
-      before: sunrise
-  actions:
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.eating_mode
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: "\U0001F37D️ Eating Mode On"
-      message: Detected kitchen activity + Apple TV playing. Eating mode activated.
-        Tap to cancel.
-      data:
-        actions:
-        - action: CANCEL_EATING_MODE
-          title: Turn Off
-        channel: Home Notifications
-  mode: single
 - id: '1773594557138'
   alias: 'Lighting: Auto Eating Mode Off'
   description: Turns off eating mode when Apple TV stops for 5 mins, eating mode has
@@ -1567,28 +1356,6 @@
     - action: input_boolean.turn_off
       target:
         entity_id: input_boolean.eating_mode
-  mode: single
-- id: '1773594562680'
-  alias: 'Notification: Cancel Eating Mode'
-  description: Handles the cancel notification action for eating mode. Sets a user-cancelled
-    flag so auto-detect won't re-trigger for this session.
-  triggers:
-  - trigger: event
-    event_type: mobile_app_notification_action
-    event_data:
-      action: CANCEL_EATING_MODE
-  conditions: []
-  actions:
-  - action: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.eating_mode
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.eating_mode_user_cancelled
-  - action: notify.mobile_app_matthews_iphone_17_pro
-    data:
-      title: Eating Mode Off
-      message: Got it, eating mode cancelled.
   mode: single
 - id: '1775968647956'
   alias: Spooky Lights on Song Change
@@ -1999,34 +1766,6 @@
     metadata: {}
     data: {}
   mode: single
-- id: ps5_pro_watch_price_drop
-  alias: PS5 Pro Watch — Price Drop Push
-  description: Pushes a notification when the PS5 Pro price watcher (Playwright on
-    docker.home) POSTs a price drop to the webhook.
-  triggers:
-  - platform: webhook
-    webhook_id: ps5_pro_watch
-    local_only: false
-    allowed_methods:
-    - POST
-  conditions: []
-  actions:
-  - data:
-      title: "{{ trigger.json.title | default('\U0001F3AE PS5 Pro price drop', true)
-        }}"
-      message: '{{ trigger.json.message | default(''A PS5 Pro price changed.'', true)
-        }}'
-      data:
-        push:
-          interruption-level: time-sensitive
-          sound: default
-        tag: ps5-pro
-        channel: PS5 Pro
-        importance: high
-        notification_icon: mdi:sony-playstation
-        color: '#003791'
-    action: notify.mobile_app_matthews_iphone_17_pro
-  mode: queued
 - id: '1788130220089'
   alias: 'Live Activity: Download Tracker (Radarr/Sonarr)'
   description: Receives Grab and Import webhooks from Radarr and Sonarr. Grab starts
@@ -2579,6 +2318,330 @@
     data:
       fan_mode: auto
   mode: single
+- id: '1753323920085'
+  alias: 'Climate: Pre-arrival Conditioning'
+  description: Restores thermostat mode, temperature, and fan_mode to whatever was
+    saved when leaving home.
+  triggers:
+  - entity_id: device_tracker.matthews_iphone_17_pro
+    zone: zone.home
+    event: enter
+    trigger: zone
+  conditions: []
+  actions:
+  - action: weather.get_forecasts
+    data:
+      type: daily
+    target:
+      entity_id: weather.37_41101472054772_121_8889136975829
+    response_variable: forecast_data
+  - variables:
+      forecast_high: '{{ forecast_data[''weather.37_41101472054772_121_8889136975829''][''forecast''][0][''temperature'']
+        | float(0) }}'
+      saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
+      saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+      saved_fan: '{{ states(''input_select.ac_previous_fan_mode'') }}'
+  - choose:
+    - conditions:
+      - condition: state
+        entity_id: input_boolean.ac_was_on_when_left
+        state: 'on'
+      sequence:
+      - action: climate.set_temperature
+        data:
+          temperature: '{{ saved_temp }}'
+          hvac_mode: '{{ saved_mode }}'
+        target:
+          entity_id: climate.living_room
+      - action: climate.set_fan_mode
+        data:
+          fan_mode: '{{ saved_fan }}'
+        target:
+          entity_id: climate.living_room
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: Welcome Home
+          message: 'Restored {{ saved_mode }} at {{ saved_temp }}F, fan: {{ saved_fan
+            }}. Currently {{ state_attr(''climate.living_room'', ''current_temperature'')
+            }}F inside. (Forecast high: {{ forecast_high | round(0) }}F)'
+        note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+          not in the service registry — pushes failed silently.'
+    default:
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        title: Welcome Home
+        message: 'AC was off when you left. Currently {{ state_attr(''climate.living_room'',
+          ''current_temperature'') }}F inside. (Forecast high: {{ forecast_high |
+          round(0) }}F)'
+  mode: single
+- id: '1764891750525'
+  alias: 'Safety: Soldering Iron Alert'
+  description: Sends critical notification when soldering iron is left on, auto-turns
+    off after 60s if no response
+  triggers:
+  - trigger: state
+    entity_id:
+    - switch.tapo_smart_plug_2
+    to:
+    - 'on'
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 0
+  conditions: []
+  actions:
+  - delay:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - if:
+    - condition: state
+      entity_id: switch.tapo_smart_plug_2
+      state:
+      - 'on'
+    then:
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        title: Soldering Iron Left On
+        message: Respond OK to this notification to keep it on; otherwise, it will
+          be shut off in 60 seconds.
+        data:
+          push:
+            interruption-level: critical
+          actions:
+          - action: KEEP_IRON_ON
+            title: Keep On
+          - action: TURN_OFF_NOW
+            title: Turn Off Now
+      note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+        not in the service registry — this safety alert failed silently.'
+    - delay:
+        seconds: 60
+    - if:
+      - condition: state
+        entity_id: switch.tapo_smart_plug_2
+        state:
+        - 'on'
+      then:
+      - action: switch.turn_off
+        data: {}
+        target:
+          entity_id: switch.tapo_smart_plug_2
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: Soldering Iron Auto-Off
+          message: Soldering iron has been automatically turned off for safety.
+  mode: single
+- id: '1764892218525'
+  alias: 'Safety: Soldering Iron Keep On'
+  description: Handles Keep On notification action for soldering iron
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: KEEP_IRON_ON
+  conditions: []
+  actions:
+  - action: automation.trigger
+    target:
+      entity_id: automation.soldering_iron_safety_notification
+    data:
+      skip_condition: true
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Soldering Iron Timer Reset
+      message: Timer reset. You have another 5 minutes.
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: single
+- id: '1763173437229'
+  alias: 'Notification: Minecraft Server'
+  description: Notifies when players join the Minecraft server
+  triggers:
+  - trigger: numeric_state
+    entity_id:
+    - sensor.minecraft_server_player_count
+    above: 0
+  conditions: []
+  actions:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Minecraft Server
+      message: A player joined! {{ states('sensor.minecraft_server_player_count')
+        }} player(s) online.
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: single
+- id: '1758577368189'
+  alias: 'Notification: Kitchen Cleanup Cancel'
+  description: Handles cancel action for kitchen vacuum cleanup notification
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: CANCEL_VACUUM
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Auto Kitchen Vacuum Cleanup Cancelled
+      message: The vacuum won't clean up the kitchen this time around, as per your
+        request.
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: single
+- id: '1773594551937'
+  alias: 'Lighting: Auto Eating Mode On'
+  description: 'Automatically activates eating mode when: Apple TV starts playing
+    AND kitchen motion sensor shows recent activity (cooking likely happened) AND
+    eating mode is not already on AND user hasn''t manually cancelled this session.
+    Only runs after sunset (when adaptive lighting has shifted warm).'
+  triggers:
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    to: playing
+  conditions:
+  - condition: state
+    entity_id: input_boolean.eating_mode
+    state: 'off'
+  - condition: state
+    entity_id: input_boolean.eating_mode_user_cancelled
+    state: 'off'
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+      != ''music'' }}'
+  - condition: numeric_state
+    entity_id: sensor.kitchen_motion_sensor_trigger_last_15m
+    above: 3
+  - condition: or
+    conditions:
+    - condition: sun
+      after: sunset
+    - condition: sun
+      before: sunrise
+  actions:
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.eating_mode
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: "\U0001F37D️ Eating Mode On"
+      message: Detected kitchen activity + Apple TV playing. Eating mode activated.
+        Tap to cancel.
+      data:
+        actions:
+        - action: CANCEL_EATING_MODE
+          title: Turn Off
+        channel: Home Notifications
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: single
+- id: '1773594562680'
+  alias: 'Notification: Cancel Eating Mode'
+  description: Handles the cancel notification action for eating mode. Sets a user-cancelled
+    flag so auto-detect won't re-trigger for this session.
+  triggers:
+  - trigger: event
+    event_type: mobile_app_notification_action
+    event_data:
+      action: CANCEL_EATING_MODE
+  conditions: []
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.eating_mode
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.eating_mode_user_cancelled
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Eating Mode Off
+      message: Got it, eating mode cancelled.
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: single
+- id: ps5_pro_watch_price_drop
+  alias: PS5 Pro Watch — Price Drop Push
+  description: Pushes a notification when the PS5 Pro price watcher (Playwright on
+    docker.home) POSTs a price drop to the webhook.
+  triggers:
+  - webhook_id: ps5_pro_watch
+    local_only: false
+    allowed_methods:
+    - POST
+    trigger: webhook
+  conditions: []
+  actions:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: "{{ trigger.json.title | default('\U0001F3AE PS5 Pro price drop', true)
+        }}"
+      message: '{{ trigger.json.message | default(''A PS5 Pro price changed.'', true)
+        }}'
+      data:
+        push:
+          interruption-level: time-sensitive
+          sound: default
+        tag: ps5-pro
+        channel: PS5 Pro
+        importance: high
+        notification_icon: mdi:sony-playstation
+        color: '#003791'
+    note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
+      not in the service registry — pushes failed silently.'
+  mode: queued
+- id: weekly_full_clean
+  alias: 'Cleaning: Weekly Full Clean'
+  description: Full apartment vacuum and mop every Tuesday at noon
+  triggers:
+  - at: '12:00:00'
+    trigger: time
+  conditions:
+  - condition: time
+    weekday:
+    - tue
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  actions:
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Weekly Full Clean Starting
+      message: Vacuum + mop for all rooms
+  - action: vacuum.send_command
+    target:
+      entity_id: vacuum.vaccum
+    data:
+      command: set_properties
+      params:
+      - siid: 4
+        piid: 4
+        value: 2
+  - delay:
+      seconds: 2
+  - action: dreame_vacuum.vacuum_clean_segment
+    data:
+      suction_level: 3
+      segments:
+      - 1
+      - 2
+      - 3
+    target:
+      entity_id: vacuum.vaccum
+    note: 'Segments remapped 2026-09-25 after the move: new Map 1 has only 1=Dining
+      Hall, 2=Primary Bedroom, 3=Kitchen. Previous value [1..7] was the old apartment''s
+      map and those ids no longer exist.'
+  - action: input_datetime.set_datetime
+    data:
+      timestamp: '{{ now().timestamp() }}'
+    target:
+      entity_id: input_datetime.last_mop_use
+  mode: single
 - id: vacuum_after_cooking
   alias: 'Cleaning: Vacuum After Cooking'
   description: Schedules vacuum to clean kitchen after extended cooking activity.
@@ -2654,9 +2717,11 @@
         data:
           suction_level: 3
           segments:
-          - 6
+          - 3
         target:
           entity_id: vacuum.vaccum
+        note: 'Segment remapped 2026-09-25 after the move: Kitchen is now id 3 on
+          the new Map 1 (was 6 in the old apartment).'
       - action: input_datetime.set_datetime
         data:
           timestamp: '{{ now().timestamp() }}'
@@ -2678,7 +2743,7 @@
         data:
           suction_level: 3
           segments:
-          - 6
+          - 3
         target:
           entity_id: vacuum.vaccum
     - action: input_boolean.turn_off
@@ -2686,52 +2751,4 @@
         entity_id: input_boolean.vacuum_will_auto_clean_kitchen
     - delay:
         minutes: 15
-  mode: single
-- id: weekly_full_clean
-  alias: 'Cleaning: Weekly Full Clean'
-  description: Full apartment vacuum and mop every Tuesday at noon
-  triggers:
-  - at: '12:00:00'
-    trigger: time
-  conditions:
-  - condition: time
-    weekday:
-    - tue
-  - condition: state
-    entity_id: input_boolean.iphone_sleep_focus_mode
-    state: 'off'
-  actions:
-  - action: notify.mobile_app_matthews_iphone
-    data:
-      title: Weekly Full Clean Starting
-      message: Vacuum + mop for all rooms
-  - action: vacuum.send_command
-    target:
-      entity_id: vacuum.vaccum
-    data:
-      command: set_properties
-      params:
-      - siid: 4
-        piid: 4
-        value: 2
-  - delay:
-      seconds: 2
-  - action: dreame_vacuum.vacuum_clean_segment
-    data:
-      suction_level: 3
-      segments:
-      - 1
-      - 2
-      - 3
-      - 4
-      - 5
-      - 6
-      - 7
-    target:
-      entity_id: vacuum.vaccum
-  - action: input_datetime.set_datetime
-    data:
-      timestamp: '{{ now().timestamp() }}'
-    target:
-      entity_id: input_datetime.last_mop_use
   mode: single
