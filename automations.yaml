@@ -304,39 +304,43 @@
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
-  description: Sets random RGB colors on all lights and pauses adaptive lighting.
-    Respects theater mode by keeping back lights off unless eating mode is on.
+  description: Sets random colors on all lights and pauses adaptive lighting. Colors
+    are drawn from the 4 Party Color pickers (input_text.party_color_N_hs, edited
+    via light.party_color_N). Respects theater mode by keeping back lights off unless
+    eating mode is on.
   triggers:
   - entity_id:
     - input_button.random_scene
-    trigger: state
     to:
+    trigger: state
   conditions: []
   actions:
   - action: input_boolean.turn_on
+    data: {}
     target:
       entity_id: input_boolean.adaptive_lighting_paused
-    data: {}
   - variables:
-      theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
-        and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
-        != ''music'' }}'
-      eating: '{{ states(''input_boolean.eating_mode'') == ''on'' }}'
       back_lights:
       - light.living_room_vertical_light_strip
       - light.living_room_pegboard_light_strip
+      eating: '{{ states(''input_boolean.eating_mode'') == ''on'' }}'
+      palette: '{% set ns = namespace(p=[]) %}{% for e in [''input_text.party_color_1_hs'',''input_text.party_color_2_hs'',''input_text.party_color_3_hs'',''input_text.party_color_4_hs'']
+        %}{% set v = states(e).split('','') %}{% if v | length == 2 and v[0] | is_number
+        and v[1] | is_number %}{% set ns.p = ns.p + [[v[0] | float, v[1] | float]]
+        %}{% endif %}{% endfor %}{{ ns.p if ns.p | length > 0 else [[23.5, 100]] }}'
+      theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
+        and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
+        != ''music'' }}'
   - repeat:
       for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | reject(''in'',
         back_lights if (theater_active and not eating) else []) | list }}'
       sequence:
-      - target:
-          entity_id: '{{ repeat.item }}'
+      - action: light.turn_on
         data:
-          effect: "{{\n [\n   \"Lake\",\n   \"Plasma\",\n   \"Noise 2\"\n ]\n| random
-            }}"
-          rgb_color: "{{ [\n  [255,100,0],[255,100,0],[255,100,0],\n  [180,0,255],[180,0,255],\n
-            \ [0,180,100],\n  [255,30,60],\n  [80,0,120]\n] | random }}"
-        action: light.turn_on
+          effect: '{{ [''Lake'', ''Plasma'', ''Noise 2''] | random }}'
+          hs_color: '{{ palette | random }}'
+        target:
+          entity_id: '{{ repeat.item }}'
   - if:
     - condition: template
       value_template: '{{ theater_active and not eating }}'
@@ -2752,3 +2756,33 @@
     - delay:
         minutes: 15
   mode: single
+- id: '1790475726354'
+  alias: 'Lighting: Party Palette Changed → Re-randomize'
+  description: When any of the 4 Party Color pickers changes, wait 3 seconds of no
+    further changes (restart mode debounces dragging / multiple tweaks), then press
+    the Randomize button so Party Mode reruns with the new palette. Only runs while
+    Color Mode (adaptive_lighting_paused) is on.
+  triggers:
+  - entity_id:
+    - input_text.party_color_1_hs
+    - input_text.party_color_2_hs
+    - input_text.party_color_3_hs
+    - input_text.party_color_4_hs
+    not_from:
+    - unavailable
+    - unknown
+    not_to:
+    - unavailable
+    - unknown
+    trigger: state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.adaptive_lighting_paused
+    state: 'on'
+  actions:
+  - delay:
+      seconds: 3
+  - action: input_button.press
+    target:
+      entity_id: input_button.random_scene
+  mode: restart
