@@ -304,10 +304,12 @@
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
-  description: Sets random colors on all lights and pauses adaptive lighting. Colors
-    are drawn from the 4 Party Color pickers (input_text.party_color_N_hs, edited
-    via light.party_color_N). Respects theater mode by keeping back lights off unless
-    eating mode is on.
+  description: Sets colors on all lights and pauses adaptive lighting. Colors are
+    drawn from the 4 Party Color pickers (input_text.party_color_N_hs, edited via
+    light.party_color_N). Each effect-capable strip uses its input_select.party_fx_<light
+    object_id> choice; 'Random' picks from Lake/Plasma/Noise 2. Lights without effects
+    get color only. Respects theater mode by keeping back lights off unless eating
+    mode is on.
   triggers:
   - entity_id:
     - input_button.random_scene
@@ -328,6 +330,10 @@
         %}{% set v = states(e).split('','') %}{% if v | length == 2 and v[0] | is_number
         and v[1] | is_number %}{% set ns.p = ns.p + [[v[0] | float, v[1] | float]]
         %}{% endif %}{% endfor %}{{ ns.p if ns.p | length > 0 else [[23.5, 100]] }}'
+      random_fx_pool:
+      - Lake
+      - Plasma
+      - Noise 2
       theater_active: '{{ states(''media_player.matthews_bedroom_2'') == ''playing''
         and state_attr(''media_player.matthews_bedroom_2'', ''media_content_type'')
         != ''music'' }}'
@@ -335,12 +341,27 @@
       for_each: '{{ expand(''light.lights'') | map(attribute=''entity_id'') | reject(''in'',
         back_lights if (theater_active and not eating) else []) | list }}'
       sequence:
-      - action: light.turn_on
-        data:
-          effect: '{{ [''Lake'', ''Plasma'', ''Noise 2''] | random }}'
-          hs_color: '{{ palette | random }}'
-        target:
-          entity_id: '{{ repeat.item }}'
+      - variables:
+          effect_list: '{{ state_attr(repeat.item, ''effect_list'') or [] }}'
+      - variables:
+          fx: '{% set c = states(''input_select.party_fx_'' ~ repeat.item.split(''.'')[1])
+            %}{{ c if c in effect_list else (random_fx_pool | random) }}'
+      - else:
+        - action: light.turn_on
+          data:
+            hs_color: '{{ palette | random }}'
+          target:
+            entity_id: '{{ repeat.item }}'
+        if:
+        - condition: template
+          value_template: '{{ effect_list | length > 0 }}'
+        then:
+        - action: light.turn_on
+          data:
+            effect: '{{ fx }}'
+            hs_color: '{{ palette | random }}'
+          target:
+            entity_id: '{{ repeat.item }}'
   - if:
     - condition: template
       value_template: '{{ theater_active and not eating }}'
@@ -2758,16 +2779,25 @@
   mode: single
 - id: '1790475726354'
   alias: 'Lighting: Party Palette Changed → Re-randomize'
-  description: When any of the 4 Party Color pickers changes, wait 3 seconds of no
-    further changes (restart mode debounces dragging / multiple tweaks), then press
-    the Randomize button so Party Mode reruns with the new palette. Only runs while
-    Color Mode (adaptive_lighting_paused) is on.
+  description: When any Party Color picker or per-strip Party FX dropdown changes,
+    wait 3 seconds of no further changes (restart mode debounces), then press Randomize
+    so Party Mode reruns. Only runs while Color Mode (adaptive_lighting_paused) is
+    on.
   triggers:
   - entity_id:
     - input_text.party_color_1_hs
     - input_text.party_color_2_hs
     - input_text.party_color_3_hs
     - input_text.party_color_4_hs
+    - input_select.party_fx_living_room_vertical_light_strip
+    - input_select.party_fx_living_room_tv_stand_light_strip
+    - input_select.party_fx_living_room_pegboard_light_strip
+    - input_select.party_fx_living_room_bookshelf_light_strips
+    - input_select.party_fx_desk_light_strips
+    - input_select.party_fx_kitchen_sink_light_strip
+    - input_select.party_fx_bedroom_nightstand_light_strip
+    - input_select.party_fx_bed_frame_light_strips
+    - input_select.party_fx_bathroom_light_strip
     not_from:
     - unavailable
     - unknown
