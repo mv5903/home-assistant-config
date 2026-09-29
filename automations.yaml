@@ -374,10 +374,11 @@
   mode: single
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
-  description: 'When video (not Music) plays on the Apple TV: vertical + pegboard
-    strips fully OFF; desk lamp, desk strip, and cubby dimmed to 5% (color left as-is,
-    restored on exit). RGB/Color mode does NOT affect this on/off behavior. If eating
-    mode is on, instead raise all five theater lights to full via apply_current_color.'
+  description: 'When video (not Music) plays on the Apple TV: bed lamp, desk lamp,
+    and pegboard strip fully OFF; desk strip and cubby dimmed to 5% (color left as-is,
+    restored on exit). Vertical strip is left alone. RGB/Color mode does NOT affect
+    this on/off behavior. If eating mode is on, instead raise the theater lights to
+    full via apply_current_color.'
   triggers:
   - device_id: 208694a8d5e7948b810321bfff0d2235
     domain: media_player
@@ -415,22 +416,22 @@
           brightness_pct: 100
           transition: 5
     default:
-    - alias: Vertical + pegboard off
+    - alias: Bed lamp + desk lamp + pegboard off
       action: light.turn_off
       data:
         transition: 5
       target:
         entity_id:
-        - light.living_room_vertical_light_strip
+        - light.bed_lamp
+        - light.desk_lamp
         - light.living_room_pegboard_light_strip
-    - alias: Desk lamp/strip + cubby dim to 5%, keep color
+    - alias: Desk strip + cubby dim to 5%, keep color
       action: light.turn_on
       data:
         brightness_pct: 5
         transition: 5
       target:
         entity_id:
-        - light.desk_lamp
         - light.desk_light_strips
         - light.cubby
   mode: restart
@@ -1138,10 +1139,10 @@
 - id: media_theater_mode_off
   alias: 'Media: Theater Mode Off'
   description: When the Apple TV has been paused/idle/stopped for 10 seconds, bring
-    the five theater lights (vertical, pegboard, desk lamp, desk strip, cubby) back
+    the five theater lights (bed lamp, desk lamp, pegboard, desk strip, cubby) back
     to full brightness at the current color (RGB album-art or adaptive white) via
-    apply_current_color. The 10s hold prevents brief pauses/scrubbing from flapping
-    the lights.
+    apply_current_color. The vertical strip is not part of theater mode and is left
+    alone. The 10s hold prevents brief pauses/scrubbing from flapping the lights.
   triggers:
   - entity_id: media_player.matthews_bedroom_2
     to: paused
@@ -1167,9 +1168,9 @@
     data:
       brightness_pct: 100
       targets:
-      - light.living_room_vertical_light_strip
-      - light.living_room_pegboard_light_strip
+      - light.bed_lamp
       - light.desk_lamp
+      - light.living_room_pegboard_light_strip
       - light.desk_light_strips
       - light.cubby
       transition: 3
