@@ -633,25 +633,54 @@ apply_current_color:
               entity_id: '{{ repeat.item }}'
         - conditions:
           - condition: template
-            value_template: '{{ not rgb_mode and ''color_temp'' in modes }}'
+            value_template: '{{ (not rgb_mode and ''color_temp'' in modes) and fx_capable
+              }}'
           sequence:
           - action: light.turn_on
             data:
               brightness: '{{ b255 }}'
               color_temp_kelvin: '{{ adaptive_kelvin }}'
-              effect: '{{ ''Solid'' if fx_capable else none }}'
+              effect: Solid
               transition: '{{ trans }}'
             target:
               entity_id: '{{ repeat.item }}'
         - conditions:
           - condition: template
-            value_template: '{{ not rgb_mode and (''rgbw'' in modes or ''rgb'' in
-              modes) }}'
+            value_template: '{{ (not rgb_mode and ''color_temp'' in modes) and not
+              fx_capable }}'
           sequence:
           - action: light.turn_on
             data:
               brightness: '{{ b255 }}'
-              effect: '{{ ''Solid'' if fx_capable else none }}'
+              color_temp_kelvin: '{{ adaptive_kelvin }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ (not rgb_mode and (''rgbw'' in modes or ''rgb'' in
+              modes)) and fx_capable }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
+              effect: Solid
+              rgbw_color:
+              - '{{ ar|int - aw|int }}'
+              - '{{ ag|int - aw|int }}'
+              - '{{ ab|int - aw|int }}'
+              - '{{ aw|int }}'
+              transition: '{{ trans }}'
+            target:
+              entity_id: '{{ repeat.item }}'
+        - conditions:
+          - condition: template
+            value_template: '{{ (not rgb_mode and (''rgbw'' in modes or ''rgb'' in
+              modes)) and not fx_capable }}'
+          sequence:
+          - action: light.turn_on
+            data:
+              brightness: '{{ b255 }}'
               rgbw_color:
               - '{{ ar|int - aw|int }}'
               - '{{ ag|int - aw|int }}'
