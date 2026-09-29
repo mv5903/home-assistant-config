@@ -380,11 +380,11 @@
     this on/off behavior. If eating mode is on, instead raise the theater lights to
     full via apply_current_color.'
   triggers:
-  - device_id: 208694a8d5e7948b810321bfff0d2235
-    domain: media_player
-    entity_id: b451ca0d99fa64340608813604902977
-    type: playing
-    trigger: device
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    to: playing
+    for:
+      seconds: 3
   conditions:
   - condition: device
     type: is_on
@@ -393,7 +393,8 @@
     domain: light
   - condition: template
     value_template: '{{ state_attr(''media_player.matthews_bedroom_2'',''media_content_type'')
-      != ''music'' }}'
+      != ''music'' and state_attr(''media_player.matthews_bedroom_2'',''app_name'')
+      != ''Music'' }}'
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
     state: 'off'
