@@ -1,0 +1,34 @@
+# Palette API -- local add-on "Palette API" (local_palette_api) on this VM, port 8095.
+# Extracts an LED-optimised colour palette from an image. Local network only.
+#
+# Usage in any automation/script (no Node-RED involved):
+#
+#   - action: rest_command.get_palette
+#     data:
+#       image_url: "{{ state_attr(media_player.spotify,entity_picture_local) }}"
+#     response_variable: palette
+#   - action: light.turn_on
+#     target: {entity_id: light.tv_backlight}
+#     data:
+#       rgb_color: "{{ palette.content.colors[0] }}"
+#
+# palette.content -> {count, colors[[r,g,b]..], hex[..], swatches[..], imageURL, elapsed_ms}
+
+rest_command:
+  get_palette:
+    url: "http://local-palette-api:8095/palette"
+    method: POST
+    content_type: "application/json"
+    payload: >-
+      {"url": {{ image_url | tojson }}}
+    timeout: 60
+
+  # Same thing for an image that already lives on this HA instance, e.g. a
+  # camera snapshot or a media_player entity_picture (a relative /api/... path).
+  get_palette_local:
+    url: "http://local-palette-api:8095/palette"
+    method: POST
+    content_type: "application/json"
+    payload: >-
+      {"url": {{ (("http://homeassistant:8123" ~ image_path) if image_path.startswith("/") else image_path) | tojson }}}
+    timeout: 60
