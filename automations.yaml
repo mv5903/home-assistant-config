@@ -2818,3 +2818,58 @@
     target:
       entity_id: input_button.random_scene
   mode: restart
+- id: '1790727224859'
+  alias: Album Art -> TV Stand Light Strip
+  description: When the Apple TV is playing MUSIC, pull the album art through the
+    local Palette API app and set the living room TV stand strip to the most dominant
+    LED-optimised colour. Video/TV content is ignored.
+  triggers:
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    attribute: entity_picture
+    id: artwork_changed
+    note: New artwork = new track. This is what fires on every track change while
+      music keeps playing.
+  - trigger: media_player.started_playing
+    target:
+      entity_id: media_player.matthews_bedroom_2
+    id: started_playing
+    note: Covers resuming the same track, where entity_picture does not change.
+  conditions:
+  - condition: media_player.is_playing
+    target:
+      entity_id: media_player.matthews_bedroom_2
+  - condition: state
+    entity_id: media_player.matthews_bedroom_2
+    attribute: media_content_type
+    state: music
+    note: Exactly what the Apple TV reports for the Music app today. Blocks tvshow/movie/video.
+  - condition: template
+    value_template: '{{ state_attr(''media_player.matthews_bedroom_2'', ''entity_picture'')
+      is not none }}'
+    note: No native 'attribute is set' condition exists; with no artwork there is
+      nothing to sample.
+  actions:
+  - variables:
+      artwork: '{{ state_attr(''media_player.matthews_bedroom_2'', ''entity_picture'')
+        }}'
+  - action: rest_command.get_palette_local
+    data:
+      image_path: '{{ artwork }}'
+    response_variable: palette
+    note: Local Palette API app on this VM (local-palette-api:8095). Relative /api/...
+      path is rewritten onto http://homeassistant:8123 by the rest_command.
+  - condition: template
+    value_template: '{{ palette is defined and palette.get(''status'', 0) == 200 and
+      palette.get(''content'', {}).get(''colors'', []) | count > 0 }}'
+    note: Stop quietly rather than pushing a bogus colour if the app is down or the
+      image failed to decode.
+  - action: light.turn_on
+    target:
+      entity_id: light.living_room_tv_stand_light_strip_2
+    data:
+      rgbw_color: '{{ palette.content.colors[0] + [0] }}'
+      transition: 2
+    note: 'W channel pinned to 0 on purpose: this strip is rgbw-only, and letting
+      HA derive a white component would undo the palette''s saturation boost.'
+  mode: restart
