@@ -2873,3 +2873,65 @@
     note: 'W channel pinned to 0 on purpose: this strip is rgbw-only, and letting
       HA derive a white component would undo the palette''s saturation boost.'
   mode: restart
+- id: '1790977090567'
+  alias: Daytime rain approaching - bring porch items inside
+  description: Every 30 min from 8 AM to 8 PM, checks the WeatherKit hourly forecast
+    for rain within the next 3 hours. Alerts Matthew's iPhone once per approaching-rain
+    event (guarded by input_boolean.daytime_rain_alert_sent), and clears the flag
+    when the 3-hour window is dry again so the next event can alert. Complements the
+    9 PM overnight automation.
+  triggers:
+  - trigger: time_pattern
+    minutes: /30
+  conditions:
+  - condition: time
+    after: 08:00:00
+    before: '20:00:00'
+  actions:
+  - action: weather.get_forecasts
+    target:
+      entity_id: weather.aviva_weather
+    data:
+      type: hourly
+    response_variable: forecast_data
+  - variables:
+      rain_soon: '{% set cutoff = as_timestamp(now()) + 3*3600 %}{{ forecast_data[''weather.aviva_weather''].forecast
+        | selectattr(''condition'', ''in'', [''rainy'', ''pouring'', ''lightning-rainy'',
+        ''hail'', ''snowy-rainy'']) | selectattr(''datetime'') | selectattr(''datetime'',
+        ''ne'', None) | list | selectattr(''datetime'') | map(attribute=''datetime'')
+        | map(''as_timestamp'') | select(''lt'', cutoff) | list }}'
+      next_rain: '{% set rains = forecast_data[''weather.aviva_weather''].forecast
+        | selectattr(''condition'', ''in'', [''rainy'', ''pouring'', ''lightning-rainy'',
+        ''hail'', ''snowy-rainy'']) | map(attribute=''datetime'') | list %}{{ rains[0]
+        if rains | count > 0 else '''' }}'
+  - choose:
+    - conditions:
+      - condition: template
+        value_template: '{{ rain_soon | count > 0 }}'
+      - condition: state
+        entity_id: input_boolean.daytime_rain_alert_sent
+        state: 'off'
+      sequence:
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          title: Rain approaching
+          message: "\U0001F327️ Rain is forecast around {{ as_timestamp(next_rain)
+            | timestamp_custom('%-I %p') }}. Bring anything sensitive in from the
+            balcony."
+          data:
+            push:
+              interruption-level: time-sensitive
+      - action: input_boolean.turn_on
+        target:
+          entity_id: input_boolean.daytime_rain_alert_sent
+    - conditions:
+      - condition: template
+        value_template: '{{ rain_soon | count == 0 }}'
+      - condition: state
+        entity_id: input_boolean.daytime_rain_alert_sent
+        state: 'on'
+      sequence:
+      - action: input_boolean.turn_off
+        target:
+          entity_id: input_boolean.daytime_rain_alert_sent
+  mode: single
