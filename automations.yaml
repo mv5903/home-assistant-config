@@ -2935,3 +2935,43 @@
         target:
           entity_id: input_boolean.daytime_rain_alert_sent
   mode: single
+- id: '1791300723399'
+  alias: Log Z2 run pace
+  description: When Strava syncs a new run with avg HR <=153 and distance >=1.5 mi,
+    append its pace to input_text.z2_pace_log (keeps last 8 paces + last activity
+    id). Feeds sensor.z2_pace_rolling_avg on the Fitness dashboard.
+  triggers:
+  - attribute: activity_id
+    entity_id: sensor.strava_matthew_vandenberg_recent_activity_pace
+    trigger: state
+  actions:
+  - delay:
+      minutes: 1
+  - variables:
+      activity_id: '{{ state_attr(''sensor.strava_matthew_vandenberg_recent_activity_pace'',
+        ''activity_id'') | string }}'
+      log_parts: '{{ states(''input_text.z2_pace_log'').split(''|'') }}'
+      pace: '{{ states(''sensor.strava_matthew_vandenberg_recent_activity_pace'')
+        | float(0) }}'
+  - attribute: sport_type
+    condition: state
+    entity_id: sensor.strava_matthew_vandenberg_recent_activity
+    state: Run
+  - above: 0
+    below: 153.05
+    condition: numeric_state
+    entity_id: sensor.strava_matthew_vandenberg_recent_activity_average_heartrate
+  - above: 1.49
+    condition: numeric_state
+    entity_id: sensor.strava_matthew_vandenberg_recent_activity_distance
+  - condition: template
+    value_template: '{{ pace > 0 and (log_parts | count < 2 or log_parts[1] != activity_id)
+      }}'
+  - action: input_text.set_value
+    data:
+      value: '{% set vals = (log_parts[0].split('','') | reject(''eq'', '''') | list)
+        + [pace | round(2) | string] %}{{ vals[-8:] | join('','') }}|{{ activity_id
+        }}'
+    target:
+      entity_id: input_text.z2_pace_log
+  mode: queued
