@@ -438,7 +438,7 @@ apply_adaptive_lighting:
           - 0
           - 0
           brightness_pct: 1
-          effect: Candle Multi
+          effect: Solid
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
     - conditions:
@@ -453,7 +453,7 @@ apply_adaptive_lighting:
           - 0
           - 0
           brightness_pct: 100
-          effect: Candle Multi
+          effect: Solid
           transition: '{{ trans }}'
         target: '{{ target_lights }}'
     - conditions:
