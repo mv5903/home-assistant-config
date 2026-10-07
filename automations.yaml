@@ -590,7 +590,7 @@
   - entity_id:
     - input_boolean.guest_mode
     to:
-    platform: state
+    trigger: state
   conditions: []
   actions:
   - choose:
@@ -619,8 +619,9 @@
         - condition: not
           conditions:
           - condition: state
-            entity_id: device_tracker.matthews_iphone_17_pro
-            state: home
+            entity_id: device_tracker.matthews_iphone
+            state:
+            - home
         then:
         - action: automation.turn_off
           data:
