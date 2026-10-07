@@ -52,6 +52,12 @@
       temperature: 68
     target:
       entity_id: climate.home_apartment_thermostat
+  - action: climate.set_fan_mode
+    metadata: {}
+    target:
+      entity_id: climate.home_apartment_thermostat
+    data:
+      fan_mode: 'on'
   mode: single
 - id: '1752541408687'
   alias: 'Lighting: Wake Up Mode'
@@ -139,12 +145,13 @@
       data:
         fan_mode: 'off'
       target:
-        entity_id: climate.living_room
+        entity_id: climate.home_apartment_thermostat
     - action: climate.set_temperature
       data:
-        temperature: 71
+        temperature: 72
+        hvac_mode: cool
       target:
-        entity_id: climate.living_room
+        entity_id: climate.home_apartment_thermostat
   mode: restart
 - id: '1763575398211'
   alias: 'Lighting: Entrance Presence'
@@ -666,7 +673,7 @@
     event: sunset
   conditions:
   - condition: state
-    entity_id: device_tracker.matthews_iphone_17_pro
+    entity_id: device_tracker.matthews_iphone
     state:
     - home
   actions:
