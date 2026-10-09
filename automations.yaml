@@ -529,21 +529,21 @@
   mode: single
 - id: '1766321188342'
   alias: 'Presence: Away Mode'
-  description: Disables automations when away mode is enabled. When re-enabling, re-applies
-    any still-active modes (guest, sleep) so multi-labeled automations aren't incorrectly
-    turned on.
+  description: Disables labeled automations when Away Mode is toggled on. When toggled
+    off, re-enables them and re-applies any still-active modes (guest, sleep) so multi-labeled
+    automations aren't incorrectly turned on.
   triggers:
-  - entity_id:
-    - device_tracker.matthews_iphone_17_pro
-    attribute: latitude
-    platform: state
+  - trigger: state
+    entity_id:
+    - input_boolean.away_mode
+    from:
+    to:
   conditions: []
   actions:
   - if:
     - condition: state
-      entity_id: device_tracker.matthews_iphone_17_pro
-      state:
-      - home
+      entity_id: input_boolean.away_mode
+      state: 'off'
     then:
     - action: automation.turn_on
       target:
