@@ -2630,7 +2630,8 @@
   mode: queued
 - id: weekly_full_clean
   alias: 'Cleaning: Weekly Full Clean'
-  description: Full apartment vacuum and mop every Tuesday at noon
+  description: Full apartment vacuum + mop every Tuesday at noon, after a 1-minute
+    cancellable countdown.
   triggers:
   - at: '12:00:00'
     trigger: time
@@ -2644,40 +2645,89 @@
   actions:
   - action: notify.mobile_app_matthews_iphone
     data:
-      title: Weekly Full Clean Starting
-      message: Vacuum + mop for all rooms
-  - alias: 'Set mode: vacuum + mop'
-    action: select.select_option
-    target:
-      entity_id: select.vaccum_cleaning_mode
+      title: Weekly Full Clean Scheduled
+      message: Vacuum + mop for all rooms starts in 1 min, at {{ (now() + timedelta(minutes=1)).strftime('%-I:%M
+        %p') }}. Tap Cancel to skip.
+      data:
+        tag: vacuum_kitchen_prompt
+        actions:
+        - action: CANCEL_VACUUM
+          title: Cancel
+  - alias: 'Live Activity: 1-minute countdown'
+    action: notify.mobile_app_matthews_iphone
     data:
-      option: sweeping_and_mopping
-    note: Replaced raw set_properties siid4/piid4 command 2026-10-27 — it was ignored
-      and the vacuum reused its last mode.
-  - delay:
-      seconds: 2
-  - action: dreame_vacuum.vacuum_clean_segment
-    data:
-      suction_level: 3
-      segments:
-      - 1
-      - 2
-      - 3
+      title: Weekly Full Clean
+      message: Starting soon
+      data:
+        tag: vacuum_kitchen_live
+        live_update: true
+        chronometer: true
+        when: '{{ (now().timestamp() + 60) | int }}'
+        notification_icon: mdi:robot-vacuum
+        push:
+          interruption-level: passive
+  - action: input_boolean.turn_on
     target:
-      entity_id: vacuum.vaccum
-    note: 'Segments remapped 2026-09-25 after the move: new Map 1 has only 1=Dining
-      Hall, 2=Primary Bedroom, 3=Kitchen. Previous value [1..7] was the old apartment''s
-      map and those ids no longer exist.'
-  - action: input_datetime.set_datetime
-    data:
-      timestamp: '{{ now().timestamp() }}'
-    target:
-      entity_id: input_datetime.last_mop_use
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - alias: One-minute countdown
+    delay:
+      minutes: 1
+  - if:
+    - condition: state
+      entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+      state: 'on'
+    then:
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_prompt
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_live
+    - alias: 'Set mode: vacuum + mop'
+      action: select.select_option
+      target:
+        entity_id: select.vaccum_cleaning_mode
+      data:
+        option: sweeping_and_mopping
+      note: Replaced raw set_properties siid4/piid4 command 2026-10-27 — it was ignored
+        and the vacuum reused its last mode.
+    - delay:
+        seconds: 2
+    - action: dreame_vacuum.vacuum_clean_segment
+      data:
+        suction_level: 3
+        segments:
+        - 1
+        - 2
+        - 3
+      target:
+        entity_id: vacuum.vaccum
+      note: 'Segments remapped 2026-09-25 after the move: new Map 1 has only 1=Dining
+        Hall, 2=Primary Bedroom, 3=Kitchen. Previous value [1..7] was the old apartment''s
+        map and those ids no longer exist.'
+    - action: input_datetime.set_datetime
+      data:
+        timestamp: '{{ now().timestamp() }}'
+      target:
+        entity_id: input_datetime.last_mop_use
+    - action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+    else:
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_live
   mode: single
 - id: vacuum_after_cooking
   alias: 'Cleaning: Vacuum After Cooking'
-  description: Vacuum + mop the kitchen after extended cooking activity, after a 1-minute
-    cancellable countdown.
+  description: Vacuum + mop the kitchen after extended cooking, once the apartment
+    has been empty for 20 min (runs anyway after 2 h). Cancellable from the notification.
   triggers:
   - entity_id:
     - sensor.kitchen_motion_sensor_trigger_last_15m
@@ -2699,27 +2749,23 @@
         sticky: true
         tag: vacuum_kitchen_prompt
       title: Automatic Kitchen Cleanup Scheduled
-      message: '{% set start = (now() + timedelta(minutes=1)).strftime(''%-I:%M %p'')
-        %}Vacuum + mop starts in 1 min, at {{ start }}. Tap Cancel to skip.'
-  - alias: 'Live Activity: 1-minute countdown'
-    action: notify.mobile_app_matthews_iphone
-    data:
-      title: Kitchen Cleanup
-      message: Starting soon
-      data:
-        tag: vacuum_kitchen_live
-        live_update: true
-        chronometer: true
-        when: '{{ (now().timestamp() + 60) | int }}'
-        notification_icon: mdi:robot-vacuum
-        push:
-          interruption-level: passive
+      message: Vacuum + mop will run once you have been out for 20 min. Tap Cancel
+        to skip.
   - action: input_boolean.turn_on
     target:
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
-  - alias: One-minute countdown before cleaning
-    delay:
-      minutes: 1
+  - alias: Wait until apartment empty for 20 min
+    wait_for_trigger:
+    - trigger: state
+      entity_id: binary_sensor.front_door_occupancy_motion_sensor_occupancy
+      to: 'off'
+      for:
+        minutes: 20
+    timeout:
+      hours: 2
+    continue_on_timeout: true
+    note: Restored 2026-10-27 (same sensor as the original device trigger, now by
+      entity_id). The 1-minute countdown belongs to the weekly clean only.
   - if:
     - condition: state
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
