@@ -2704,11 +2704,11 @@
         - 1
         - 2
         - 3
+        - 4
       target:
         entity_id: vacuum.vaccum
-      note: 'Segments remapped 2026-09-25 after the move: new Map 1 has only 1=Dining
-        Hall, 2=Primary Bedroom, 3=Kitchen. Previous value [1..7] was the old apartment''s
-        map and those ids no longer exist.'
+      note: 'Remapped 2026-10-27: current Map 1 is 1=Hallway, 2=Main, 3=Bathroom,
+        4=Kitchen.'
     - action: input_datetime.set_datetime
       data:
         timestamp: '{{ now().timestamp() }}'
@@ -2788,11 +2788,11 @@
       data:
         suction_level: 3
         segments:
-        - 3
+        - 4
       target:
         entity_id: vacuum.vaccum
-      note: 'Segment remapped 2026-09-25 after the move: Kitchen is now id 3 on the
-        new Map 1 (was 6 in the old apartment).'
+      note: 'Remapped 2026-10-27: current Map 1 is 1=Hallway, 2=Main, 3=Bathroom,
+        4=Kitchen. Previous [3] was cleaning the bathroom.'
     - action: input_datetime.set_datetime
       data:
         timestamp: '{{ now().timestamp() }}'
@@ -3093,8 +3093,9 @@
       - 1
       - 2
       - 3
+      - 4
   - action: notify.mobile_app_matthews_iphone
     data:
       title: Vacuuming While You're Out
-      message: Vacuum-only clean of all rooms started.
+      message: Vacuum-only clean of all 4 rooms started.
   mode: single
