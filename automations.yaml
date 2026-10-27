@@ -96,7 +96,7 @@
             - matthews_bedroom
             - kitchen
             entity_id:
-            - light.living_room_tv_stand_light_strip
+            - light.living_room_tv_stand_light_strip_2
             - light.living_room_bookshelf_light_strips
             - light.living_room_lamp
             - light.desk_light_strips
@@ -160,10 +160,10 @@
     is correct for time of day. Excludes bedroom and bathroom.
   triggers:
   - entity_id:
-    - binary_sensor.motion_sensor_occupancy_2
+    - binary_sensor.front_door_occupancy_motion_sensor_occupancy
     to:
     - 'on'
-    platform: state
+    trigger: state
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
@@ -178,11 +178,10 @@
       target_lights:
         entity_id:
         - light.living_room_vertical_light_strip
-        - light.living_room_tv_stand_light_strip
         - light.living_room_pegboard_light_strip
         - light.living_room_bookshelf_light_strips
         - light.desk_light_strips
-        - light.kitchen_sink_light_strip
+        - light.living_room_tv_stand_light_strip_2
         - light.shoerack_light
         - light.living_room_lamp
         - light.desk_lamp
@@ -632,9 +631,10 @@
   triggers:
   - trigger: state
     entity_id:
-    - binary_sensor.motion_sensor_trigger_count_last_15m
+    - binary_sensor.motion_sensor_occupancy_2
     to:
     - 'on'
+    note: Kitchen cooking-area sensor (2026-10-27); old entity no longer existed.
   - type: motion
     device_id: 3198b11294e5ad0eb908ecfe9c6d1094
     entity_id: 66a31ceefc9efa422acf86a29339c5b2
@@ -786,10 +786,10 @@
   triggers:
   - entity_id:
     - input_boolean.iphone_sleep_focus_mode
-    platform: state
+    trigger: state
   - entity_id:
     - input_boolean.iphone_charging
-    platform: state
+    trigger: state
   conditions: []
   actions:
   - else:
@@ -801,7 +801,7 @@
       - condition: not
         conditions:
         - condition: state
-          entity_id: device_tracker.matthews_iphone_17_pro
+          entity_id: device_tracker.matthews_iphone
           state: home
       then:
       - action: automation.turn_off
@@ -1033,14 +1033,14 @@
           entity_id: light.living_room_vertical_light_strip
     - if:
       - condition: template
-        value_template: '{{ state_attr(''light.living_room_tv_stand_light_strip'',
+        value_template: '{{ state_attr(''light.living_room_tv_stand_light_strip_2'',
           ''effect'') != states(''input_select.music_effect_tv_stand_strip'') }}'
       then:
       - action: light.turn_on
         data:
           effect: '{{ states(''input_select.music_effect_tv_stand_strip'') }}'
         target:
-          entity_id: light.living_room_tv_stand_light_strip
+          entity_id: light.living_room_tv_stand_light_strip_2
     - if:
       - condition: template
         value_template: '{{ state_attr(''light.living_room_bookshelf_light_strips'',
@@ -1090,17 +1090,17 @@
       - action: light.turn_on
         data:
           effect: Solid
-          rgb_color: '{{ state_attr(''light.kitchen_sink_light_strip'', ''rgb_color'')
-            }}'
-          brightness: '{{ state_attr(''light.kitchen_sink_light_strip'', ''brightness'')
-            }}'
+          rgb_color: '{{ state_attr(''light.living_room_lamp'', ''rgb_color'') }}'
+          brightness: '{{ state_attr(''light.living_room_lamp'', ''brightness'') }}'
         target:
           entity_id:
           - light.living_room_vertical_light_strip
-          - light.living_room_tv_stand_light_strip
+          - light.living_room_tv_stand_light_strip_2
           - light.living_room_bookshelf_light_strips
           - light.desk_light_strips
           - light.living_room_pegboard_light_strip
+        note: Color source was light.kitchen_sink_light_strip, which no longer exists;
+          now copies the adaptive living room lamp (2026-10-27).
   mode: single
 - id: adaptive_lighting_schedule
   alias: 'Lighting: Adaptive Sun Schedule'
@@ -1289,17 +1289,17 @@
   description: Saves thermostat state (mode, temperature, fan_mode) and turns off
     AC when leaving home
   triggers:
-  - platform: zone
-    entity_id: device_tracker.matthews_iphone_17_pro
+  - entity_id: device_tracker.matthews_iphone
     zone: zone.home
     event: leave
+    trigger: zone
   conditions: []
   actions:
   - if:
     - condition: not
       conditions:
       - condition: state
-        entity_id: climate.living_room
+        entity_id: climate.home_apartment_thermostat
         state: 'off'
     then:
     - action: input_boolean.turn_on
@@ -1307,24 +1307,26 @@
         entity_id: input_boolean.ac_was_on_when_left
     - action: input_number.set_value
       data:
-        value: '{{ state_attr(''climate.living_room'', ''temperature'') | int }}'
+        value: '{{ state_attr(''climate.home_apartment_thermostat'', ''temperature'')
+          | int }}'
       target:
         entity_id: input_number.ac_previous_temperature
     - action: input_select.select_option
       data:
-        option: '{{ states(''climate.living_room'') }}'
+        option: '{{ states(''climate.home_apartment_thermostat'') }}'
       target:
         entity_id: input_select.ac_previous_mode
     - action: input_select.select_option
       data:
-        option: '{{ state_attr(''climate.living_room'', ''fan_mode'') }}'
+        option: '{{ state_attr(''climate.home_apartment_thermostat'', ''fan_mode'')
+          }}'
       target:
         entity_id: input_select.ac_previous_fan_mode
     - action: climate.set_hvac_mode
       data:
         hvac_mode: 'off'
       target:
-        entity_id: climate.living_room
+        entity_id: climate.home_apartment_thermostat
     else:
     - action: input_boolean.turn_off
       target:
@@ -1392,7 +1394,7 @@
   triggers:
   - attribute: media_title
     entity_id: media_player.matthews_bedroom_2
-    platform: state
+    trigger: state
   conditions:
   - condition: state
     entity_id: media_player.matthews_bedroom_2
@@ -1415,7 +1417,6 @@
       - light.bed_lamp
       - light.desk_lamp
       - light.living_room_lamp
-      - light.kitchen_sink_light_strip
       - light.shoerack_light
       - light.bathroom_light_strip
       sequence:
@@ -1439,7 +1440,8 @@
     album-art lights that are currently on, via apply_current_color (primary hue everywhere,
     complementary on pegboard, per-light music effects, brightness preserved). Off
     lights are left alone and pick up the latest color when next turned on. In white
-    mode, only the TV stand strip gets the album color (if on).'
+    mode the TV stand strip (light.living_room_tv_stand_light_strip_2) is handled
+    by the separate Album Art -> TV Stand Light Strip automation.'
   triggers:
   - entity_id: input_text.album_art_color
     trigger: state
@@ -1466,22 +1468,6 @@
         data:
           targets: '{{ on_album_lights }}'
           transition: 1
-    - alias: White mode - TV stand only gets album color
-      conditions:
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'off'
-      - condition: state
-        entity_id: light.living_room_tv_stand_light_strip
-        state: 'on'
-      sequence:
-      - action: light.turn_on
-        data:
-          effect: Solid
-          hs_color: '{{ primary_hs }}'
-          brightness: 255
-        target:
-          entity_id: light.living_room_tv_stand_light_strip
   mode: restart
   variables:
     art_hue: '{% set p=states(''input_text.album_art_color'').split('','') %}{% set
@@ -1490,7 +1476,7 @@
       d==0 else (60*(((g-b)/d)%6) if mx==r else (60*((b-r)/d+2) if mx==g else 60*((r-g)/d+4)))
       %}{{ ((h+360)%360)|round(1) }}'
     primary_hs: '{{ [art_hue|float(0), 100] }}'
-    on_album_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_tv_stand_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.kitchen_sink_light_strip'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
+    on_album_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.living_room_tv_stand_light_strip_2'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
       | select(''is_state'',''on'') | list }}'
 - id: lighting_color_mode_deactivate
   alias: 'Lighting: Color Mode Deactivate'
@@ -1777,7 +1763,7 @@
         data:
           fan_mode: 'on'
         target:
-          entity_id: climate.living_room
+          entity_id: climate.home_apartment_thermostat
       - delay:
           minutes: 14
   mode: restart
@@ -2279,12 +2265,12 @@
     morning commute. A gps_accuracy guard rejects low-quality fixes that could false-trigger
     the zone.
   triggers:
-  - entity_id: device_tracker.matthews_iphone_17_pro
+  - entity_id: device_tracker.matthews_iphone
     event: enter
     id: grove_st
     trigger: zone
     zone: zone.grove_st_path
-  - entity_id: device_tracker.matthews_iphone_17_pro
+  - entity_id: device_tracker.matthews_iphone
     event: enter
     id: paulus_hook
     trigger: zone
@@ -2295,7 +2281,7 @@
   - attribute: gps_accuracy
     below: 100
     condition: numeric_state
-    entity_id: device_tracker.matthews_iphone_17_pro
+    entity_id: device_tracker.matthews_iphone
   actions:
   - action: climate.set_hvac_mode
     data:
@@ -2350,7 +2336,7 @@
   description: Restores thermostat mode, temperature, and fan_mode to whatever was
     saved when leaving home.
   triggers:
-  - entity_id: device_tracker.matthews_iphone_17_pro
+  - entity_id: device_tracker.matthews_iphone
     zone: zone.home
     event: enter
     trigger: zone
@@ -2360,10 +2346,10 @@
     data:
       type: daily
     target:
-      entity_id: weather.37_41101472054772_121_8889136975829
+      entity_id: weather.aviva_weather
     response_variable: forecast_data
   - variables:
-      forecast_high: '{{ forecast_data[''weather.37_41101472054772_121_8889136975829''][''forecast''][0][''temperature'']
+      forecast_high: '{{ forecast_data[''weather.aviva_weather''][''forecast''][0][''temperature'']
         | float(0) }}'
       saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
       saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
@@ -2379,17 +2365,17 @@
           temperature: '{{ saved_temp }}'
           hvac_mode: '{{ saved_mode }}'
         target:
-          entity_id: climate.living_room
+          entity_id: climate.home_apartment_thermostat
       - action: climate.set_fan_mode
         data:
           fan_mode: '{{ saved_fan }}'
         target:
-          entity_id: climate.living_room
+          entity_id: climate.home_apartment_thermostat
       - action: notify.mobile_app_matthews_iphone
         data:
           title: Welcome Home
           message: 'Restored {{ saved_mode }} at {{ saved_temp }}F, fan: {{ saved_fan
-            }}. Currently {{ state_attr(''climate.living_room'', ''current_temperature'')
+            }}. Currently {{ state_attr(''climate.home_apartment_thermostat'', ''current_temperature'')
             }}F inside. (Forecast high: {{ forecast_high | round(0) }}F)'
         note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
           not in the service registry — pushes failed silently.'
@@ -2397,7 +2383,7 @@
     - action: notify.mobile_app_matthews_iphone
       data:
         title: Welcome Home
-        message: 'AC was off when you left. Currently {{ state_attr(''climate.living_room'',
+        message: 'AC was off when you left. Currently {{ state_attr(''climate.home_apartment_thermostat'',
           ''current_temperature'') }}F inside. (Forecast high: {{ forecast_high |
           round(0) }}F)'
   mode: single
