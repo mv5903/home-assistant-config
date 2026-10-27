@@ -495,33 +495,15 @@
   mode: single
 - id: '1759889851814'
   alias: 'Media: Apple TV Auto Reload'
-  description: Reloads Apple TV integration when it becomes unavailable
+  description: Reloads Apple TV integration only after it has been unavailable for
+    2 minutes
   triggers:
-  - trigger: time_pattern
-    minutes: /1
-  conditions:
-  - condition: or
-    conditions:
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state:
-      - unavailable
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state:
-      - unknown
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state:
-      - 'off'
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state:
-      - paused
-    - condition: state
-      entity_id: media_player.matthews_bedroom_2
-      state:
-      - standby
+  - trigger: state
+    entity_id: media_player.matthews_bedroom_2
+    to: unavailable
+    for:
+      minutes: 2
+  conditions: []
   actions:
   - action: homeassistant.reload_config_entry
     data:
@@ -1159,16 +1141,25 @@
     for:
       seconds: 10
     trigger: state
+    not_from:
+    - unavailable
+    - unknown
   - entity_id: media_player.matthews_bedroom_2
     to: idle
     for:
       seconds: 10
     trigger: state
+    not_from:
+    - unavailable
+    - unknown
   - entity_id: media_player.matthews_bedroom_2
     to: standby
     for:
       seconds: 10
     trigger: state
+    not_from:
+    - unavailable
+    - unknown
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
@@ -1596,21 +1587,24 @@
     for:
       seconds: 5
     id: presence_off
-    platform: state
-  - seconds: /10
+    trigger: state
+  - trigger: state
+    entity_id: light.bedroom_nightstand_light_strip
+    to: 'off'
+    for:
+      seconds: 2
     id: time_check
-    platform: time_pattern
   - type: occupied
     device_id: ddcfc3b69328d9678089d111a1ace821
     entity_id: 7d42b49068568a0220f2652076c1cb45
     domain: binary_sensor
     id: motion_detected
-    platform: device
+    trigger: device
   - entity_id:
     - binary_sensor.esphome_web_cb9878_presence
     to: 'on'
     id: presence_on
-    platform: state
+    trigger: state
   conditions: []
   actions:
   - choose:
@@ -1689,9 +1683,6 @@
       - condition: state
         entity_id: light.bedroom_nightstand_light_strip
         state: 'off'
-      - condition: template
-        value_template: '{{ (now() - states.light.bedroom_nightstand_light_strip.last_changed).total_seconds()
-          < 10 }}'
       sequence:
       - if:
         - condition: state
