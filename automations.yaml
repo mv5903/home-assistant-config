@@ -2514,6 +2514,12 @@
     data: {}
     target:
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
+  - alias: End countdown Live Activity
+    action: notify.mobile_app_matthews_iphone
+    data:
+      message: clear_notification
+      data:
+        tag: vacuum_kitchen_live
   - action: notify.mobile_app_matthews_iphone
     data:
       title: Auto Kitchen Vacuum Cleanup Cancelled
@@ -2692,30 +2698,34 @@
         channel: Vacuum Notifications
         importance: high
         sticky: true
+        tag: vacuum_kitchen_prompt
       title: Automatic Kitchen Cleanup Scheduled
       message: '{% set last_mop = states(''input_datetime.last_mop_use'') %}{% set
         days_since_mop = ((now().timestamp() - as_timestamp(last_mop, 0)) / 86400)
-        | round(1) %}{% if days_since_mop >= 3 %}Vacuum + mop in 20 min ({{ days_since_mop
-        }} days since last mop){% else %}Vacuum only in 20 min (mopped {{ days_since_mop
-        }} days ago){% endif %}'
+        | round(1) %}{% set start = (now() + timedelta(minutes=1)).strftime(''%-I:%M
+        %p'') %}{% if days_since_mop >= 3 %}Vacuum + mop starts in 1 min, at {{ start
+        }} ({{ days_since_mop }} days since last mop). Tap Cancel to skip.{% else
+        %}Vacuum only starts in 1 min, at {{ start }} (mopped {{ days_since_mop }}
+        days ago). Tap Cancel to skip.{% endif %}'
+  - alias: 'Live Activity: 1-minute countdown'
+    action: notify.mobile_app_matthews_iphone
+    data:
+      title: Kitchen Cleanup
+      message: Starting soon
+      data:
+        tag: vacuum_kitchen_live
+        live_update: true
+        chronometer: true
+        when: '{{ (now().timestamp() + 60) | int }}'
+        notification_icon: mdi:robot-vacuum
+        push:
+          interruption-level: passive
   - action: input_boolean.turn_on
     target:
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
-  - wait_for_trigger:
-    - type: not_occupied
-      device_id: 7a77497327e77c4f57494e46af1adda4
-      entity_id: 45f4a4582c135ccff23030dc5d0394e3
-      domain: binary_sensor
-      trigger: device
-      for:
-        hours: 0
-        minutes: 20
-        seconds: 0
-    timeout:
-      hours: 2
-      minutes: 0
-      seconds: 0
-    continue_on_timeout: true
+  - alias: One-minute countdown before cleaning
+    delay:
+      minutes: 1
   - if:
     - condition: state
       entity_id: input_boolean.vacuum_will_auto_clean_kitchen
@@ -2773,11 +2783,66 @@
           - 3
         target:
           entity_id: vacuum.vaccum
+    - action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_prompt
+    - alias: Wait for vacuum to start
+      wait_for_trigger:
+      - trigger: state
+        entity_id: vacuum.vaccum
+        to: cleaning
+      timeout:
+        minutes: 2
+      continue_on_timeout: true
+    - alias: 'Live Activity: status while running'
+      repeat:
+        while:
+        - condition: state
+          entity_id: vacuum.vaccum
+          state:
+          - cleaning
+          - returning
+          - paused
+        - condition: template
+          value_template: '{{ repeat.index <= 180 }}'
+        sequence:
+        - action: notify.mobile_app_matthews_iphone
+          data:
+            title: Kitchen Cleanup
+            message: '{{ states(''sensor.vaccum_status'') | replace(''_'', '' '')
+              | title }} · {{ (states(''sensor.vaccum_cleaned_area'') | float(0) *
+              10.764) | round(0) | int }} sq ft · {{ states(''sensor.vaccum_cleaning_time'')
+              }} min · {{ states(''sensor.vaccum_battery_level'') }}% battery'
+            data:
+              tag: vacuum_kitchen_live
+              live_update: true
+              progress: '{{ states(''sensor.vaccum_cleaning_progress'') | int(0) }}'
+              progress_max: 100
+              notification_icon: mdi:robot-vacuum
+              push:
+                interruption-level: passive
+        - delay:
+            seconds: 30
+    - alias: End Live Activity
+      action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_live
     - action: input_boolean.turn_off
       target:
         entity_id: input_boolean.vacuum_will_auto_clean_kitchen
     - delay:
         minutes: 15
+    else:
+    - alias: 'Cancelled or asleep: end Live Activity'
+      action: notify.mobile_app_matthews_iphone
+      data:
+        message: clear_notification
+        data:
+          tag: vacuum_kitchen_live
   mode: single
 - id: '1790475726354'
   alias: 'Lighting: Party Palette Changed → Re-randomize'
