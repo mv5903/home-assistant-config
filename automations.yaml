@@ -2646,15 +2646,14 @@
     data:
       title: Weekly Full Clean Starting
       message: Vacuum + mop for all rooms
-  - action: vacuum.send_command
+  - alias: 'Set mode: vacuum + mop'
+    action: select.select_option
     target:
-      entity_id: vacuum.vaccum
+      entity_id: select.vaccum_cleaning_mode
     data:
-      command: set_properties
-      params:
-      - siid: 4
-        piid: 4
-        value: 2
+      option: sweeping_and_mopping
+    note: Replaced raw set_properties siid4/piid4 command 2026-10-27 — it was ignored
+      and the vacuum reused its last mode.
   - delay:
       seconds: 2
   - action: dreame_vacuum.vacuum_clean_segment
@@ -2677,8 +2676,8 @@
   mode: single
 - id: vacuum_after_cooking
   alias: 'Cleaning: Vacuum After Cooking'
-  description: Schedules vacuum to clean kitchen after extended cooking activity.
-    Mops if 3+ days since last mop.
+  description: Vacuum + mop the kitchen after extended cooking activity, after a 1-minute
+    cancellable countdown.
   triggers:
   - entity_id:
     - sensor.kitchen_motion_sensor_trigger_last_15m
@@ -2700,13 +2699,8 @@
         sticky: true
         tag: vacuum_kitchen_prompt
       title: Automatic Kitchen Cleanup Scheduled
-      message: '{% set last_mop = states(''input_datetime.last_mop_use'') %}{% set
-        days_since_mop = ((now().timestamp() - as_timestamp(last_mop, 0)) / 86400)
-        | round(1) %}{% set start = (now() + timedelta(minutes=1)).strftime(''%-I:%M
-        %p'') %}{% if days_since_mop >= 3 %}Vacuum + mop starts in 1 min, at {{ start
-        }} ({{ days_since_mop }} days since last mop). Tap Cancel to skip.{% else
-        %}Vacuum only starts in 1 min, at {{ start }} (mopped {{ days_since_mop }}
-        days ago). Tap Cancel to skip.{% endif %}'
+      message: '{% set start = (now() + timedelta(minutes=1)).strftime(''%-I:%M %p'')
+        %}Vacuum + mop starts in 1 min, at {{ start }}. Tap Cancel to skip.'
   - alias: 'Live Activity: 1-minute countdown'
     action: notify.mobile_app_matthews_iphone
     data:
@@ -2734,55 +2728,30 @@
       entity_id: input_boolean.iphone_sleep_focus_mode
       state: 'off'
     then:
-    - if:
-      - condition: template
-        value_template: '{{ ((now().timestamp() - as_timestamp(states(''input_datetime.last_mop_use''),
-          0)) / 86400) >= 3 }}'
-      then:
-      - action: vacuum.send_command
-        target:
-          entity_id: vacuum.vaccum
-        data:
-          command: set_properties
-          params:
-          - siid: 4
-            piid: 4
-            value: 2
-      - delay:
-          seconds: 2
-      - action: dreame_vacuum.vacuum_clean_segment
-        data:
-          suction_level: 3
-          segments:
-          - 3
-        target:
-          entity_id: vacuum.vaccum
-        note: 'Segment remapped 2026-09-25 after the move: Kitchen is now id 3 on
-          the new Map 1 (was 6 in the old apartment).'
-      - action: input_datetime.set_datetime
-        data:
-          timestamp: '{{ now().timestamp() }}'
-        target:
-          entity_id: input_datetime.last_mop_use
-      else:
-      - action: vacuum.send_command
-        target:
-          entity_id: vacuum.vaccum
-        data:
-          command: set_properties
-          params:
-          - siid: 4
-            piid: 4
-            value: 0
-      - delay:
-          seconds: 2
-      - action: dreame_vacuum.vacuum_clean_segment
-        data:
-          suction_level: 3
-          segments:
-          - 3
-        target:
-          entity_id: vacuum.vaccum
+    - alias: 'Set mode: vacuum + mop'
+      action: select.select_option
+      target:
+        entity_id: select.vaccum_cleaning_mode
+      data:
+        option: sweeping_and_mopping
+      note: Replaced raw set_properties siid4/piid4 command 2026-10-27 — it was ignored
+        and the vacuum reused its last mode.
+    - delay:
+        seconds: 2
+    - action: dreame_vacuum.vacuum_clean_segment
+      data:
+        suction_level: 3
+        segments:
+        - 3
+      target:
+        entity_id: vacuum.vaccum
+      note: 'Segment remapped 2026-09-25 after the move: Kitchen is now id 3 on the
+        new Map 1 (was 6 in the old apartment).'
+    - action: input_datetime.set_datetime
+      data:
+        timestamp: '{{ now().timestamp() }}'
+      target:
+        entity_id: input_datetime.last_mop_use
     - action: notify.mobile_app_matthews_iphone
       data:
         message: clear_notification
@@ -3040,3 +3009,46 @@
     target:
       entity_id: input_text.z2_pace_log
   mode: queued
+- id: '1793117209331'
+  alias: 'Cleaning: Vacuum While Away'
+  description: Vacuum-only clean of all rooms once Matthew has been away for 30 minutes.
+  triggers:
+  - trigger: state
+    entity_id: person.matt
+    from: home
+    to: not_home
+    for:
+      minutes: 30
+  conditions:
+  - condition: state
+    entity_id: vacuum.vaccum
+    state: docked
+  - alias: Only once per day
+    condition: template
+    value_template: '{{ this.attributes.last_triggered is none or as_local(this.attributes.last_triggered)
+      < today_at(''00:00'') }}'
+    note: last_triggered is set only when conditions pass and actions run, so one
+      run today blocks later ones.
+  actions:
+  - alias: 'Set mode: vacuum only'
+    action: select.select_option
+    target:
+      entity_id: select.vaccum_cleaning_mode
+    data:
+      option: sweeping
+  - delay:
+      seconds: 2
+  - action: dreame_vacuum.vacuum_clean_segment
+    target:
+      entity_id: vacuum.vaccum
+    data:
+      suction_level: 3
+      segments:
+      - 1
+      - 2
+      - 3
+  - action: notify.mobile_app_matthews_iphone
+    data:
+      title: Vacuuming While You're Out
+      message: Vacuum-only clean of all rooms started.
+  mode: single
