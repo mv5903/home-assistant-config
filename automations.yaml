@@ -494,15 +494,47 @@
   mode: single
 - id: '1759889851814'
   alias: 'Media: Apple TV Auto Reload'
-  description: Reloads Apple TV integration only after it has been unavailable for
-    2 minutes
+  description: 'Keeps the Apple TV integration (media_player.matthews_bedroom_2) from
+    going stale. Two cases: (1) unavailable for 2 min -> reload. (2) Stale-''off''
+    check: the integration sometimes sticks on ''off'' while the Apple TV is actually
+    playing, which silently breaks Album Art -> TV Stand Light Strip and other media
+    automations. Every 15 min, if it has reported off/standby for 15+ min, reload
+    once. Skipped during iPhone sleep focus to keep logs quiet overnight. Deliberately
+    low-frequency to avoid log flooding.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
     to: unavailable
     for:
       minutes: 2
-  conditions: []
+    id: unavailable
+  - trigger: time_pattern
+    minutes: /15
+    id: stale_off_check
+  conditions:
+  - condition: or
+    conditions:
+    - condition: trigger
+      id: unavailable
+    - condition: and
+      conditions:
+      - condition: trigger
+        id: stale_off_check
+      - condition: state
+        entity_id: input_boolean.iphone_sleep_focus_mode
+        state: 'off'
+      - condition: or
+        conditions:
+        - condition: state
+          entity_id: media_player.matthews_bedroom_2
+          state: 'off'
+          for:
+            minutes: 15
+        - condition: state
+          entity_id: media_player.matthews_bedroom_2
+          state: standby
+          for:
+            minutes: 15
   actions:
   - action: homeassistant.reload_config_entry
     data:
@@ -1433,51 +1465,6 @@
         target:
           entity_id: '{{ repeat.item }}'
   mode: restart
-- id: music_album_art_wled_controller
-  alias: 'Music: Album Art WLED Controller'
-  description: 'When Node-RED writes album art RGB to input_text.album_art_color (Music
-    playing): In random/color mode (adaptive_lighting_paused on), recolor ONLY the
-    album-art lights that are currently on, via apply_current_color (primary hue everywhere,
-    complementary on pegboard, per-light music effects, brightness preserved). Off
-    lights are left alone and pick up the latest color when next turned on. In white
-    mode the TV stand strip (light.living_room_tv_stand_light_strip_2) is handled
-    by the separate Album Art -> TV Stand Light Strip automation.'
-  triggers:
-  - entity_id: input_text.album_art_color
-    trigger: state
-  conditions:
-  - condition: state
-    entity_id: media_player.matthews_bedroom_2
-    state: playing
-  - condition: state
-    entity_id: media_player.matthews_bedroom_2
-    attribute: app_name
-    state: Music
-  - condition: template
-    value_template: '{{ states(''input_text.album_art_color'') | regex_match(''^\d+,\d+,\d+$'')
-      }}'
-  actions:
-  - choose:
-    - alias: Random/color mode - recolor only lights that are on
-      conditions:
-      - condition: state
-        entity_id: input_boolean.adaptive_lighting_paused
-        state: 'on'
-      sequence:
-      - action: script.apply_current_color
-        data:
-          targets: '{{ on_album_lights }}'
-          transition: 1
-  mode: restart
-  variables:
-    art_hue: '{% set p=states(''input_text.album_art_color'').split('','') %}{% set
-      r=p[0]|int(0)/255 %}{% set g=p[1]|int(0)/255 %}{% set b=p[2]|int(0)/255 %}{%
-      set mx=[r,g,b]|max %}{% set mn=[r,g,b]|min %}{% set d=mx-mn %}{% set h=0 if
-      d==0 else (60*(((g-b)/d)%6) if mx==r else (60*((b-r)/d+2) if mx==g else 60*((r-g)/d+4)))
-      %}{{ ((h+360)%360)|round(1) }}'
-    primary_hs: '{{ [art_hue|float(0), 100] }}'
-    on_album_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.living_room_tv_stand_light_strip_2'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
-      | select(''is_state'',''on'') | list }}'
 - id: lighting_color_mode_deactivate
   alias: 'Lighting: Color Mode Deactivate'
   description: When Color/RGB mode is turned off, recolor all managed lights that
@@ -2886,9 +2873,14 @@
   mode: restart
 - id: '1790727224859'
   alias: Album Art -> TV Stand Light Strip
-  description: When the Apple TV is playing MUSIC, pull the album art through the
-    local Palette API app and set the living room TV stand strip to the most dominant
-    LED-optimised colour. Video/TV content is ignored.
+  description: 'When the Apple TV is playing MUSIC, pull the album art through the
+    local Palette API app. Always sets the TV stand strip (light.living_room_tv_stand_light_strip_2,
+    the ESP named ''Sink'') to the dominant colour. In color mode (input_boolean.adaptive_lighting_paused
+    on), also spreads the palette across every other album-art light that is currently
+    ON (colours cycle through the palette); off lights are left alone. Skip debounce:
+    mode restart + 6 s settle delay (track must be stable >5 s), so rapid track skipping
+    only applies the track you land on. Replaces the deleted ''Music: Album Art WLED
+    Controller'' (Node-RED/input_text based).'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -2916,6 +2908,13 @@
     note: No native 'attribute is set' condition exists; with no artwork there is
       nothing to sample.
   actions:
+  - delay:
+      seconds: 6
+    note: 'Skip debounce. mode: restart cancels this run on each new track, so nothing
+      changes until a track has been stable for more than 5 s (6 s delay).'
+  - condition: media_player.is_playing
+    target:
+      entity_id: media_player.matthews_bedroom_2
   - variables:
       artwork: '{{ state_attr(''media_player.matthews_bedroom_2'', ''entity_picture'')
         }}'
@@ -2938,6 +2937,27 @@
       transition: 2
     note: 'W channel pinned to 0 on purpose: this strip is rgbw-only, and letting
       HA derive a white component would undo the palette''s saturation boost.'
+  - if:
+    - condition: state
+      entity_id: input_boolean.adaptive_lighting_paused
+      state: 'on'
+    then:
+    - variables:
+        colors: '{{ palette.content.colors }}'
+        on_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
+          | select(''is_state'',''on'') | list }}'
+    - repeat:
+        for_each: '{{ on_lights }}'
+        sequence:
+        - action: light.turn_on
+          target:
+            entity_id: '{{ repeat.item }}'
+          data:
+            rgb_color: '{{ colors[(repeat.index) % (colors | count)] }}'
+            transition: 2
+      note: Color mode only. Index offset by 1 so the first light differs from the
+        TV stand's dominant colour; cycles if there are more lights than palette colours.
+        Brightness untouched.
   mode: restart
 - id: '1790977090567'
   alias: Daytime rain approaching - bring porch items inside
