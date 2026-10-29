@@ -2320,27 +2320,36 @@
   mode: single
 - id: '1753323920085'
   alias: 'Climate: Pre-arrival Conditioning'
-  description: Restores thermostat mode, temperature, and fan_mode to whatever was
-    saved when leaving home.
+  description: 'Restores thermostat mode, temperature, and fan_mode to whatever was
+    saved when leaving home. Debounced: phone must stay home 90 s and have been away
+    10+ min, so GPS blips on the balcony or drive-bys don''t fire it.'
   triggers:
   - entity_id: device_tracker.matthews_iphone
-    zone: zone.home
-    event: enter
-    trigger: zone
-  conditions: []
+    for:
+      seconds: 90
+    not_from:
+    - unavailable
+    - unknown
+    to: home
+    trigger: state
+  conditions:
+  - alias: Was away at least 10 minutes (ignores GPS blips)
+    condition: template
+    value_template: '{{ as_timestamp(trigger.to_state.last_changed) - as_timestamp(trigger.from_state.last_changed)
+      >= 600 }}'
   actions:
   - action: weather.get_forecasts
     data:
       type: daily
+    response_variable: forecast_data
     target:
       entity_id: weather.aviva_weather
-    response_variable: forecast_data
   - variables:
       forecast_high: '{{ forecast_data[''weather.aviva_weather''][''forecast''][0][''temperature'']
         | float(0) }}'
-      saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
-      saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
       saved_fan: '{{ states(''input_select.ac_previous_fan_mode'') }}'
+      saved_mode: '{{ states(''input_select.ac_previous_mode'') }}'
+      saved_temp: '{{ states(''input_number.ac_previous_temperature'') | int(72) }}'
   - choose:
     - conditions:
       - condition: state
@@ -2349,8 +2358,8 @@
       sequence:
       - action: climate.set_temperature
         data:
-          temperature: '{{ saved_temp }}'
           hvac_mode: '{{ saved_mode }}'
+          temperature: '{{ saved_temp }}'
         target:
           entity_id: climate.home_apartment_thermostat
       - action: climate.set_fan_mode
@@ -2360,19 +2369,19 @@
           entity_id: climate.home_apartment_thermostat
       - action: notify.mobile_app_matthews_iphone
         data:
-          title: Welcome Home
-          message: 'Restored {{ saved_mode }} at {{ saved_temp }}F, fan: {{ saved_fan
+          message: 'Restored {{ saved_mode }} at {{ saved_temp }}°F, fan: {{ saved_fan
             }}. Currently {{ state_attr(''climate.home_apartment_thermostat'', ''current_temperature'')
-            }}F inside. (Forecast high: {{ forecast_high | round(0) }}F)'
+            }}°F inside. (Forecast high: {{ forecast_high | round(0) }}°F)'
+          title: Welcome Home
         note: 'Service corrected 2026-09-25: was notify.mobile_app_matthews_iphone_17_pro,
           not in the service registry — pushes failed silently.'
     default:
     - action: notify.mobile_app_matthews_iphone
       data:
-        title: Welcome Home
         message: 'AC was off when you left. Currently {{ state_attr(''climate.home_apartment_thermostat'',
-          ''current_temperature'') }}F inside. (Forecast high: {{ forecast_high |
-          round(0) }}F)'
+          ''current_temperature'') }}°F inside. (Forecast high: {{ forecast_high |
+          round(0) }}°F)'
+        title: Welcome Home
   mode: single
 - id: '1764891750525'
   alias: 'Safety: Soldering Iron Alert'
