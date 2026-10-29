@@ -2874,13 +2874,13 @@
 - id: '1790727224859'
   alias: Album Art -> TV Stand Light Strip
   description: 'When the Apple TV is playing MUSIC, pull the album art through the
-    local Palette API app. Always sets the TV stand strip (light.living_room_tv_stand_light_strip_2,
-    the ESP named ''Sink'') to the dominant colour. In color mode (input_boolean.adaptive_lighting_paused
-    on), also spreads the palette across every other album-art light that is currently
-    ON (colours cycle through the palette); off lights are left alone. Skip debounce:
-    mode restart + 6 s settle delay (track must be stable >5 s), so rapid track skipping
-    only applies the track you land on. Replaces the deleted ''Music: Album Art WLED
-    Controller'' (Node-RED/input_text based).'
+    local Palette API app. The TV stand strip (light.living_room_tv_stand_light_strip_2,
+    ESP named Sink) switches to the dominant colour immediately on every track with
+    a 0.5 s fade. In color mode (input_boolean.adaptive_lighting_paused on), after
+    the song has stayed for 5 s, every other album-art light that is ON quickly fades
+    (0.5 s transition; 0 felt too harsh) to a different palette colour; off lights
+    are left alone. mode: restart cancels the 5 s wait on each skip. Replaces the
+    deleted Music: Album Art WLED Controller.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -2908,13 +2908,6 @@
     note: No native 'attribute is set' condition exists; with no artwork there is
       nothing to sample.
   actions:
-  - delay:
-      seconds: 6
-    note: 'Skip debounce. mode: restart cancels this run on each new track, so nothing
-      changes until a track has been stable for more than 5 s (6 s delay).'
-  - condition: media_player.is_playing
-    target:
-      entity_id: media_player.matthews_bedroom_2
   - variables:
       artwork: '{{ state_attr(''media_player.matthews_bedroom_2'', ''entity_picture'')
         }}'
@@ -2934,14 +2927,21 @@
       entity_id: light.living_room_tv_stand_light_strip_2
     data:
       rgbw_color: '{{ palette.content.colors[0] + [0] }}'
-      transition: 2
-    note: 'W channel pinned to 0 on purpose: this strip is rgbw-only, and letting
-      HA derive a white component would undo the palette''s saturation boost.'
+      transition: 0.5
+    note: 'TV stand changes on every track with no debounce, 0.5 s fade (0 felt too
+      harsh). W channel pinned to 0: strip is rgbw-only.'
   - if:
     - condition: state
       entity_id: input_boolean.adaptive_lighting_paused
       state: 'on'
     then:
+    - delay:
+        seconds: 5
+      note: 'Skip debounce for the other lights only. mode: restart cancels this on
+        each new track, so they change only once a song has stayed for 5 s.'
+    - condition: media_player.is_playing
+      target:
+        entity_id: media_player.matthews_bedroom_2
     - variables:
         colors: '{{ palette.content.colors }}'
         on_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
@@ -2954,7 +2954,7 @@
             entity_id: '{{ repeat.item }}'
           data:
             rgb_color: '{{ colors[(repeat.index) % (colors | count)] }}'
-            transition: 2
+            transition: 0.5
       note: Color mode only. Index offset by 1 so the first light differs from the
         TV stand's dominant colour; cycles if there are more lights than palette colours.
         Brightness untouched.
