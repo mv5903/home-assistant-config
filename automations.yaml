@@ -2875,12 +2875,13 @@
   alias: Album Art -> TV Stand Light Strip
   description: 'When the Apple TV is playing MUSIC, pull the album art through the
     local Palette API app. The TV stand strip (light.living_room_tv_stand_light_strip_2,
-    ESP named Sink) switches to the dominant colour immediately on every track with
-    a 0.5 s fade. In color mode (input_boolean.adaptive_lighting_paused on), after
-    the song has stayed for 5 s, every other album-art light that is ON quickly fades
-    (0.5 s transition; 0 felt too harsh) to a different palette colour; off lights
-    are left alone. mode: restart cancels the 5 s wait on each skip. Replaces the
-    deleted Music: Album Art WLED Controller.'
+    ESP named Sink) switches to the dominant colour immediately on every track (0.5
+    s fade). In color mode (input_boolean.adaptive_lighting_paused on), after the
+    song has stayed for 5 s, lights that are ON get layout-aware palette groups (see
+    note on the groups step): primary colour also on vertical strip, bathroom basket,
+    shoerack; 2nd on the two big uplight lamps; 3rd on bookshelf/desk; 4th as accent
+    on bed frame, nightstand, pegboard. 0.5 s transitions. mode: restart cancels the
+    5 s wait on each skip.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -2944,20 +2945,55 @@
         entity_id: media_player.matthews_bedroom_2
     - variables:
         colors: '{{ palette.content.colors }}'
-        on_lights: '{{ [''light.living_room_vertical_light_strip'',''light.living_room_bookshelf_light_strips'',''light.desk_light_strips'',''light.living_room_pegboard_light_strip'',''light.bedroom_nightstand_light_strip'',''light.bed_frame_light_strips'',''light.bathroom_light_strip'',''light.cubby'',''light.desk_lamp'',''light.living_room_lamp'',''light.bed_lamp'',''light.shoerack_light'']
-          | select(''is_state'',''on'') | list }}'
+        groups:
+        - name: primary
+          idx: 0
+          lights:
+          - light.living_room_vertical_light_strip
+          - light.bathroom_light_strip
+          - light.shoerack_light
+        - name: walls
+          idx: 1
+          lights:
+          - light.living_room_lamp
+          - light.bed_lamp
+        - name: mid
+          idx: 2
+          lights:
+          - light.living_room_bookshelf_light_strips
+          - light.desk_light_strips
+          - light.desk_lamp
+        - name: accent
+          idx: 3
+          lights:
+          - light.bed_frame_light_strips
+          - light.bedroom_nightstand_light_strip
+          - light.living_room_pegboard_light_strip
+      note: 'Layout-aware palette groups (studio, facing TV). primary=palette[0] same
+        as TV stand: vertical strip (animated, should be dominant), bathroom basket
+        strip, shoerack (big entryway/kitchen/bath bulb). walls=palette[1]: tall living
+        room lamp + bed lamp uplighting white walls. mid=palette[2]: bookshelf, desk
+        strip, desk lamp. accent=palette[3]: bed frame, nightstand, pegboard. If the
+        palette has fewer colours, falls back to the last one. light.cubby intentionally
+        excluded (not in use).'
     - repeat:
-        for_each: '{{ on_lights }}'
+        for_each: '{{ groups }}'
         sequence:
-        - action: light.turn_on
-          target:
-            entity_id: '{{ repeat.item }}'
-          data:
-            rgb_color: '{{ colors[(repeat.index) % (colors | count)] }}'
-            transition: 0.5
-      note: Color mode only. Index offset by 1 so the first light differs from the
-        TV stand's dominant colour; cycles if there are more lights than palette colours.
-        Brightness untouched.
+        - variables:
+            targets: '{{ repeat.item.lights | select(''is_state'', ''on'') | list
+              }}'
+            color: '{{ colors[[repeat.item.idx, (colors | count) - 1] | min] }}'
+        - if:
+          - condition: template
+            value_template: '{{ targets | count > 0 }}'
+          then:
+          - action: light.turn_on
+            target:
+              entity_id: '{{ targets }}'
+            data:
+              rgb_color: '{{ color }}'
+              transition: 0.5
+      note: Only lights that are on; each group switches together.
   mode: restart
 - id: '1790977090567'
   alias: Daytime rain approaching - bring porch items inside
