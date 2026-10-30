@@ -2889,10 +2889,13 @@
     ESP named Sink) switches to the dominant colour immediately on every track (0.5
     s fade). In color mode (input_boolean.adaptive_lighting_paused on), after the
     song has stayed for 5 s, lights that are ON get layout-aware palette groups (see
-    note on the groups step): primary colour also on vertical strip, bathroom basket,
-    shoerack; 2nd on the two big uplight lamps; 3rd on bookshelf/desk; 4th as accent
-    on bed frame, nightstand, pegboard. 0.5 s transitions. mode: restart cancels the
-    5 s wait on each skip.'
+    note on the groups step): primary colour also on vertical strip, bathroom strip
+    (a major light), shoerack; 2nd on the two big uplight lamps; 3rd on bookshelf/desk;
+    4th as accent on bed frame, nightstand, pegboard. 0.5 s transitions. mode: restart
+    cancels the 5 s wait on each skip. Grey/low-saturation palette colours are filtered
+    out first (vivid variable). Bulbs (lamps, desk lamp, shoerack) get a perceived-brightness
+    cap (bulb_luminance_cap) so bright hues like cyan/yellow are dimmed to match pink-level
+    brightness; raise/lower the cap to tune.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -2934,14 +2937,22 @@
       palette.get(''content'', {}).get(''colors'', []) | count > 0 }}'
     note: Stop quietly rather than pushing a bogus colour if the app is down or the
       image failed to decode.
+  - variables:
+      vivid: '{% set ns = namespace(v=[]) %}{% for c in palette.content.colors %}{%
+        set mx = c | max %}{% set mn = c | min %}{% if mx > 0 and (mx - mn) / mx >=
+        0.35 %}{% set ns.v = ns.v + [c] %}{% endif %}{% endfor %}{{ ns.v if ns.v |
+        count > 0 else palette.content.colors }}'
+    note: Drop washed-out palette colours (HSV saturation < 0.35, i.e. greys/whites/beiges)
+      so no light goes grey. Keeps palette order. If every colour is grey, falls back
+      to the raw palette.
   - action: light.turn_on
     target:
       entity_id: light.living_room_tv_stand_light_strip_2
     data:
-      rgbw_color: '{{ palette.content.colors[0] + [0] }}'
+      rgbw_color: '{{ vivid[0] + [0] }}'
       transition: 0.5
-    note: 'TV stand changes on every track with no debounce, 0.5 s fade (0 felt too
-      harsh). W channel pinned to 0: strip is rgbw-only.'
+    note: 'TV stand changes on every track with no debounce, 0.5 s fade. Uses the
+      most dominant VIVID colour. W channel pinned to 0: strip is rgbw-only.'
   - if:
     - condition: state
       entity_id: input_boolean.adaptive_lighting_paused
@@ -2955,7 +2966,7 @@
       target:
         entity_id: media_player.matthews_bedroom_2
     - variables:
-        colors: '{{ palette.content.colors }}'
+        colors: '{{ vivid }}'
         groups:
         - name: primary
           idx: 0
@@ -2980,6 +2991,12 @@
           - light.bed_frame_light_strips
           - light.bedroom_nightstand_light_strip
           - light.living_room_pegboard_light_strip
+        bulb_luminance_cap: 0.26
+        bulbs:
+        - light.living_room_lamp
+        - light.bed_lamp
+        - light.desk_lamp
+        - light.shoerack_light
       note: 'Layout-aware palette groups (studio, facing TV). primary=palette[0] same
         as TV stand: vertical strip (animated, should be dominant), bathroom basket
         strip, shoerack (big entryway/kitchen/bath bulb). walls=palette[1]: tall living
@@ -2993,18 +3010,45 @@
         - variables:
             targets: '{{ repeat.item.lights | select(''is_state'', ''on'') | list
               }}'
-            color: '{{ colors[[repeat.item.idx, (colors | count) - 1] | min] }}'
+            color: '{{ colors[repeat.item.idx % (colors | count)] }}'
+        - variables:
+            bulb_targets: '{{ targets | select(''in'', bulbs) | list }}'
+            strip_targets: '{{ targets | reject(''in'', bulbs) | list }}'
+            bulb_pct: '{% set w = [0.2126, 0.7152, 0.0722] %}{% set mx = color | max
+              %}{% set ns = namespace(y=0) %}{% for i in range(3) %}{% set c = color[i]
+              / mx if mx > 0 else 0 %}{% set lin = c / 12.92 if c <= 0.04045 else
+              ((c + 0.055) / 1.055) ** 2.4 %}{% set ns.y = ns.y + w[i] * lin %}{%
+              endfor %}{{ ([100, [15, (bulb_luminance_cap / ns.y * 100) | round(0)]
+              | max] | min | int) if ns.y > 0 else 100 }}'
+          note: 'Perceived-brightness cap for bulbs only. bulb_pct = cap / relative
+            luminance of the hue (sRGB linearised, Rec.709 weights), clamped 15-100%.
+            Cyan (~0.52) -> ~50%, pink (~0.26) -> 100%. HSL L does not work here:
+            it rates every pure hue 50%. Strips keep their own brightness (some intentionally
+            at ~1%).'
         - if:
           - condition: template
-            value_template: '{{ targets | count > 0 }}'
+            value_template: '{{ strip_targets | count > 0 }}'
           then:
           - action: light.turn_on
             target:
-              entity_id: '{{ targets }}'
+              entity_id: '{{ strip_targets }}'
             data:
               rgb_color: '{{ color }}'
               transition: 0.5
-      note: Only lights that are on; each group switches together.
+        - if:
+          - condition: template
+            value_template: '{{ bulb_targets | count > 0 }}'
+          then:
+          - action: light.turn_on
+            target:
+              entity_id: '{{ bulb_targets }}'
+            data:
+              rgb_color: '{{ color }}'
+              brightness_pct: '{{ bulb_pct }}'
+              transition: 0.5
+      note: Only lights that are on; each group switches together. If fewer vivid
+        colours than groups, indices wrap around (e.g. 2 colours -> primary A, walls
+        B, mid A, accent B).
   mode: restart
 - id: '1790977090567'
   alias: Daytime rain approaching - bring porch items inside
