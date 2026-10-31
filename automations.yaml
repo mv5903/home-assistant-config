@@ -63,7 +63,8 @@
   alias: 'Lighting: Wake Up Mode'
   description: Activates adaptive lighting when iPhone sleep focus turns off or All
     Lights White is pressed. Also clears the adaptive lighting pause flag. Respects
-    theater mode by keeping back lights off unless eating mode is on. When triggered
+    theater mode by keeping the pegboard off and the living room (TV) lamp dimmed
+    to 5% unless eating mode is on; vertical strip gets adaptive lighting. When triggered
     by sleep focus turning off, also turns off fan and restores daytime temperature
     (71°F).
   triggers:
@@ -98,9 +99,9 @@
             entity_id:
             - light.living_room_tv_stand_light_strip_2
             - light.living_room_bookshelf_light_strips
-            - light.living_room_lamp
             - light.desk_light_strips
             - light.desk_lamp
+            - light.living_room_vertical_light_strip
           transition: 2
       - if:
         - condition: state
@@ -111,15 +112,21 @@
           data:
             target_lights:
               entity_id:
-              - light.living_room_vertical_light_strip
+              - light.living_room_lamp
               - light.living_room_pegboard_light_strip
             transition: 2
         else:
         - action: light.turn_off
           target:
             entity_id:
-            - light.living_room_vertical_light_strip
             - light.living_room_pegboard_light_strip
+        - action: light.turn_on
+          data:
+            brightness_pct: 5
+            transition: 2
+          target:
+            entity_id:
+            - light.living_room_lamp
     default:
     - action: script.apply_adaptive_lighting
       alias: No theater mode - all lights adaptive
@@ -317,8 +324,8 @@
     drawn from the 4 Party Color pickers (input_text.party_color_N_hs, edited via
     light.party_color_N). Each effect-capable strip uses its input_select.party_fx_<light
     object_id> choice; 'Random' picks from Lake/Plasma/Noise 2. Lights without effects
-    get color only. Respects theater mode by keeping back lights off unless eating
-    mode is on.
+    get color only. Respects theater mode by keeping the pegboard off and dimming
+    the living room (TV) lamp to 5% unless eating mode is on.
   triggers:
   - entity_id:
     - input_button.random_scene
@@ -332,7 +339,6 @@
       entity_id: input_boolean.adaptive_lighting_paused
   - variables:
       back_lights:
-      - light.living_room_vertical_light_strip
       - light.living_room_pegboard_light_strip
       eating: '{{ states(''input_boolean.eating_mode'') == ''on'' }}'
       palette: '{% set ns = namespace(p=[]) %}{% for e in [''input_text.party_color_1_hs'',''input_text.party_color_2_hs'',''input_text.party_color_3_hs'',''input_text.party_color_4_hs'']
@@ -378,16 +384,21 @@
     - action: light.turn_off
       target:
         entity_id:
-        - light.living_room_vertical_light_strip
         - light.living_room_pegboard_light_strip
+    - action: light.turn_on
+      data:
+        brightness_pct: 5
+      target:
+        entity_id:
+        - light.living_room_lamp
   mode: single
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
   description: 'When video (not Music) plays on the Apple TV: bed lamp, desk lamp,
-    and pegboard strip fully OFF; desk strip and cubby dimmed to 5% (color left as-is,
-    restored on exit). Vertical strip is left alone. RGB/Color mode does NOT affect
-    this on/off behavior. If eating mode is on, instead raise the theater lights to
-    full via apply_current_color.'
+    and pegboard strip fully OFF; desk strip, cubby and living room (TV) lamp dimmed
+    to 5% (color left as-is, restored on exit). Vertical strip is left alone. RGB/Color
+    mode does NOT affect this on/off behavior. If eating mode is on, instead raise
+    the theater lights to full via apply_current_color.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -423,6 +434,7 @@
           - light.desk_lamp
           - light.desk_light_strips
           - light.cubby
+          - light.living_room_lamp
           brightness_pct: 100
           transition: 5
     default:
@@ -435,7 +447,7 @@
         - light.bed_lamp
         - light.desk_lamp
         - light.living_room_pegboard_light_strip
-    - alias: Desk strip + cubby dim to 5%, keep color
+    - alias: Desk strip + cubby + living room (TV) lamp dim to 5%, keep color
       action: light.turn_on
       data:
         brightness_pct: 5
@@ -444,6 +456,7 @@
         entity_id:
         - light.desk_light_strips
         - light.cubby
+        - light.living_room_lamp
   mode: restart
 - id: '1732932623429'
   alias: 'Media: Jumbotron On'
@@ -1165,10 +1178,11 @@
 - id: media_theater_mode_off
   alias: 'Media: Theater Mode Off'
   description: When the Apple TV has been paused/idle/stopped for 10 seconds, bring
-    the five theater lights (bed lamp, desk lamp, pegboard, desk strip, cubby) back
-    to full brightness at the current color (RGB album-art or adaptive white) via
-    apply_current_color. The vertical strip is not part of theater mode and is left
-    alone. The 10s hold prevents brief pauses/scrubbing from flapping the lights.
+    the theater lights (bed lamp, desk lamp, pegboard, desk strip, cubby, living room
+    TV lamp) back to full brightness at the current color (RGB album-art or adaptive
+    white) via apply_current_color. The vertical strip is not part of theater mode
+    and is left alone. The 10s hold prevents brief pauses/scrubbing from flapping
+    the lights.
   triggers:
   - entity_id: media_player.matthews_bedroom_2
     to: paused
@@ -1208,6 +1222,7 @@
       - light.living_room_pegboard_light_strip
       - light.desk_light_strips
       - light.cubby
+      - light.living_room_lamp
       transition: 3
   mode: restart
 - id: eating_mode_on
@@ -1236,12 +1251,14 @@
       - light.desk_lamp
       - light.desk_light_strips
       - light.cubby
+      - light.living_room_lamp
       transition: 5
   mode: single
 - id: eating_mode_off
   alias: 'Eating: Dim Back Lights'
   description: 'When eating mode turns off during theater, re-apply the theater layout:
-    vertical + pegboard off, desk lamp/strip + cubby back to 5%.'
+    pegboard off; living room (TV) lamp, desk lamp/strip + cubby back to 5%. Vertical
+    strip is left alone.'
   triggers:
   - entity_id: input_boolean.eating_mode
     from: 'on'
@@ -1260,7 +1277,6 @@
       transition: 5
     target:
       entity_id:
-      - light.living_room_vertical_light_strip
       - light.living_room_pegboard_light_strip
   - action: light.turn_on
     data:
@@ -1271,6 +1287,7 @@
       - light.desk_lamp
       - light.desk_light_strips
       - light.cubby
+      - light.living_room_lamp
   mode: single
 - id: cubby_light_sleep_color
   alias: 'Lighting: Cubby Sleep Color'
