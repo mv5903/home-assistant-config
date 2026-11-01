@@ -2905,11 +2905,11 @@
     local Palette API app. The TV stand strip (light.living_room_tv_stand_light_strip_2,
     ESP named Sink) switches to the dominant colour immediately on every track (0.5
     s fade). In color mode (input_boolean.adaptive_lighting_paused on), after the
-    song has stayed for 5 s, lights that are ON get layout-aware palette groups (see
+    song has stayed for 3 s, lights that are ON get layout-aware palette groups (see
     note on the groups step): primary colour also on vertical strip, bathroom strip
     (a major light), shoerack; 2nd on the two big uplight lamps; 3rd on bookshelf/desk;
     4th as accent on bed frame, nightstand, pegboard. 0.5 s transitions. mode: restart
-    cancels the 5 s wait on each skip. Grey/low-saturation palette colours are filtered
+    cancels the 3 s wait on each skip. Grey/low-saturation palette colours are filtered
     out first (vivid variable). Bulbs (lamps, desk lamp, shoerack) get a perceived-brightness
     cap (bulb_luminance_cap) so bright hues like cyan/yellow are dimmed (cap 0.13;
     was 0.26); raise/lower the cap to tune.'
@@ -2976,9 +2976,9 @@
       state: 'on'
     then:
     - delay:
-        seconds: 5
+        seconds: 3
       note: 'Skip debounce for the other lights only. mode: restart cancels this on
-        each new track, so they change only once a song has stayed for 5 s.'
+        each new track, so they change only once a song has stayed for 3 s.'
     - condition: media_player.is_playing
       target:
         entity_id: media_player.matthews_bedroom_2
