@@ -2911,8 +2911,8 @@
     4th as accent on bed frame, nightstand, pegboard. 0.5 s transitions. mode: restart
     cancels the 5 s wait on each skip. Grey/low-saturation palette colours are filtered
     out first (vivid variable). Bulbs (lamps, desk lamp, shoerack) get a perceived-brightness
-    cap (bulb_luminance_cap) so bright hues like cyan/yellow are dimmed to match pink-level
-    brightness; raise/lower the cap to tune.'
+    cap (bulb_luminance_cap) so bright hues like cyan/yellow are dimmed (cap 0.13;
+    was 0.26); raise/lower the cap to tune.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -3008,7 +3008,7 @@
           - light.bed_frame_light_strips
           - light.bedroom_nightstand_light_strip
           - light.living_room_pegboard_light_strip
-        bulb_luminance_cap: 0.26
+        bulb_luminance_cap: 0.13
         bulbs:
         - light.living_room_lamp
         - light.bed_lamp
@@ -3035,12 +3035,13 @@
               %}{% set ns = namespace(y=0) %}{% for i in range(3) %}{% set c = color[i]
               / mx if mx > 0 else 0 %}{% set lin = c / 12.92 if c <= 0.04045 else
               ((c + 0.055) / 1.055) ** 2.4 %}{% set ns.y = ns.y + w[i] * lin %}{%
-              endfor %}{{ ([100, [15, (bulb_luminance_cap / ns.y * 100) | round(0)]
+              endfor %}{{ ([100, [10, (bulb_luminance_cap / ns.y * 100) | round(0)]
               | max] | min | int) if ns.y > 0 else 100 }}'
           note: 'Perceived-brightness cap for bulbs only. bulb_pct = cap / relative
-            luminance of the hue (sRGB linearised, Rec.709 weights), clamped 15-100%.
-            Cyan (~0.52) -> ~50%, pink (~0.26) -> 100%. HSL L does not work here:
-            it rates every pure hue 50%. Strips keep their own brightness (some intentionally
+            luminance of the hue (sRGB linearised, Rec.709 weights), clamped 10-100%.
+            Cap 0.13 (halved from 0.26): cyan (~0.52) -> ~25%, pink (~0.26) -> ~50%,
+            pure red -> ~61%, deep blue -> 100%. HSL L does not work here: it rates
+            every pure hue 50%. Strips keep their own brightness (some intentionally
             at ~1%).'
         - if:
           - condition: template
