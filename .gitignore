@@ -1,0 +1,12 @@
+# Never commit runtime data, logs or secrets
+home-assistant_v2.db*
+*.db.corrupt.*
+*.log
+*.log.*
+cron.log
+.cache/
+.cloud/
+tts/
+backups/
+.ha_cursor_agent_key
+.HA_VERSION
