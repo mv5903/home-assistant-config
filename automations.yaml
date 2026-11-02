@@ -395,10 +395,9 @@
 - id: '1756866282389'
   alias: 'Media: Theater Mode On'
   description: 'When video (not Music) plays on the Apple TV: bed lamp, desk lamp,
-    and pegboard strip fully OFF; desk strip, cubby and living room (TV) lamp dimmed
-    to 5% (color left as-is, restored on exit). Vertical strip is left alone. RGB/Color
-    mode does NOT affect this on/off behavior. If eating mode is on, instead raise
-    the theater lights to full via apply_current_color.'
+    pegboard strip, desk strip, cubby and living room (TV) lamp all dim to 5% (color
+    left as-is, restored on exit). Vertical strip is left alone. If eating mode is
+    on, instead raise the theater lights to full via apply_current_color.'
   triggers:
   - trigger: state
     entity_id: media_player.matthews_bedroom_2
@@ -438,22 +437,16 @@
           brightness_pct: 100
           transition: 5
     default:
-    - alias: Bed lamp + desk lamp + pegboard off
-      action: light.turn_off
-      data:
-        transition: 5
-      target:
-        entity_id:
-        - light.bed_lamp
-        - light.desk_lamp
-        - light.living_room_pegboard_light_strip
-    - alias: Desk strip + cubby + living room (TV) lamp dim to 5%, keep color
+    - alias: All theater lights dim to 5%, keep color
       action: light.turn_on
       data:
         brightness_pct: 5
         transition: 5
       target:
         entity_id:
+        - light.bed_lamp
+        - light.desk_lamp
+        - light.living_room_pegboard_light_strip
         - light.desk_light_strips
         - light.cubby
         - light.living_room_lamp
