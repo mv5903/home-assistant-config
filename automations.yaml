@@ -21,8 +21,8 @@
     data: {}
     target:
       entity_id:
-      - switch.tapo_power_strip_49c7_smart_plug_1
       - switch.tapo_power_strip_49c7_smart_plug_4
+      - switch.smart_plug_3_lava_lamp
   - action: script.apply_adaptive_lighting
     data:
       target_lights:
@@ -703,7 +703,6 @@
     data: {}
     target:
       entity_id:
-      - switch.tapo_power_strip_49c7_smart_plug_1
       - switch.tapo_power_strip_49c7_smart_plug_4
   mode: single
 - id: '1765080604283'
@@ -3262,3 +3261,36 @@
         target:
           entity_id: scene.living_room_lamp_before_tv
   mode: restart
+- id: '1793668657422'
+  alias: 'Lighting: Lava Lamp Evening On'
+  description: Turns on the lava lamp (Smart Plug 3) once lights reach warmest white
+    (sun elevation below -6 deg = 2000K), or on arrival home / HA start after that
+    point in the evening.
+  triggers:
+  - trigger: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: -6
+  - trigger: state
+    entity_id: device_tracker.matthews_iphone
+    to: home
+  - trigger: homeassistant
+    event: start
+  conditions:
+  - condition: state
+    entity_id: device_tracker.matthews_iphone
+    state: home
+  - condition: numeric_state
+    entity_id: sun.sun
+    attribute: elevation
+    below: -6
+  - condition: time
+    after: '12:00:00'
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.smart_plug_3_lava_lamp
+  mode: single
