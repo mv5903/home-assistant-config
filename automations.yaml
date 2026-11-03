@@ -3319,7 +3319,7 @@
     state: 'off'
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
-    state: 'off'
+    state: 'on'
   actions:
   - action: scene.create
     data:
