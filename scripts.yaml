@@ -689,3 +689,55 @@ apply_current_color:
               transition: '{{ trans }}'
             target:
               entity_id: '{{ repeat.item }}'
+wled_vibes_cozy:
+  alias: 'WLED Vibes: Cozy'
+  description: 'Location-aware WLED effects across the studio. TV stand: slow Colorwaves.
+    Bookshelf: Twinklefox fireflies. Vertical strip: Aurora. Bed frame: slow Breathe.
+    Nightstand: Candle Multi. Pegboard: Twinklefox. Desk: left solid for focus.'
+  icon: mdi:candle
+  sequence:
+  - action: light.turn_on
+    target:
+      entity_id: light.living_room_tv_stand_light_strip_2
+    data:
+      effect: Colorwaves
+      brightness_pct: 60
+  - action: light.turn_on
+    target:
+      entity_id: light.living_room_bookshelf_light_strips
+    data:
+      effect: Twinklefox
+      brightness_pct: 70
+  - action: light.turn_on
+    target:
+      entity_id: light.living_room_vertical_light_strip
+    data:
+      effect: Aurora
+      brightness_pct: 80
+  - action: light.turn_on
+    target:
+      entity_id: light.bed_frame_light_strips
+    data:
+      effect: Breathe
+      rgb_color:
+      - 255
+      - 120
+      - 30
+      brightness_pct: 60
+  - action: light.turn_on
+    target:
+      entity_id: light.bedroom_nightstand_light_strip
+    data:
+      effect: Candle Multi
+      rgb_color:
+      - 255
+      - 140
+      - 40
+      brightness_pct: 70
+  - action: light.turn_on
+    target:
+      entity_id: light.living_room_pegboard_light_strip
+    data:
+      effect: Twinklefox
+      brightness_pct: 50
+  mode: single
