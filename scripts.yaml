@@ -698,6 +698,11 @@ wled_vibes_cozy:
   sequence:
   - action: number.set_value
     target:
+      entity_id: number.bed_frame_light_strips_speed
+    data:
+      value: 25
+  - action: number.set_value
+    target:
       entity_id: number.kitchen_sink_light_strip_speed
     data:
       value: 15
@@ -728,7 +733,7 @@ wled_vibes_cozy:
     target:
       entity_id: light.bed_frame_light_strips
     data:
-      effect: Breathe
+      effect: Running
       brightness_pct: 60
   - action: light.turn_on
     target:
