@@ -1535,9 +1535,17 @@
             entity_id: light.bathroom_light_strip
           transition: 0
       else:
-      - condition: state
-        entity_id: light.bathroom_light_strip
-        state: 'off'
+      - condition: or
+        note: Also re-apply daytime lighting if the strip is still on from the night
+          (dim, under ~4%).
+        conditions:
+        - condition: state
+          entity_id: light.bathroom_light_strip
+          state: 'off'
+        - condition: numeric_state
+          entity_id: light.bathroom_light_strip
+          attribute: brightness
+          below: 10
       - if:
         - condition: state
           entity_id: input_boolean.adaptive_lighting_paused
