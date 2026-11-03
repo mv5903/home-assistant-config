@@ -3490,3 +3490,36 @@
       transition: 0
   mode: single
   max_exceeded: silent
+- id: '1793715166926'
+  alias: 'Lighting: All Off When Away'
+  description: 'Turns off every light once Matt has left home AND no presence/motion
+    sensor (binary_sensor.apartment_presence group) has seen anyone for 15 minutes.
+    Two triggers cover both orderings: leaving after the apartment has already been
+    quiet 15 min, or the apartment going quiet 15 min after leaving. Intentionally
+    has no away_mode_disables label so Away Mode can''t race it.'
+  triggers:
+  - entity_id: person.matt
+    event: leave
+    trigger: zone
+    zone: zone.home
+  - entity_id: binary_sensor.apartment_presence
+    for:
+      minutes: 15
+    to: 'off'
+    trigger: state
+  conditions:
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: person.matt
+      state: home
+  - condition: state
+    entity_id: binary_sensor.apartment_presence
+    for:
+      minutes: 15
+    state: 'off'
+  actions:
+  - action: light.turn_off
+    target:
+      entity_id: all
+  mode: single
