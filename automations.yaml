@@ -3481,3 +3481,50 @@
     target:
       entity_id: all
   mode: single
+- id: '1793982554937'
+  alias: 'Climate: Cooler While PC On'
+  description: 'PC heats the room while sitting at it: hold 69°F while Matt-PC is
+    online and Matt is home; resume ecobee schedule when PC goes offline.'
+  triggers:
+  - trigger: state
+    entity_id: binary_sensor.matt_pc_online
+    to: 'on'
+    for:
+      minutes: 2
+    id: pc_on
+  - trigger: state
+    entity_id: binary_sensor.matt_pc_online
+    to: 'off'
+    for:
+      minutes: 5
+    id: pc_off
+  conditions:
+  - condition: state
+    entity_id: person.matt
+    state: home
+  - condition: not
+    conditions:
+    - condition: state
+      entity_id: climate.home_apartment_thermostat
+      state: 'off'
+  actions:
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: pc_on
+      sequence:
+      - action: climate.set_temperature
+        target:
+          entity_id: climate.home_apartment_thermostat
+        data:
+          temperature: 69
+    - conditions:
+      - condition: trigger
+        id: pc_off
+      sequence:
+      - action: ecobee.resume_program
+        target:
+          entity_id: climate.home_apartment_thermostat
+        data:
+          resume_all: false
+  mode: restart
