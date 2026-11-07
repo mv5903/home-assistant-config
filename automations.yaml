@@ -3477,6 +3477,13 @@
       minutes: 15
     state: 'off'
   actions:
+  - action: scene.create
+    data:
+      scene_id: bedroom_before_away
+      snapshot_entities:
+      - light.bed_frame_light_strips
+      - light.bed_lamp
+      - light.bedroom_nightstand_light_strip
   - action: light.turn_off
     target:
       entity_id: all
@@ -3528,3 +3535,22 @@
         data:
           resume_all: false
   mode: restart
+- id: '1794091626439'
+  alias: 'Lighting: Restore Bedroom On Arrival'
+  description: When Matt gets home, restores the bedroom lights to how they were before
+    'All Off When Away' turned them off (snapshot scene.bedroom_before_away). Skipped
+    during Sleep Focus.
+  triggers:
+  - trigger: state
+    entity_id: person.matt
+    to: home
+  conditions:
+  - condition: state
+    entity_id: input_boolean.iphone_sleep_focus_mode
+    state: 'off'
+  actions:
+  - action: scene.turn_on
+    target:
+      entity_id: scene.bedroom_before_away
+    continue_on_error: true
+  mode: single
