@@ -3595,14 +3595,14 @@
           effect list exactly.
         variables:
           sound_fx:
-            light.bathroom_light_strip: Pixelwave
-            light.bed_frame_light_strips: Gravcenter
-            light.bedroom_nightstand_light_strip: Juggles
-            light.desk_light_strips: Midnoise
-            light.living_room_bookshelf_light_strips: Waterfall
-            light.living_room_pegboard_light_strip: Ripple Peak
-            light.living_room_tv_stand_light_strip_2: Puddlepeak
-            light.living_room_vertical_light_strip: Gravimeter
+            light.bathroom_light_strip: PS GEQ 1D
+            light.bed_frame_light_strips: PS GEQ 1D
+            light.bedroom_nightstand_light_strip: PS GEQ 1D
+            light.desk_light_strips: PS GEQ 1D
+            light.living_room_bookshelf_light_strips: PS GEQ 1D
+            light.living_room_pegboard_light_strip: PS GEQ 1D
+            light.living_room_tv_stand_light_strip_2: PS GEQ 1D
+            light.living_room_vertical_light_strip: PS GEQ 1D
       - note: Only strips that are on, so this never turns a strip on.
         repeat:
           for_each: '{{ sound_fx | dictsort | map(''first'') | select(''is_state'',
