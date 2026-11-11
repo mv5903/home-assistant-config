@@ -3562,12 +3562,14 @@
 - id: '1794420538507'
   alias: 'Lighting: Sound Reactive Mode'
   description: 'Sound Reactive toggle (switch.wled_sound_reactive, a group of all
-    8 WLED audio-reactive switches). ON: each WLED strip that is currently on switches
-    to its audio effect from the sound_fx map. OFF while Color Mode is on: presses
-    Randomize so Party Mode reapplies the per-strip Party FX choices (the normal color-mode
-    effects). OFF while Color Mode is off: does nothing; adaptive lighting already
-    owns the lights. Turning Color Mode off also turns Sound Reactive off. Party Mode
-    skips effects while this is on, so Randomize only changes colors in sound mode.'
+    8 WLED audio-reactive switches). ON: each WLED strip that is currently on loads
+    its WLED preset named ''Sound'' if it has one (per-strip bass/mid/high tuning
+    lives there), otherwise switches to its sound_fx effect. OFF while Color Mode
+    is on: presses Randomize so Party Mode reapplies the per-strip Party FX choices
+    (the normal color-mode effects). OFF while Color Mode is off: does nothing; adaptive
+    lighting already owns the lights. Turning Color Mode off also turns Sound Reactive
+    off. Party Mode skips effects while this is on, so Randomize only changes colors
+    in sound mode.'
   triggers:
   - entity_id: switch.wled_sound_reactive
     from: 'off'
@@ -3591,8 +3593,9 @@
       - condition: trigger
         id: sound_on
       sequence:
-      - note: Per-strip audio effect. Edit names here to change; must match the WLED
-          effect list exactly.
+      - note: 'sound_preset: each strip''s WLED Preset select. If that strip has a
+          WLED preset named exactly ''Sound'', it is loaded (keeps per-strip bin/slider
+          tuning HA can''t set). Otherwise falls back to the sound_fx effect.'
         variables:
           sound_fx:
             light.bathroom_light_strip: PS GEQ 1D
@@ -3603,16 +3606,40 @@
             light.living_room_pegboard_light_strip: PS GEQ 1D
             light.living_room_tv_stand_light_strip_2: PS GEQ 1D
             light.living_room_vertical_light_strip: PS GEQ 1D
+          sound_preset:
+            light.living_room_vertical_light_strip: select.living_room_vertical_light_strip_preset
+            light.living_room_tv_stand_light_strip_2: select.kitchen_sink_light_strip_preset
+            light.living_room_bookshelf_light_strips: select.living_room_bookshelf_light_strips_preset
+            light.living_room_pegboard_light_strip: select.living_room_pegboard_light_strip_preset
+            light.desk_light_strips: select.wled_preset
+            light.bathroom_light_strip: select.bathroom_light_strip_preset
+            light.bed_frame_light_strips: select.bed_frame_light_strips_preset
+            light.bedroom_nightstand_light_strip: select.bedroom_nightstand_light_strip_preset
       - note: Only strips that are on, so this never turns a strip on.
         repeat:
           for_each: '{{ sound_fx | dictsort | map(''first'') | select(''is_state'',
             ''on'') | list }}'
           sequence:
-          - action: light.turn_on
-            data:
-              effect: '{{ sound_fx[repeat.item] }}'
-            target:
-              entity_id: '{{ repeat.item }}'
+          - variables:
+              preset_select: '{{ sound_preset[repeat.item] }}'
+          - if:
+            - condition: template
+              value_template: '{{ ''Sound'' in (state_attr(preset_select, ''options'')
+                or []) }}'
+            then:
+            - action: select.select_option
+              target:
+                entity_id: '{{ preset_select }}'
+              data:
+                option: Sound
+            else:
+            - action: light.turn_on
+              target:
+                entity_id: '{{ repeat.item }}'
+              data:
+                effect: '{{ sound_fx[repeat.item] }}'
+            note: No native condition can test whether a select has an option, so
+              this one is a template.
     - conditions:
       - condition: trigger
         id: sound_off
