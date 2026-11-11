@@ -62,11 +62,17 @@ template:
           {% endif %}
           
 command_line:
-  - sensor: 
-        command: "curl -s https://api.mcsrvstat.us/3/play.mattvandenberg.com | grep -o '\"online\":[0-9]*' | head -1 | cut -d':' -f2"
-        command_timeout: 7
+  - sensor:
         name: Minecraft Server Player Count
         unique_id: sensor.minecraft_server_player_count
+        # Server address is edited in the UI: input_text.minecraft_server_address
+        # mcstatus.io (mcsrvstat.us fails on the playit.gg tunnel)
+        command: "curl -s --max-time 6 https://api.mcstatus.io/v2/status/java/{{ states('input_text.minecraft_server_address') }}"
+        command_timeout: 7
+        value_template: "{{ value_json.players.online if value_json.online else 0 }}"
+        unit_of_measurement: players
+        state_class: measurement
+        icon: mdi:minecraft
 
 template:
   - sensor:
