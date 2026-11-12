@@ -3564,12 +3564,12 @@
   description: 'Sound Reactive toggle (switch.wled_sound_reactive, a group of all
     8 WLED audio-reactive switches). ON: each WLED strip that is currently on loads
     its WLED preset named ''Sound'' if it has one (per-strip bass/mid/high tuning
-    lives there), otherwise switches to its sound_fx effect. OFF while Color Mode
-    is on: presses Randomize so Party Mode reapplies the per-strip Party FX choices
-    (the normal color-mode effects). OFF while Color Mode is off: does nothing; adaptive
-    lighting already owns the lights. Turning Color Mode off also turns Sound Reactive
-    off. Party Mode skips effects while this is on, so Randomize only changes colors
-    in sound mode.'
+    lives there), otherwise switches to its sound_fx effect; either way its palette
+    is set to ''* Color 1''. OFF while Color Mode is on: presses Randomize so Party
+    Mode reapplies the per-strip Party FX choices (the normal color-mode effects).
+    OFF while Color Mode is off: does nothing; adaptive lighting already owns the
+    lights. Turning Color Mode off also turns Sound Reactive off. Party Mode skips
+    effects while this is on, so Randomize only changes colors in sound mode.'
   triggers:
   - entity_id: switch.wled_sound_reactive
     from: 'off'
@@ -3595,7 +3595,9 @@
       sequence:
       - note: 'sound_preset: each strip''s WLED Preset select. If that strip has a
           WLED preset named exactly ''Sound'', it is loaded (keeps per-strip bin/slider
-          tuning HA can''t set). Otherwise falls back to the sound_fx effect.'
+          tuning HA can''t set). Otherwise falls back to the sound_fx effect. sound_palette:
+          each strip''s WLED palette select, forced to ''* Color 1'' so sound effects
+          use the strip''s actual color instead of a default/temperature palette.'
         variables:
           sound_fx:
             light.bathroom_light_strip: PS GEQ 1D
@@ -3604,7 +3606,7 @@
             light.desk_light_strips: Freqpixels
             light.living_room_bookshelf_light_strips: Juggles
             light.living_room_pegboard_light_strip: PS Springy
-            light.living_room_tv_stand_light_strip_2: PS Springy
+            light.living_room_tv_stand_light_strip_2: Juggles
             light.living_room_vertical_light_strip: Freqwave
           sound_preset:
             light.living_room_vertical_light_strip: select.living_room_vertical_light_strip_preset
@@ -3615,6 +3617,15 @@
             light.bathroom_light_strip: select.bathroom_light_strip_preset
             light.bed_frame_light_strips: select.bed_frame_light_strips_preset
             light.bedroom_nightstand_light_strip: select.bedroom_nightstand_light_strip_preset
+          sound_palette:
+            light.desk_light_strips: select.wled_color_palette
+            light.living_room_tv_stand_light_strip_2: select.kitchen_sink_light_strip_color_palette
+            light.living_room_vertical_light_strip: select.living_room_vertical_light_strip_color_palette
+            light.bathroom_light_strip: select.bathroom_light_strip_color_palette
+            light.living_room_pegboard_light_strip: select.living_room_pegboard_light_strip_color_palette
+            light.bedroom_nightstand_light_strip: select.bedroom_nightstand_light_strip_color_palette
+            light.bed_frame_light_strips: select.bed_frame_light_strips_color_palette
+            light.living_room_bookshelf_light_strips: select.living_room_bookshelf_light_strips_color_palette
       - note: Only strips that are on, so this never turns a strip on.
         repeat:
           for_each: '{{ sound_fx | dictsort | map(''first'') | select(''is_state'',
@@ -3640,6 +3651,12 @@
                 effect: '{{ sound_fx[repeat.item] }}'
             note: No native condition can test whether a select has an option, so
               this one is a template.
+          - action: select.select_option
+            target:
+              entity_id: '{{ sound_palette[repeat.item] }}'
+            data:
+              option: '* Color 1'
+            note: Palette 'Color 1' so the effect matches the strip's color 1.
     - conditions:
       - condition: trigger
         id: sound_off
