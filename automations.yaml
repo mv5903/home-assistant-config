@@ -3599,13 +3599,13 @@
         variables:
           sound_fx:
             light.bathroom_light_strip: PS GEQ 1D
-            light.bed_frame_light_strips: PS GEQ 1D
+            light.bed_frame_light_strips: Freqpixels
             light.bedroom_nightstand_light_strip: PS GEQ 1D
-            light.desk_light_strips: PS GEQ 1D
-            light.living_room_bookshelf_light_strips: PS GEQ 1D
-            light.living_room_pegboard_light_strip: PS GEQ 1D
-            light.living_room_tv_stand_light_strip_2: PS GEQ 1D
-            light.living_room_vertical_light_strip: PS GEQ 1D
+            light.desk_light_strips: Freqpixels
+            light.living_room_bookshelf_light_strips: Juggles
+            light.living_room_pegboard_light_strip: PS Springy
+            light.living_room_tv_stand_light_strip_2: PS Springy
+            light.living_room_vertical_light_strip: Freqwave
           sound_preset:
             light.living_room_vertical_light_strip: select.living_room_vertical_light_strip_preset
             light.living_room_tv_stand_light_strip_2: select.kitchen_sink_light_strip_preset
