@@ -161,6 +161,11 @@
         hvac_mode: cool
       target:
         entity_id: climate.home_apartment_thermostat
+  - action: switch.turn_on
+    metadata: {}
+    target:
+      entity_id: switch.bug_trap
+    data: {}
   mode: restart
 - id: '1763575398211'
   alias: 'Lighting: Entrance Presence'
@@ -317,6 +322,11 @@
       entity_id: select.nintendo_toy_mode_selector
     data:
       option: 'Off'
+  - action: switch.turn_off
+    metadata: {}
+    target:
+      entity_id: switch.bug_trap
+    data: {}
   mode: single
 - id: '1768974170420'
   alias: 'Lighting: Party Mode'
