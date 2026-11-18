@@ -2679,10 +2679,13 @@
         - 2
         - 3
         - 4
+        - 5
+        - 6
+        - 7
       target:
         entity_id: vacuum.vaccum
-      note: 'Remapped 2026-10-27: current Map 1 is 1=Hallway, 2=Main, 3=Bathroom,
-        4=Kitchen.'
+      note: 'Remapped 2026-11-18 after Mova app reinstall: Map 1 is 1=Dining Room,
+        2=Bathroom, 3=Kitchen, 4=Hallway, 5=Living Room, 6=Master Bedroom, 7=Study.'
     - action: input_datetime.set_datetime
       data:
         timestamp: '{{ now().timestamp() }}'
@@ -2762,11 +2765,11 @@
       data:
         suction_level: 3
         segments:
-        - 4
+        - 3
       target:
         entity_id: vacuum.vaccum
-      note: 'Remapped 2026-10-27: current Map 1 is 1=Hallway, 2=Main, 3=Bathroom,
-        4=Kitchen. Previous [3] was cleaning the bathroom.'
+      note: 'Remapped 2026-11-18 after Mova app reinstall: Kitchen is now segment
+        3 (4 is Hallway).'
     - action: input_datetime.set_datetime
       data:
         timestamp: '{{ now().timestamp() }}'
@@ -3182,10 +3185,14 @@
       - 2
       - 3
       - 4
+      - 5
+      - 6
+      - 7
+    note: 'Remapped 2026-11-18 after Mova app reinstall: 7 rooms on Map 1.'
   - action: notify.mobile_app_matthews_iphone
     data:
       title: Vacuuming While You're Out
-      message: Vacuum-only clean of all 4 rooms started.
+      message: Vacuum-only clean of all rooms started.
   mode: single
 - id: '1793241592779'
   alias: Dim Living Room Lamp During Apple TV Video
