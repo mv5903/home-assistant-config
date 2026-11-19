@@ -759,3 +759,74 @@ wled_vibes_cozy:
     data:
       option: '* Color 1'
   mode: single
+vacuum_live_activity:
+  alias: Vacuum Live Activity
+  description: Keeps the vacuum_kitchen_live Live Activity updated while the vacuum
+    runs, then ends it. Runs detached (script.turn_on) so editing the calling automation
+    doesn't kill it mid-clean. Updates are silent so iOS refreshes in place.
+  fields:
+    title:
+      default: Vacuum
+      description: Live Activity header (only applied when the activity starts)
+      name: Title
+      selector:
+        text: {}
+  mode: restart
+  sequence:
+  - alias: Update while running
+    repeat:
+      sequence:
+      - variables:
+          area: '{{ states(''sensor.vaccum_cleaned_area'') | float(0) | round(0) |
+            int }}'
+          base: '{{ states(''sensor.vaccum_self_wash_base_status'') }}'
+          mins: '{{ states(''sensor.vaccum_cleaning_time'') | int(0) }}'
+          vac: '{{ states(''vacuum.vaccum'') }}'
+      - variables:
+          label: '{% if base in [''washing'', ''clean_add_water''] %}{{ ''Getting
+            mops ready'' if area == 0 else ''Washing mops'' }}{% elif vac == ''returning''
+            %}Heading back to base{% elif vac == ''paused'' %}Paused{% else %}Cleaning{%
+            endif %}'
+      - action: notify.mobile_app_matthews_iphone
+        data:
+          data:
+            alert_once: true
+            live_update: true
+            notification_icon: '{{ ''mdi:water-sync'' if base in [''washing'', ''clean_add_water'']
+              else ''mdi:robot-vacuum'' }}'
+            progress: '{{ states(''sensor.vaccum_cleaning_progress'') | int(0) }}'
+            progress_max: 100
+            push:
+              interruption-level: passive
+            silent: true
+            tag: vacuum_kitchen_live
+          message: '{{ label }}{% if area > 0 %} · {{ area }} sq ft · {{ mins }} min{%
+            endif %} · {{ states(''sensor.vaccum_battery_level'') }}% battery'
+          title: '{{ title | default(''Vacuum'') }}'
+      - alias: Next update on a phase change, or after 60s
+        continue_on_timeout: true
+        note: 'Mop-washing and status changes show up right away instead of waiting
+          out the interval. to: null ignores attribute-only changes.'
+        timeout:
+          seconds: 60
+        wait_for_trigger:
+        - entity_id:
+          - sensor.vaccum_self_wash_base_status
+          - sensor.vaccum_status
+          to:
+          trigger: state
+      while:
+      - condition: state
+        entity_id: vacuum.vaccum
+        state:
+        - cleaning
+        - returning
+        - paused
+      - condition: template
+        value_template: '{{ repeat.index <= 240 }}'
+  - action: notify.mobile_app_matthews_iphone
+    alias: End Live Activity
+    data:
+      data:
+        tag: vacuum_kitchen_live
+      message: clear_notification

@@ -2789,45 +2789,15 @@
         minutes: 2
       continue_on_timeout: true
     - alias: 'Live Activity: status while running'
-      repeat:
-        while:
-        - condition: state
-          entity_id: vacuum.vaccum
-          state:
-          - cleaning
-          - returning
-          - paused
-        - condition: template
-          value_template: '{{ repeat.index <= 180 }}'
-        sequence:
-        - action: notify.mobile_app_matthews_iphone
-          data:
-            title: Kitchen Cleanup
-            message: '{{ states(''sensor.vaccum_status'') | replace(''_'', '' '')
-              | title }} · {{ (states(''sensor.vaccum_cleaned_area'') | float(0) *
-              10.764) | round(0) | int }} sq ft · {{ states(''sensor.vaccum_cleaning_time'')
-              }} min · {{ states(''sensor.vaccum_battery_level'') }}% battery'
-            data:
-              tag: vacuum_kitchen_live
-              live_update: true
-              progress: '{{ states(''sensor.vaccum_cleaning_progress'') | int(0) }}'
-              progress_max: 100
-              notification_icon: mdi:robot-vacuum
-              push:
-                interruption-level: passive
-              silent: true
-              alert_once: true
-        - delay:
-            seconds: 60
-      note: 'Updates use silent: true so iOS refreshes the Live Activity in place
-        (interruption-level alone still re-alerted). First push starts the activity
-        and always alerts once. 60s interval since cleaning time is in whole minutes.'
-    - alias: End Live Activity
-      action: notify.mobile_app_matthews_iphone
+      action: script.turn_on
+      target:
+        entity_id: script.vacuum_live_activity
       data:
-        message: clear_notification
-        data:
-          tag: vacuum_kitchen_live
+        variables:
+          title: Kitchen Cleanup
+      note: Detached script (script.turn_on) so saving this automation mid-clean no
+        longer kills the Live Activity. The script ends the activity itself when the
+        vacuum docks.
     - action: input_boolean.turn_off
       target:
         entity_id: input_boolean.vacuum_will_auto_clean_kitchen
