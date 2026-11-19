@@ -2815,8 +2815,13 @@
               notification_icon: mdi:robot-vacuum
               push:
                 interruption-level: passive
+              silent: true
+              alert_once: true
         - delay:
-            seconds: 30
+            seconds: 60
+      note: 'Updates use silent: true so iOS refreshes the Live Activity in place
+        (interruption-level alone still re-alerted). First push starts the activity
+        and always alerts once. 60s interval since cleaning time is in whole minutes.'
     - alias: End Live Activity
       action: notify.mobile_app_matthews_iphone
       data:
