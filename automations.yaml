@@ -2707,8 +2707,8 @@
     has been empty for 20 min (runs anyway after 2 h). Cancellable from the notification.
   triggers:
   - entity_id:
-    - sensor.kitchen_motion_sensor_trigger_last_15m
-    above: 24
+    - sensor.kitchen_motion_sensor_trigger_last_30m
+    above: 48
     trigger: numeric_state
   conditions:
   - condition: state
