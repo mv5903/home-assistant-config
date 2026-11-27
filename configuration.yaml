@@ -226,6 +226,7 @@ homekit:
     entity_config:
       camera.main:
         stream_source: "-rtsp_transport tcp -fflags nobuffer -analyzeduration 1000000 -probesize 500000 -i rtsp://ccab4aaf-frigate-fa:8554/main_sub"
+        stream_address: 10.10.0.10   # address announced to iOS for the SRTP video; must be reachable from the phone
         video_codec: copy
         support_audio: false
         max_fps: 20
@@ -240,6 +241,7 @@ homekit:
     entity_config:
       camera.bedroom:
         stream_source: "-rtsp_transport tcp -fflags nobuffer -analyzeduration 1000000 -probesize 500000 -i rtsp://ccab4aaf-frigate-fa:8554/bedroom_sub"
+        stream_address: 10.10.0.10   # address announced to iOS for the SRTP video; must be reachable from the phone
         video_codec: copy
         support_audio: false
         max_fps: 20
