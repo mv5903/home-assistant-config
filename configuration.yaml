@@ -211,29 +211,36 @@ input_select:
     initial: cool
 
 homekit:
+  # Cameras use the Frigate entities (instant snapshots from Frigate) and stream
+  # straight from Frigate's go2rtc restream, which Frigate keeps connected 24/7.
+  # video_codec: copy = no transcoding (lowest latency + CPU).
   - name: "Main Camera"
     mode: accessory
     port: 21072
     filter:
       include_entities:
-        - camera.main_2
+        - camera.main
     entity_config:
-      camera.main_2:
+      camera.main:
+        stream_source: rtsp://ccab4aaf-frigate-fa:8554/main
         video_codec: copy
         support_audio: false
+        max_fps: 20
 
   - name: "Bedroom Camera"
     mode: accessory
     port: 21073
     filter:
       include_entities:
-        - camera.bedroom_2
+        - camera.bedroom
     entity_config:
-      camera.bedroom_2:
+      camera.bedroom:
+        stream_source: rtsp://ccab4aaf-frigate-fa:8554/bedroom
         video_codec: copy
         support_audio: false
+        max_fps: 20
 
-        
+
 rest:
   - resource: http://10.0.0.14:7878/api/v3/queue?pageSize=50
     headers:
