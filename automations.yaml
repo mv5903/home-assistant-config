@@ -3416,14 +3416,23 @@
     target:
       entity_id: binary_sensor.esphome_web_cb9878_moving_target
     trigger: motion.detected
+    options:
+      behavior: each
+      for: 00:00:00
   - id: motion
     target:
       entity_id: binary_sensor.esphome_web_cb9878_presence
     trigger: occupancy.detected
+    options:
+      behavior: each
+      for: 00:00:00
   - id: timer_done
     target:
       entity_id: timer.night_red_lights
     trigger: timer.finished
+    options:
+      behavior: each
+      for: 00:00:00
   conditions:
   - condition: state
     entity_id: input_boolean.iphone_sleep_focus_mode
@@ -3468,7 +3477,7 @@
             - 255
             - 0
             - 0
-            transition: 0
+            transition: 5
           target:
             entity_id:
             - light.bathroom_light_strip
@@ -3496,6 +3505,11 @@
       - action: timer.start
         target:
           entity_id: timer.night_red_lights
+        data:
+          duration:
+            hours: 0
+            minutes: 5
+            seconds: 0
     - conditions:
       - condition: trigger
         id: timer_done
@@ -3520,5 +3534,10 @@
         - action: timer.start
           target:
             entity_id: timer.night_red_lights
+          data:
+            duration:
+              hours: 0
+              minutes: 5
+              seconds: 0
   max_exceeded: silent
   mode: queued
