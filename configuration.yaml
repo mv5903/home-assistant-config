@@ -213,16 +213,19 @@ input_select:
 homekit:
   # Cameras use the Frigate entities (instant snapshots from Frigate) and stream
   # straight from Frigate's go2rtc restream, which Frigate keeps connected 24/7.
+  # Uses the 640x360 sub streams: HomeKit requests <=720p at ~300 kbps, and the
+  # 1440p main stream (several Mbps) made live view fail intermittently.
   # video_codec: copy = no transcoding (lowest latency + CPU).
   - name: "Main Camera"
     mode: accessory
     port: 21072
+    ip_address: 10.10.0.10   # HA's LAN NIC; the phone can't reach 10.0.0.10, which broke live video
     filter:
       include_entities:
         - camera.main
     entity_config:
       camera.main:
-        stream_source: rtsp://ccab4aaf-frigate-fa:8554/main
+        stream_source: "-rtsp_transport tcp -fflags nobuffer -analyzeduration 1000000 -probesize 500000 -i rtsp://ccab4aaf-frigate-fa:8554/main_sub"
         video_codec: copy
         support_audio: false
         max_fps: 20
@@ -230,12 +233,13 @@ homekit:
   - name: "Bedroom Camera"
     mode: accessory
     port: 21073
+    ip_address: 10.10.0.10   # HA's LAN NIC; the phone can't reach 10.0.0.10, which broke live video
     filter:
       include_entities:
         - camera.bedroom
     entity_config:
       camera.bedroom:
-        stream_source: rtsp://ccab4aaf-frigate-fa:8554/bedroom
+        stream_source: "-rtsp_transport tcp -fflags nobuffer -analyzeduration 1000000 -probesize 500000 -i rtsp://ccab4aaf-frigate-fa:8554/bedroom_sub"
         video_codec: copy
         support_audio: false
         max_fps: 20
